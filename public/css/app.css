@@ -18,9 +18,9 @@ body {
 
 body .v-application,
 body #welcome {
-  background: #72d5c4 !important;
-  background: linear-gradient(15deg, #72d5c4 0%, #0797df 62%) !important;
-  filter: progid:DXImageTransform.Microsoft.gradient(startColorstr="#72d5c4",endColorstr="#0797df",GradientType=1);
+  background: #72ffad;
+  background: linear-gradient(180deg, #8ef3b8 0%, #48bebe 100%);
+  filter: progid:DXImageTransform.Microsoft.gradient(startColorstr="#8ef3b8",endColorstr="#48bebe",GradientType=1);
 }
 
 a {

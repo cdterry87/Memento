@@ -6,7 +6,7 @@
             <div class="title m-b-md">
                 {{ config('app.name', 'Laravel') }}
                 <div class="subtitle m-t-sm">
-                    Something interesting about this site!
+                    Keep track of your memories!
                 </div>
             </div>
             <div class="links">
