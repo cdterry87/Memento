@@ -1,5 +1,6 @@
 @import '~vuetify/dist/vuetify.min.css';
 @import '~@mdi/font/css/materialdesignicons.min.css';
+@import url('https://fonts.googleapis.com/css?family=Arizonia|Leckerli+One|Norican|Playball&display=swap');
 
 html, body {
     color: #fff;
@@ -10,11 +11,11 @@ html, body {
 }
 
 body .v-application, body #welcome {
-    background: #72ffad;
-    background: -moz-linear-gradient(180deg, #8ef3b8 0%, #48bebe 100%);
-    background: -webkit-linear-gradient(180deg, #8ef3b8 0%, #48bebe 100%);
-    background: linear-gradient(180deg, #8ef3b8 0%, #48bebe 100%);
-    filter: progid:DXImageTransform.Microsoft.gradient(startColorstr="#8ef3b8",endColorstr="#48bebe",GradientType=1);
+    background: #72ffad !important;
+    background: -moz-linear-gradient(180deg, #8ef3b8 0%, #48bebe 100%) !important;
+    background: -webkit-linear-gradient(180deg, #8ef3b8 0%, #48bebe 100%) !important;
+    background: linear-gradient(180deg, #8ef3b8 0%, #48bebe 100%) !important;
+    filter: progid:DXImageTransform.Microsoft.gradient(startColorstr="#8ef3b8",endColorstr="#48bebe",GradientType=1) !important;
 }
 
 a {
@@ -23,8 +24,11 @@ a {
 }
 
 .v-application .logo, .logo {
-    font-size: 2rem !important;
-    font-family: 'Nunito', sans-serif !important;
+    font-size: 5rem !important;
+    font-family: 'Arizonia', sans-serif !important;
+    font-family: 'Leckerli One', sans-serif !important;
+    font-family: 'Norican', sans-serif !important;
+    font-family: 'Playball', sans-serif !important;
 }
 
 .v-alert {

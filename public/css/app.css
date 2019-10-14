@@ -1,4 +1,4 @@
-@charset "UTF-8";
+@import url(https://fonts.googleapis.com/css?family=Arizonia|Leckerli+One|Norican|Playball&display=swap);@charset "UTF-8";
 /*!
 * Vuetify v2.0.4
 * Forged by John Leider
@@ -18,9 +18,9 @@ body {
 
 body .v-application,
 body #welcome {
-  background: #72ffad;
-  background: linear-gradient(180deg, #8ef3b8 0%, #48bebe 100%);
-  filter: progid:DXImageTransform.Microsoft.gradient(startColorstr="#8ef3b8",endColorstr="#48bebe",GradientType=1);
+  background: #72ffad !important;
+  background: linear-gradient(180deg, #8ef3b8 0%, #48bebe 100%) !important;
+  filter: progid:DXImageTransform.Microsoft.gradient(startColorstr="#8ef3b8",endColorstr="#48bebe",GradientType=1) !important;
 }
 
 a {
@@ -30,8 +30,11 @@ a {
 
 .v-application .logo,
 .logo {
-  font-size: 2rem !important;
-  font-family: "Nunito", sans-serif !important;
+  font-size: 5rem !important;
+  font-family: "Arizonia", sans-serif !important;
+  font-family: "Leckerli One", sans-serif !important;
+  font-family: "Norican", sans-serif !important;
+  font-family: "Playball", sans-serif !important;
 }
 
 .v-alert {
