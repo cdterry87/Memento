@@ -42,13 +42,113 @@
                                 <v-icon>mdi-close</v-icon>
                             </v-btn>
                         </v-toolbar>
-                        <v-list subheader>
-                            <v-list-item>
-                                <v-list-item-content>
-                                    <v-list-item-title>Add a page to your story!</v-list-item-title>
-                                </v-list-item-content>
-                            </v-list-item>
-                        </v-list>
+                        <div class="text-center">
+                            <div v-if="panel == 1">
+                                <div class="title mb-5">
+                                    Add a new page to your story!
+                                </div>
+
+                                <v-date-picker color="teal accent-4" v-model="date"></v-date-picker>
+
+                                <div class="mt-5">
+                                    <v-btn outlined rounded large color="teal accent-4" dark @click="panel = 2">Next <v-icon>mdi-arrow-right-thick</v-icon></v-btn>
+                                </div>
+                            </div>
+                            <div v-if="panel == 2">
+                                <div class="title mb-5">
+                                    So, how was your day?!
+                                </div>
+
+                                <v-icon size="150" v-if="level == 1" color="deep-purple">mdi-emoticon-dead-outline</v-icon>
+                                <v-icon size="150" v-if="level == 2" color="deep-purple">mdi-emoticon-cry-outline</v-icon>
+                                <v-icon size="150" v-if="level == 3" color="deep-purple">mdi-emoticon-sad-outline</v-icon>
+                                <v-icon size="150" v-if="level == 4" color="deep-purple">mdi-emoticon-angry-outline</v-icon>
+                                <v-icon size="150" v-if="level == 5" color="deep-purple">mdi-emoticon-neutral-outline</v-icon>
+                                <v-icon size="150" v-if="level == 6" color="deep-purple">mdi-emoticon-happy-outline</v-icon>
+                                <v-icon size="150" v-if="level == 7" color="deep-purple">mdi-emoticon-outline</v-icon>
+                                <v-icon size="150" v-if="level == 8" color="deep-purple">mdi-emoticon-wink-outline</v-icon>
+                                <v-icon size="150" v-if="level == 9" color="deep-purple">mdi-emoticon-tongue-outline</v-icon>
+                                <v-icon size="150" v-if="level == 10" color="deep-purple">mdi-emoticon-cool-outline</v-icon>
+                                <v-icon size="150" v-if="level == 11" color="deep-purple">mdi-emoticon-kiss-outline</v-icon>
+                                <v-icon size="150" v-if="level == 12" color="deep-purple">mdi-emoticon-excited-outline</v-icon>
+
+                                <v-container grid-list-md class="mt-5 mb-5">
+                                    <v-layout row>
+                                        <v-flex xs10 offset-xs1>
+                                            <v-slider v-model="level" min="1" max="12" color="deep-purple" track-color="teal accent-4"></v-slider>
+                                        </v-flex>
+                                    </v-layout>
+                                </v-container>
+
+                                <div class="mt-5">
+                                    <v-btn outlined rounded large color="deep-purple" dark @click="panel = 1"><v-icon>mdi-arrow-left-thick</v-icon> Back</v-btn>
+                                    <v-btn outlined rounded large color="teal accent-4" dark @click="panel = 3">Next <v-icon>mdi-arrow-right-thick</v-icon></v-btn>
+                                </div>
+                            </div>
+                            <div v-if="panel == 3">
+                                <div class="title mb-5">
+                                    What made your day so _?
+                                </div>
+
+                                <v-container grid-list-md class="mt-5 mb-5">
+                                    <v-layout row wrap>
+                                        <v-flex xs4>
+                                            <v-btn text color="deep-purple"><v-icon>mdi-email</v-icon></v-btn>
+                                        </v-flex>
+                                        <v-flex xs4>
+                                            <v-btn text color="deep-purple"><v-icon>mdi-home</v-icon></v-btn>
+                                        </v-flex>
+                                        <v-flex xs4>
+                                            <v-btn text color="deep-purple"><v-icon>mdi-account-group</v-icon></v-btn>
+                                        </v-flex>
+                                        <v-flex xs4>
+                                            <v-btn text color="deep-purple"><v-icon>mdi-school</v-icon></v-btn>
+                                        </v-flex>
+                                        <v-flex xs4>
+                                            <v-btn text color="deep-purple"><v-icon>mdi-food-apple</v-icon></v-btn>
+                                        </v-flex>
+                                        <v-flex xs4>
+                                            <v-btn text color="deep-purple"><v-icon>mdi-earth</v-icon></v-btn>
+                                        </v-flex>
+                                        <v-flex xs4>
+                                            <v-btn text color="deep-purple"><v-icon>mdi-weight</v-icon></v-btn>
+                                        </v-flex>
+                                        <v-flex xs4>
+                                            <v-btn text color="deep-purple"><v-icon>mdi-plus</v-icon></v-btn>
+                                        </v-flex>
+                                    </v-layout>
+                                </v-container>
+
+                                    <div class="mt-5">
+                                    <v-btn outlined rounded large color="deep-purple" dark @click="panel = 2"><v-icon>mdi-arrow-left-thick</v-icon> Back</v-btn>
+                                    <v-btn outlined rounded large color="teal accent-4" dark @click="panel = 4">Next <v-icon>mdi-arrow-right-thick</v-icon></v-btn>
+                                </div>
+                            </div>
+                            <div v-if="panel == 4">
+                                <div class="title mb-5">
+                                    Would you like to add any details?
+                                </div>
+
+                                    <v-container grid-list-md class="mt-5 mb-5">
+                                    <v-layout row wrap>
+                                        <v-flex xs12>
+                                            <v-textarea
+                                            outlined
+                                            name="details"
+                                            label="Details"
+                                            color="teal accent-4"
+                                            rows="15"
+                                            ></v-textarea>
+                                        </v-flex>
+                                    </v-layout>
+                                    </v-container>
+
+                                    <div class="mt-5">
+                                    <v-btn outlined rounded large color="deep-purple" dark @click="panel = 3"><v-icon>mdi-arrow-left-thick</v-icon> Back</v-btn>
+                                    <v-btn outlined rounded large color="teal accent-4" dark>Done <v-icon>mdi-check-circle</v-icon></v-btn>
+                                </div>
+                            </div>
+                        </div>
                     </v-card>
                 </v-dialog>
             </v-flex>
@@ -62,6 +162,9 @@
         data() {
             return {
                 dialog: false,
+                date: '',
+                level: 6,
+                panel: 1,
                 memories: [
                     { title: 'Sister\'s Wedding', date: 'June 22nd, 2019', icon: 'mdi-emoticon-cry' },
                     { title: 'Date Night!', date: 'June 30th, 2019', icon: 'mdi-emoticon-kiss' },
