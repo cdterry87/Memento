@@ -44,11 +44,11 @@
                         </v-toolbar>
                         <div class="text-center">
                             <div v-if="panel == 1">
-                                <div class="title mb-5">
+                                <div class="body-2 mb-2">
                                     Add a new page to your story!
                                 </div>
 
-                                <v-date-picker color="teal accent-4" v-model="date"></v-date-picker>
+                                <v-date-picker color="deep-purple" v-model="date"></v-date-picker>
 
                                 <v-footer absolute color="transparent" class="text-center mb-5">
                                     <v-spacer></v-spacer>
@@ -57,7 +57,7 @@
                                 </v-footer>
                             </div>
                             <div v-if="panel == 2">
-                                <div class="title mb-5">
+                                <div class="body-2 mb-2">
                                     So, how was your day?!
                                 </div>
 
@@ -90,7 +90,7 @@
                                 </v-footer>
                             </div>
                             <div v-if="panel == 3">
-                                <div class="title">
+                                <div class="body-2 mb-2">
                                     What made your day so _?
                                 </div>
 
@@ -108,9 +108,8 @@
                                                         </v-list-item-content>
                                                         <v-list-item-action>
                                                             <v-checkbox
-                                                                v-model="active"
                                                                 color="teal accent-4"
-                                                                @click="toggle"
+                                                                :value="reason.selected"
                                                             ></v-checkbox>
                                                         </v-list-item-action>
                                                     </template>
@@ -128,8 +127,8 @@
                                 </v-footer>
                             </div>
                             <div v-if="panel == 4">
-                                <div class="title mb-5">
-                                    Would you like to add any additional details?
+                                <div class="body-2 mb-2">
+                                    Would you like to add any details?
                                 </div>
 
                                 <v-container grid-list-md>
@@ -171,15 +170,13 @@
                 level: 6,
                 panel: 1,
                 reasons: [
-                    { title: 'Work', icon: 'mdi-email'},
-                    { title: 'Family', icon: 'mdi-home'},
-                    { title: 'Relationship', icon: 'mdi-heart-multiple'},
-                    { title: 'Friends', icon: 'mdi-account-group'},
-                    { title: 'School', icon: 'mdi-school'},
-                    { title: 'Food', icon: 'mdi-food-apple'},
-                    { title: 'Travel', icon: 'mdi-earth'},
-                    { title: 'Exercise', icon: 'mdi-weight'},
-                    { title: 'Other', icon: 'mdi-plus'},
+                    { title: 'Work', icon: 'mdi-email', selected: false},
+                    { title: 'Family', icon: 'mdi-home', selected: false},
+                    { title: 'Relationship', icon: 'mdi-heart-multiple', selected: false},
+                    { title: 'Friends', icon: 'mdi-account-group', selected: false},
+                    { title: 'School', icon: 'mdi-school', selected: false},
+                    { title: 'Travel', icon: 'mdi-earth', selected: false},
+                    { title: 'Other', icon: 'mdi-plus', selected: false},
                 ],
                 memories: [
                     { title: 'Sister\'s Wedding', date: 'June 22nd, 2019', icon: 'mdi-emoticon-cry' },
