@@ -61,12 +61,12 @@
                                     So, how was your day?
                                 </div>
 
-                                <v-icon color="deep-purple" size="225" v-show="level == emotion.level" v-for="(emotion, index) in emotions" :key="index">{{ emotion.icon }}</v-icon>
+                                <v-icon color="deep-purple" size="225" v-show="emotion == e.level" v-for="(e, index) in emotions" :key="index">{{ e.icon }}</v-icon>
 
                                 <v-container grid-list-md>
                                     <v-layout row>
                                         <v-flex xs10 offset-xs1>
-                                            <v-slider v-model="level" min="1" max="11" color="deep-purple" track-color="teal accent-4"></v-slider>
+                                            <v-slider v-model="emotion" min="1" max="11" color="deep-purple" track-color="teal accent-4"></v-slider>
                                         </v-flex>
                                     </v-layout>
                                 </v-container>
@@ -157,29 +157,29 @@
                 dialog: false,
                 panel: 1,
                 date: new Date().toISOString().substr(0, 10),
-                level: 6,
+                emotion: 6,
                 details: '',
                 emotions: [
-                    { level: 1, icon: 'mdi-emoticon-dead-outline' },
-                    { level: 2, icon: 'mdi-emoticon-cry-outline' },
-                    { level: 3, icon: 'mdi-emoticon-sad-outline' },
-                    { level: 4, icon: 'mdi-emoticon-angry-outline' },
-                    { level: 5, icon: 'mdi-emoticon-neutral-outline' },
-                    { level: 6, icon: 'mdi-emoticon-happy-outline' },
-                    { level: 7, icon: 'mdi-emoticon-outline' },
-                    { level: 8, icon: 'mdi-emoticon-tongue-outline' },
-                    { level: 9, icon: 'mdi-emoticon-cool-outline' },
-                    { level: 10, icon: 'mdi-emoticon-kiss-outline' },
-                    { level: 11, icon: 'mdi-emoticon-excited-outline' },
+                    { emotion: 1, icon: 'mdi-emoticon-dead-outline' },
+                    { emotion: 2, icon: 'mdi-emoticon-cry-outline' },
+                    { emotion: 3, icon: 'mdi-emoticon-sad-outline' },
+                    { emotion: 4, icon: 'mdi-emoticon-angry-outline' },
+                    { emotion: 5, icon: 'mdi-emoticon-neutral-outline' },
+                    { emotion: 6, icon: 'mdi-emoticon-happy-outline' },
+                    { emotion: 7, icon: 'mdi-emoticon-outline' },
+                    { emotion: 8, icon: 'mdi-emoticon-tongue-outline' },
+                    { emotion: 9, icon: 'mdi-emoticon-cool-outline' },
+                    { emotion: 10, icon: 'mdi-emoticon-kiss-outline' },
+                    { emotion: 11, icon: 'mdi-emoticon-excited-outline' },
                 ],
                 reasons: [
-                    { title: 'Work', icon: 'mdi-email', selected: false},
-                    { title: 'Family', icon: 'mdi-home', selected: false},
-                    { title: 'Relationship', icon: 'mdi-heart-multiple', selected: false},
-                    { title: 'Friends', icon: 'mdi-account-group', selected: false},
-                    { title: 'School', icon: 'mdi-school', selected: false},
-                    { title: 'Travel', icon: 'mdi-earth', selected: false},
-                    { title: 'Other', icon: 'mdi-plus', selected: false},
+                    { reason: 'Work', icon: 'mdi-email', selected: false},
+                    { reason: 'Family', icon: 'mdi-home', selected: false},
+                    { reason: 'Relationship', icon: 'mdi-heart-multiple', selected: false},
+                    { reason: 'Friends', icon: 'mdi-account-group', selected: false},
+                    { reason: 'School', icon: 'mdi-school', selected: false},
+                    { reason: 'Travel', icon: 'mdi-earth', selected: false},
+                    { reason: 'Other', icon: 'mdi-plus', selected: false},
                 ],
                 memories: [
                     { title: 'Sister\'s Wedding', date: 'June 22nd, 2019', icon: 'mdi-emoticon-cry' },
