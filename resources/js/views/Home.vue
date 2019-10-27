@@ -58,26 +58,15 @@
                             </div>
                             <div v-if="panel == 2">
                                 <div class="body-2 mb-2">
-                                    So, how was your day?!
+                                    So, how was your day?
                                 </div>
 
-                                <v-icon size="225" v-if="level == 1" color="deep-purple">mdi-emoticon-dead-outline</v-icon>
-                                <v-icon size="225" v-if="level == 2" color="deep-purple">mdi-emoticon-cry-outline</v-icon>
-                                <v-icon size="225" v-if="level == 3" color="deep-purple">mdi-emoticon-sad-outline</v-icon>
-                                <v-icon size="225" v-if="level == 4" color="deep-purple">mdi-emoticon-angry-outline</v-icon>
-                                <v-icon size="225" v-if="level == 5" color="deep-purple">mdi-emoticon-neutral-outline</v-icon>
-                                <v-icon size="225" v-if="level == 6" color="deep-purple">mdi-emoticon-happy-outline</v-icon>
-                                <v-icon size="225" v-if="level == 7" color="deep-purple">mdi-emoticon-outline</v-icon>
-                                <v-icon size="225" v-if="level == 8" color="deep-purple">mdi-emoticon-wink-outline</v-icon>
-                                <v-icon size="225" v-if="level == 9" color="deep-purple">mdi-emoticon-tongue-outline</v-icon>
-                                <v-icon size="225" v-if="level == 10" color="deep-purple">mdi-emoticon-cool-outline</v-icon>
-                                <v-icon size="225" v-if="level == 11" color="deep-purple">mdi-emoticon-kiss-outline</v-icon>
-                                <v-icon size="225" v-if="level == 12" color="deep-purple">mdi-emoticon-excited-outline</v-icon>
+                                <v-icon color="deep-purple" size="225" v-show="level == emotion.level" v-for="(emotion, index) in emotions" :key="index">{{ emotion.icon }}</v-icon>
 
                                 <v-container grid-list-md>
                                     <v-layout row>
                                         <v-flex xs10 offset-xs1>
-                                            <v-slider v-model="level" min="1" max="12" color="deep-purple" track-color="teal accent-4"></v-slider>
+                                            <v-slider v-model="level" min="1" max="11" color="deep-purple" track-color="teal accent-4"></v-slider>
                                         </v-flex>
                                     </v-layout>
                                 </v-container>
@@ -135,6 +124,7 @@
                                 <v-layout row wrap>
                                     <v-flex xs12>
                                         <v-textarea
+                                        v-model="details"
                                         outlined
                                         name="details"
                                         label="Details"
@@ -166,9 +156,23 @@
         data() {
             return {
                 dialog: false,
-                date: '',
-                level: 6,
                 panel: 1,
+                date: new Date().toISOString().substr(0, 10),
+                level: 6,
+                details: '',
+                emotions: [
+                    { level: 1, icon: 'mdi-emoticon-dead-outline' },
+                    { level: 2, icon: 'mdi-emoticon-cry-outline' },
+                    { level: 3, icon: 'mdi-emoticon-sad-outline' },
+                    { level: 4, icon: 'mdi-emoticon-angry-outline' },
+                    { level: 5, icon: 'mdi-emoticon-neutral-outline' },
+                    { level: 6, icon: 'mdi-emoticon-happy-outline' },
+                    { level: 7, icon: 'mdi-emoticon-outline' },
+                    { level: 8, icon: 'mdi-emoticon-tongue-outline' },
+                    { level: 9, icon: 'mdi-emoticon-cool-outline' },
+                    { level: 10, icon: 'mdi-emoticon-kiss-outline' },
+                    { level: 11, icon: 'mdi-emoticon-excited-outline' },
+                ],
                 reasons: [
                     { title: 'Work', icon: 'mdi-email', selected: false},
                     { title: 'Family', icon: 'mdi-home', selected: false},
