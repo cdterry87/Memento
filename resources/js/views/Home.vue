@@ -87,21 +87,20 @@
                                     <v-layout row wrap>
                                         <v-flex xs12>
                                             <v-list class="text-left">
-                                                <v-list-item v-for="(reason, index) in reasons" :key="index">
-                                                    <template v-slot:default="{ active, toggle }">
-                                                        <v-list-item-action>
-                                                            <v-icon color="deep-purple">{{ reason.icon }}</v-icon>
-                                                        </v-list-item-action>
-                                                        <v-list-item-content>
-                                                            <v-list-item-title>{{ reason.title }}</v-list-item-title>
-                                                        </v-list-item-content>
-                                                        <v-list-item-action>
-                                                            <v-checkbox
-                                                                color="teal accent-4"
-                                                                :value="reason.selected"
-                                                            ></v-checkbox>
-                                                        </v-list-item-action>
-                                                    </template>
+                                                <v-list-item v-for="(reason, index) in reasons" :key="index" @click="reason.selected = !reason.selected">
+                                                    <v-list-item-action>
+                                                        <v-icon color="deep-purple">{{ reason.icon }}</v-icon>
+                                                    </v-list-item-action>
+                                                    <v-list-item-content>
+                                                        <v-list-item-title>{{ reason.title }}</v-list-item-title>
+                                                    </v-list-item-content>
+                                                    <v-list-item-action>
+                                                        <v-checkbox
+                                                            color="teal accent-4"
+                                                            :value="reason.selected"
+                                                            v-model="reason[index]"
+                                                        ></v-checkbox>
+                                                    </v-list-item-action>
                                                 </v-list-item>
                                             </v-list>
                                         </v-flex>
