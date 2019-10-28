@@ -58,7 +58,7 @@
                             </div>
                             <div v-if="panel == 2">
                                 <div class="body-2 mb-2">
-                                    So, how was your day?
+                                    How was your day?
                                 </div>
 
                                 <v-icon color="deep-purple" size="225" v-show="emotion == e.emotion" v-for="(e, index) in emotions" :key="index">{{ e.icon }}</v-icon>
@@ -80,32 +80,26 @@
                             </div>
                             <div v-if="panel == 3">
                                 <div class="body-2 mb-2">
-                                    What made your day so _?
+                                    Why was your day {{ why }}?
                                 </div>
 
-                                <v-container>
-                                    <v-layout row wrap>
-                                        <v-flex xs12>
-                                            <v-list class="text-left">
-                                                <v-list-item v-for="(reason, index) in reasons" :key="index">
-                                                    <v-list-item-action>
-                                                        <v-icon color="deep-purple">{{ reason.icon }}</v-icon>
-                                                    </v-list-item-action>
-                                                    <v-list-item-content>
-                                                        <v-list-item-title>{{ reason.reason }}</v-list-item-title>
-                                                    </v-list-item-content>
-                                                    <v-list-item-action>
-                                                        <v-checkbox
-                                                            color="teal accent-4"
-                                                            :value="reason.selected"
-                                                            v-model="reason[index]"
-                                                        ></v-checkbox>
-                                                    </v-list-item-action>
-                                                </v-list-item>
-                                            </v-list>
-                                        </v-flex>
-                                    </v-layout>
-                                </v-container>
+                                <v-list class="text-left">
+                                    <v-list-item v-for="(reason, index) in reasons" :key="index">
+                                        <v-list-item-action>
+                                            <v-icon color="deep-purple">{{ reason.icon }}</v-icon>
+                                        </v-list-item-action>
+                                        <v-list-item-content>
+                                            <v-list-item-title>{{ reason.reason }}</v-list-item-title>
+                                        </v-list-item-content>
+                                        <v-list-item-action>
+                                            <v-checkbox
+                                                color="teal accent-4"
+                                                :value="reason.selected"
+                                                v-model="reason[index]"
+                                            ></v-checkbox>
+                                        </v-list-item-action>
+                                    </v-list-item>
+                                </v-list>
 
                                 <v-footer absolute color="transparent" class="text-center mb-5">
                                     <v-spacer></v-spacer>
@@ -194,9 +188,39 @@
                 ],
             }
         },
+        methods: {
+            getEmotions() {
+                axios.get('/api/emotions')
+                .then(response => {
+                    let emotions = response.data
+                    console.log('emotions', emotions)
+                })
+            },
+            getReasons() {
+                axios.get('/api/reasons')
+                .then(response => {
+                    let reasons = response.data
+                    console.log('reasons', reasons)
+                })
+            },
+            getMemories() {
+                axios.get('/api/memories')
+                .then(response => {
+                    let memories = response.data
+                    console.log('memories', memories)
+                })
+            }
+        },
+        computed: {
+            why() {
+                return '_____'
+            }
+        },
+        created() {
+            this.getEmotions()
+            this.getReasons()
+            this.getMemories()
+        }
     }
 </script>
 
-<style lang="scss" scoped>
-
-</style>

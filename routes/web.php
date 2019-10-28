@@ -30,6 +30,9 @@ Route::get('/home', 'HomeController@index')->name('home');
 Route::group(['middleware' => 'auth'], function () {
     Route::prefix('api')->group(function () {
         // Application API routes go here
+        Route::get('/emotions', 'EmotionController@index');
+        Route::get('/reasons', 'ReasonController@index');
+        Route::resource('/memories', 'MemoryController');
 
         // User account routes
         Route::get('/user', 'UserController@index');
