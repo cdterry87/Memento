@@ -61,7 +61,7 @@
                                     So, how was your day?
                                 </div>
 
-                                <v-icon color="deep-purple" size="225" v-show="emotion == e.level" v-for="(e, index) in emotions" :key="index">{{ e.icon }}</v-icon>
+                                <v-icon color="deep-purple" size="225" v-show="emotion == e.emotion" v-for="(e, index) in emotions" :key="index">{{ e.icon }}</v-icon>
 
                                 <v-container grid-list-md>
                                     <v-layout row>
@@ -87,12 +87,12 @@
                                     <v-layout row wrap>
                                         <v-flex xs12>
                                             <v-list class="text-left">
-                                                <v-list-item v-for="(reason, index) in reasons" :key="index" @click="reason.selected = !reason.selected">
+                                                <v-list-item v-for="(reason, index) in reasons" :key="index">
                                                     <v-list-item-action>
                                                         <v-icon color="deep-purple">{{ reason.icon }}</v-icon>
                                                     </v-list-item-action>
                                                     <v-list-item-content>
-                                                        <v-list-item-title>{{ reason.title }}</v-list-item-title>
+                                                        <v-list-item-title>{{ reason.reason }}</v-list-item-title>
                                                     </v-list-item-content>
                                                     <v-list-item-action>
                                                         <v-checkbox
