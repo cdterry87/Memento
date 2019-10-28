@@ -17,9 +17,11 @@ class CreateMemoriesTable extends Migration
             $table->bigIncrements('id');
             $table->bigInteger('user_id')->unsigned();
             $table->foreign('user_id')->references('id')->on('users')->onDelete('cascade');
+            $table->bigInteger('emotion_id')->unsigned();
+            $table->foreign('emotion_id')->references('id')->on('emotions')->onDelete('cascade');
+            $table->bigInteger('reason_id')->unsigned();
+            $table->foreign('reason_id')->references('id')->on('reasons')->onDelete('cascade');
             $table->date('date');
-            $table->tinyInteger('emotion');
-            $table->tinyInteger('reason');
             $table->text('details')->nullable();
             $table->timestamps();
         });

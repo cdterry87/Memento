@@ -4,7 +4,7 @@ use Illuminate\Support\Facades\Schema;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Database\Migrations\Migration;
 
-class CreateReasionsTable extends Migration
+class CreateReasonsTable extends Migration
 {
     /**
      * Run the migrations.
@@ -13,9 +13,10 @@ class CreateReasionsTable extends Migration
      */
     public function up()
     {
-        Schema::create('reasions', function (Blueprint $table) {
+        Schema::create('reasons', function (Blueprint $table) {
             $table->bigIncrements('id');
-            $table->timestamps();
+            $table->string('reason');
+            $table->string('icon');
         });
     }
 
@@ -26,6 +27,6 @@ class CreateReasionsTable extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('reasions');
+        Schema::dropIfExists('reasons');
     }
 }
