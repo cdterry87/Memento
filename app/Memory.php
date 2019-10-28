@@ -10,14 +10,9 @@ class Memory extends Model
 
     protected $guarded = [];
 
-    public function emotions()
-    {
-        return $this->hasMany('App\Emotion');
-    }
-
     public function reasons()
     {
-        return $this->hasMany('App\Reason');
+        return $this->belongsToMany('App\Reason', 'memories_reasons')->withTimestamps();
     }
 
     public function user()

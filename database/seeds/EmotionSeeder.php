@@ -23,7 +23,7 @@ class EmotionSeeder extends Seeder
             ['emotion' => 'Fun', 'icon' => 'mdi-emoticon-tongue-outline'],
             ['emotion' => 'Awesome', 'icon' => 'mdi-emoticon-cool-outline'],
             ['emotion' => 'Romantic', 'icon' => 'mdi-emoticon-kiss-outline'],
-            ['emotion' => 'Excited', 'icon' => 'mdi-emoticon-excited-outline']
+            ['emotion' => 'Exciting', 'icon' => 'mdi-emoticon-excited-outline']
         ]);
     }
 }
