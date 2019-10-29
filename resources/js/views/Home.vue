@@ -27,7 +27,7 @@
                         </v-btn>
                     </template>
                     <v-card light>
-                        <v-form @submit.prevent="saveMemory">
+                        <v-form @submit.prevent="saveMemory" ref="form" autocomplete="off" lazy-validation>
                             <v-toolbar color="transparent" flat>
                                 <v-spacer></v-spacer>
                                 <v-btn icon @click="dialog = false">
@@ -112,7 +112,7 @@
                                     <v-container grid-list-md>
                                     <v-layout row wrap>
                                         <v-flex xs12>
-                                            <v-text-field outlined name="title" label="Title (optional)" color="teal accent-4" v-model="title"></v-text-field>
+                                            <v-text-field outlined name="title" label="Title" :rules="[v => !!v || 'Title is required']" color="teal accent-4" v-model="title"></v-text-field>
                                             <v-textarea
                                             v-model="details"
                                             outlined
@@ -178,17 +178,28 @@
                 })
             },
             saveMemory() {
-                let date = this.date
-                let emotion = this.emotion
-                let reasons = this.selectedReasons
-                let title = this.title
-                let details = this.details
+                if (this.$refs.form.validate()) {
+                    let date = this.date
+                    let emotion = this.emotion
+                    let reasons = this.selectedReasons
+                    let title = this.title
+                    let details = this.details
 
-                axios.post('/api/memories', { date, emotion, reasons, title, details })
-                .then(response => {
-                    this.dialog = false
-                    this.getMemories()
-                })
+                    axios.post('/api/memories', { date, emotion, reasons, title, details })
+                    .then(response => {
+                        this.reset()
+                        this.dialog = false
+                        this.getMemories()
+                    })
+                }
+            },
+            reset() {
+                this.panel = 1
+                this.date = new Date().toISOString().substr(0, 10)
+                this.emotion = 6
+                this.details = ''
+                this.title = ''
+                this.selectedReasons = []
             }
         },
         computed: {
