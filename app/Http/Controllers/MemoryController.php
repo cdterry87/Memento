@@ -57,7 +57,7 @@ class MemoryController extends Controller
      */
     public function show(Memory $memory)
     {
-        return response()->json($memory->where('id', $memory->id)->with('emotions')->with('reasons')->first());
+        return response()->json($memory->where('id', $memory->id)->with('reasons')->first());
     }
 
     /**

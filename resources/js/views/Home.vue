@@ -5,7 +5,7 @@
                 <v-list dark color="transparent" shaped two-line>
                     <div class="title">My Story</div>
                     <v-list-item-group color="deep-purple" v-if="memories.length > 0">
-                        <v-list-item v-for="(memory, i) in memories" :key="i">
+                        <v-list-item v-for="(memory, i) in memories" :key="i" :to="'memory/' + memory.id">
                             <v-list-item-icon>
                                 <v-icon v-if="emotions.length > 0" v-text="emotions[memory.emotion_id - 1].icon"></v-icon>
                             </v-list-item-icon>

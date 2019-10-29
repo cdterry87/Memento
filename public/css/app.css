@@ -47,3 +47,7 @@ a {
   flex: none !important;
 }
 
+.no-padding {
+  padding: 0 !important;
+}
+
