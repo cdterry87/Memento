@@ -34,10 +34,13 @@ class MemoryController extends Controller
             'user_id' => Auth::user()->id
         ]);
 
-        //Pivot table relationship for reasons attached to this memory.
-        foreach ($request->reasons as $reason_id => $status) {
-            $memory->reasons()->attach($reason_id);
+        //Pivot table relationship for selected reasons attached to this memory.
+        foreach ($request->reasons as $id => $value) {
+            if ($value) {
+                $memory->reasons()->attach($id + 1);
+            }
         }
+        exit;
 
         return response()->json([
             'status' => (bool) $memory,

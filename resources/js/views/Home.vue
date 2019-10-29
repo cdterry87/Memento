@@ -3,13 +3,11 @@
         <v-layout row>
             <v-flex xs12>
                 <v-list dark color="transparent" shaped two-line>
-                    <v-subheader class="title">
-                        <span>My Story</span>
-                    </v-subheader>
-                    <v-list-item-group color="deep-purple">
+                    <div class="title">My Story</div>
+                    <v-list-item-group color="deep-purple" v-if="memories.length > 0">
                         <v-list-item v-for="(memory, i) in memories" :key="i">
                             <v-list-item-icon>
-                                <v-icon v-text="emotions[memory.emotion_id].icon"></v-icon>
+                                <v-icon v-if="emotions.length > 0" v-text="emotions[memory.emotion_id - 1].icon"></v-icon>
                             </v-list-item-icon>
                             <v-list-item-content>
                                 <v-list-item-title v-text="memory.title"></v-list-item-title>
@@ -17,21 +15,14 @@
                             </v-list-item-content>
                         </v-list-item>
                     </v-list-item-group>
+                    <div v-else class="mt-3">
+                        <p>You haven't added any memories.</p>
+                        <p>Get started by adding some below!</p>
+                    </div>
                 </v-list>
                 <v-dialog v-model="dialog" fullscreen hide-overlay transition="dialog-bottom-transition">
                     <template v-slot:activator="{ on }">
-                        <v-btn
-                            class="fixed"
-                            color="deep-purple"
-                            dark
-                            large
-                            absolute
-                            bottom
-                            right
-                            fab
-                            @click="dialog = true"
-                            style="margin-bottom: 50px;"
-                        >
+                        <v-btn class="fixed" color="deep-purple" dark large absolute bottom right fab @click="dialog = true" style="margin-bottom: 50px;">
                             <v-icon>mdi-plus</v-icon>
                         </v-btn>
                     </template>
@@ -100,8 +91,7 @@
                                             <v-list-item-action>
                                                 <v-checkbox
                                                     color="teal accent-4"
-                                                    :value="reason.selected"
-                                                    v-model="reason[index]"
+                                                    v-model="selectedReasons[index]"
                                                 ></v-checkbox>
                                             </v-list-item-action>
                                         </v-list-item>
@@ -164,18 +154,8 @@
                 details: '',
                 emotions: [],
                 reasons: [],
+                selectedReasons: [],
                 memories: []
-                // memories: [
-                //     { title: 'Sister\'s Wedding', date: 'June 22nd, 2019', icon: 'mdi-emoticon-cry' },
-                //     { title: 'Date Night!', date: 'June 30th, 2019', icon: 'mdi-emoticon-kiss' },
-                //     { title: 'Geek Convention', date: 'July 13th, 2019', icon: 'mdi-emoticon-cool' },
-                //     { title: 'Work Trip', date: 'July 15th, 2019', icon: 'mdi-emoticon-angry' },
-                //     { title: 'Rock Show', date: 'September 22nd, 2019', icon: 'mdi-emoticon-cool' },
-                //     { title: 'My Awesome Birthday Party', date: 'September 25th, 2019', icon: 'mdi-emoticon' },
-                //     { title: 'Out With Friends', date: 'September 28th, 2019', icon: 'mdi-emoticon-tongue' },
-                //     { title: 'The Water Lantern Festival', date: 'October 5th, 2019', icon: 'mdi-emoticon-excited' },
-                //     { title: 'Halloween Party', date: 'October 31st, 2019', icon: 'mdi-emoticon-devil' },
-                // ],
             }
         },
         methods: {
@@ -200,12 +180,13 @@
             saveMemory() {
                 let date = this.date
                 let emotion = this.emotion
-                let reasons = this.reasons
+                let reasons = this.selectedReasons
                 let title = this.title
                 let details = this.details
 
                 axios.post('/api/memories', { date, emotion, reasons, title, details })
                 .then(response => {
+                    this.dialog = false
                     this.getMemories()
                 })
             }
