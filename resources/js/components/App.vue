@@ -1,9 +1,9 @@
 <template>
     <div>
         <v-app class="inspire">
-            <v-toolbar color="transparent" flat dense>
+            <v-toolbar color="transparent" flat>
                 <v-toolbar-title>
-                    <a href="/home" class="headline logo">{{ title }}</a>
+                    <a href="/home" class="display-1 logo">{{ title }}</a>
                 </v-toolbar-title>
                 <v-spacer></v-spacer>
                 <v-toolbar-items>

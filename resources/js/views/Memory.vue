@@ -1,6 +1,7 @@
 <template>
     <v-container fluid grid-list-md>
-        <v-layout row>
+        <Loading v-if="loading" />
+        <v-layout row v-else>
             <v-flex xs10 offset-xs1>
                 <div class="headline">
                     {{ memory.title }}
@@ -41,8 +42,13 @@
 </template>
 
 <script>
+    import Loading from './../components/Loading'
+
     export default {
         name: 'Memory',
+        components: {
+            Loading
+        },
         props: ['id'],
         data() {
             return {

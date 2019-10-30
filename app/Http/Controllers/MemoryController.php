@@ -15,7 +15,7 @@ class MemoryController extends Controller
      */
     public function index()
     {
-        return response()->json(Auth::user()->memories()->with('reasons')->get());
+        return response()->json(Auth::user()->memories()->with('reasons')->orderBy('date', 'desc')->get());
     }
 
     /**

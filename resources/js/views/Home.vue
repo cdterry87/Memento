@@ -1,9 +1,9 @@
 <template>
    <v-container fluid grid-list-md>
-        <v-layout row>
+       <Loading v-if="loading" />
+        <v-layout row v-else>
             <v-flex xs12>
                 <v-list dark color="transparent" shaped two-line>
-                    <div class="title">My Story</div>
                     <v-list-item-group color="deep-purple" v-if="memories.length > 0">
                         <v-list-item v-for="(memory, i) in memories" :key="i" :to="'memory/' + memory.id">
                             <v-list-item-icon>
@@ -142,10 +142,16 @@
 </template>
 
 <script>
+    import Loading from './../components/Loading'
+
     export default {
         name: 'Home',
+        components: {
+            Loading
+        },
         data() {
             return {
+                loading: true,
                 dialog: false,
                 panel: 1,
                 title: '',
@@ -172,9 +178,12 @@
                 })
             },
             getMemories() {
+                this.loading = true
+
                 axios.get('/api/memories')
                 .then(response => {
                     this.memories = response.data
+                    this.loading = false
                 })
             },
             saveMemory() {
