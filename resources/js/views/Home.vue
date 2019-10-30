@@ -11,7 +11,7 @@
                             </v-list-item-icon>
                             <v-list-item-content>
                                 <v-list-item-title v-text="memory.title"></v-list-item-title>
-                                <v-list-item-subtitle v-text="memory.date"></v-list-item-subtitle>
+                                <v-list-item-subtitle>{{ formatDate(memory.date) }}</v-list-item-subtitle>
                             </v-list-item-content>
                         </v-list-item>
                     </v-list-item-group>
@@ -165,6 +165,9 @@
             }
         },
         methods: {
+            formatDate(date) {
+                return moment(date).format("dddd, MMM Do YYYY")
+            },
             getEmotions() {
                 axios.get('/api/emotions')
                 .then(response => {

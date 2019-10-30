@@ -7,7 +7,7 @@
                     {{ memory.title }}
                 </div>
                 <div class="subheading mt-2">
-                    {{ memory.date }}
+                    {{ memoryDate }}
                 </div>
                 <div class="mt-4">
                     {{ memory.details }}
@@ -90,6 +90,11 @@
                     this.$router.push('/home')
                 })
             },
+        },
+        computed: {
+            memoryDate() {
+                return moment(this.memory.date).format("dddd, MMM Do YYYY")
+            }
         },
         created () {
             this.getEmotions()
