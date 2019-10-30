@@ -40,7 +40,6 @@ class MemoryController extends Controller
                 $memory->reasons()->attach($id + 1);
             }
         }
-        exit;
 
         return response()->json([
             'status' => (bool) $memory,

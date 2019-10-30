@@ -10,8 +10,8 @@
                     {{ memoryDate }}
                 </div>
                 <div class="mt-2">
-                    <v-btn flat text><v-icon>{{ memory.emotion.icon }}</v-icon></v-btn>
-                    <v-btn flat text v-for="(reason, index) in memory.reasons" :key="index"><v-icon>{{ reason.icon }}</v-icon></v-btn>
+                    <v-btn text><v-icon>{{ memory.emotion.icon }}</v-icon></v-btn>
+                    <v-btn text v-for="(reason, index) in memory.reasons" :key="index"><v-icon>{{ reason.icon }}</v-icon></v-btn>
                 </div>
                 <div class="mt-4">
                     {{ memory.details }}

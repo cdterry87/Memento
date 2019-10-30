@@ -201,7 +201,12 @@
                     .then(response => {
                         this.reset()
                         this.dialog = false
-                        this.getMemories()
+                        // this.getMemories()
+
+                        let memory_id = response.data.data.id
+                        if (typeof memory_id != 'undefined' && memory_id != '') {
+                            this.$router.push('/memory/' + memory_id)
+                        }
                     })
                 }
             },
