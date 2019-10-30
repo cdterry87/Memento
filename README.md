@@ -25,5 +25,7 @@ php artisan serve             # Runs the application on a local web server
 ```
 
 ### Login to the application with the following credentials:
+```
 username: admin
 password: password
+```
