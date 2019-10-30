@@ -9,6 +9,10 @@
                 <div class="subheading mt-2">
                     {{ memoryDate }}
                 </div>
+                <div class="mt-2">
+                    <v-btn flat text><v-icon>{{ memory.emotion.icon }}</v-icon></v-btn>
+                    <v-btn flat text v-for="(reason, index) in memory.reasons" :key="index"><v-icon>{{ reason.icon }}</v-icon></v-btn>
+                </div>
                 <div class="mt-4">
                     {{ memory.details }}
                 </div>
@@ -64,18 +68,6 @@
             }
         },
         methods: {
-            getEmotions() {
-                axios.get('/api/emotions')
-                .then(response => {
-                    this.emotions = response.data
-                })
-            },
-            getReasons() {
-                axios.get('/api/reasons')
-                .then(response => {
-                    this.reasons = response.data
-                })
-            },
             getMemory() {
                 axios.get('/api/memories/' + this.id)
                 .then(response => {
@@ -97,8 +89,6 @@
             }
         },
         created () {
-            this.getEmotions()
-            this.getReasons()
             this.getMemory()
         },
     }
