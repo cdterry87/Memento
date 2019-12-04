@@ -10,8 +10,18 @@
                     {{ memoryDate }}
                 </div>
                 <div class="mt-2">
-                    <v-btn text><v-icon>{{ memory.emotion.icon }}</v-icon></v-btn>
-                    <v-btn text v-for="(reason, index) in memory.reasons" :key="index"><v-icon>{{ reason.icon }}</v-icon></v-btn>
+                    <v-tooltip top color="deep-purple">
+                        <template v-slot:activator="{ on }">
+                            <v-btn text v-on="on"><v-icon>{{ memory.emotion.icon }}</v-icon></v-btn>
+                        </template>
+                        <span>{{ memory.emotion.emotion }}</span>
+                    </v-tooltip>
+                    <v-tooltip top color="deep-purple" v-for="(reason, index) in memory.reasons" :key="index">
+                        <template v-slot:activator="{ on }">
+                            <v-btn text v-on="on"><v-icon>{{ reason.icon }}</v-icon></v-btn>
+                        </template>
+                        <span>{{ reason.reason }}</span>
+                    </v-tooltip>
                 </div>
                 <div class="mt-4">
                     {{ memory.details }}
