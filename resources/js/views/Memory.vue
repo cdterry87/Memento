@@ -30,7 +30,7 @@
                     <v-divider></v-divider>
                 </div>
                 <div class="mt-2">
-                    <v-system-bar flat color="transparent" height="48" style="padding: 0;">
+                    <v-system-bar flat color="transparent" height="48" class="p-0">
                         <span>Photos</span>
                         <v-spacer></v-spacer>
                         <v-dialog v-model="dialog" width="500">
@@ -69,7 +69,7 @@
                         </v-dialog>
                     </v-system-bar>
                     <v-container fluid class="pt-0 px-0">
-                        <v-row>
+                        <v-row v-if="memory.photos.length > 0">
                             <v-col v-for="photo in memory.photos" :key="photo.id" cols="4 px-2">
                                 <v-avatar size="80" class="pointer elevation-4">
                                     <v-img @click="selectPhoto(photo.id, photo.filename)" :src="photo.filename" aspect-ratio="1" class="deep-purple" :title="photo.filename">
@@ -81,6 +81,9 @@
                                     </v-img>
                                 </v-avatar>
                             </v-col>
+                        </v-row>
+                        <v-row v-else class="mt-4 body-2">
+                            You have not added any photos yet.  Click the "+" icon above to add photos of this memory!
                         </v-row>
                     </v-container>
 
