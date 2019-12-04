@@ -71,18 +71,37 @@
                     <v-container fluid class="pt-0 px-0">
                         <v-row>
                             <v-col v-for="photo in memory.photos" :key="photo.id" cols="4 px-2">
-                                <v-card flat tile>
-                                    <v-img :src="photo.filename" aspect-ratio="1" class="deep-purple" :title="photo.filename">
+                                <v-avatar size="80" class="pointer elevation-4">
+                                    <v-img @click="selectPhoto(photo.id, photo.filename)" :src="photo.filename" aspect-ratio="1" class="deep-purple" :title="photo.filename">
                                         <template v-slot:placeholder>
                                             <v-row class="fill-height ma-0" align="center" justify="center" >
                                                 <v-progress-circular indeterminate color="teal accent-4"></v-progress-circular>
                                             </v-row>
                                         </template>
                                     </v-img>
-                                </v-card>
+                                </v-avatar>
                             </v-col>
                         </v-row>
                     </v-container>
+
+                    <v-dialog v-model="photo">
+                        <v-card light>
+                            <v-img :src="selectedPhoto.filename" width="100%">
+                                <v-btn @click="photo = false" small class="float-right ma-2">
+                                    <v-icon>mdi-close</v-icon>
+                                </v-btn>
+                            </v-img>
+
+                            <v-card-actions>
+                                <v-spacer></v-spacer>
+                                <v-btn @click="deletePhoto(selectedPhoto.id)" dark color="red accent-4">
+                                    <v-icon>mdi-trash-can</v-icon>
+                                    Delete
+                                </v-btn>
+                                <v-spacer></v-spacer>
+                            </v-card-actions>
+                        </v-card>
+                    </v-dialog>
                 </div>
             </v-flex>
         </v-layout>
@@ -113,6 +132,7 @@
         data() {
             return {
                 dialog: false,
+                photo: false,
                 fab: false,
                 fabBottom: true,
                 fabRight: true,
@@ -122,7 +142,7 @@
                 emotions: [],
                 reasons: [],
                 photos: [],
-                photo: '',
+                selectedPhoto: '',
                 memory: ''
             }
         },
@@ -157,10 +177,17 @@
                     this.getMemory()
                 })
             },
-            handleUpload(e) {
-                // this.photos = this.$refs.photos.files
-                this.photos = e
+            selectPhoto(id, filename) {
+                this.selectedPhoto = {
+                    id: id,
+                    filename: filename
+                }
+
+                this.photo = true
             },
+            deletePhoto(id) {
+                this.photo = false
+            }
         },
         computed: {
             memoryDate() {
