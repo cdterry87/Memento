@@ -68,6 +68,21 @@
                             </v-card>
                         </v-dialog>
                     </v-system-bar>
+                    <v-container fluid class="pt-0 px-0">
+                        <v-row>
+                            <v-col v-for="photo in memory.photos" :key="photo.id" cols="4 px-2">
+                                <v-card flat tile>
+                                    <v-img :src="photo.filename" aspect-ratio="1" class="deep-purple" :title="photo.filename">
+                                        <template v-slot:placeholder>
+                                            <v-row class="fill-height ma-0" align="center" justify="center" >
+                                                <v-progress-circular indeterminate color="teal accent-4"></v-progress-circular>
+                                            </v-row>
+                                        </template>
+                                    </v-img>
+                                </v-card>
+                            </v-col>
+                        </v-row>
+                    </v-container>
                 </div>
             </v-flex>
         </v-layout>

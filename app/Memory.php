@@ -22,7 +22,7 @@ class Memory extends Model
 
     public function photos()
     {
-        return $this->hasMany('App\MemoryPhotos');
+        return $this->hasMany('App\MemoryPhoto');
     }
 
     public function user()

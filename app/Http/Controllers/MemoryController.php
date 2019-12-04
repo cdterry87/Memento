@@ -57,7 +57,7 @@ class MemoryController extends Controller
      */
     public function show(Memory $memory)
     {
-        return response()->json($memory->where('id', $memory->id)->with('emotion')->with('reasons')->first());
+        return response()->json($memory->where('id', $memory->id)->with('emotion')->with(['reasons', 'photos'])->first());
     }
 
     /**
@@ -110,11 +110,12 @@ class MemoryController extends Controller
 
         if ($request->hasfile('photos')) {
             foreach ($request->file('photos') as $photo) {
-                $filename = $photo->store('memories/' . $request->memory_id . '/photos');
+                $filename = $photo->store('/storage/memories/' . $request->memory_id . '/photos');
+                $photo->move(storage_path('app/public/memories/' . $request->memory_id . '/photos'), $filename);
 
                 MemoryPhoto::create([
                     'memory_id' => $request->memory_id,
-                    'filename' => $filename
+                    'filename' => '/' . $filename
                 ]);
 
                 $status = true;
