@@ -33,9 +33,49 @@
                     <v-system-bar flat color="transparent" height="48" style="padding: 0;">
                         <span>Photos</span>
                         <v-spacer></v-spacer>
-                        <v-btn icon small="">
-                            <v-icon>mdi-plus</v-icon>
-                        </v-btn>
+                        <v-dialog v-model="dialog" width="500">
+                            <template v-slot:activator="{ on }">
+                                <v-btn icon small v-on="on">
+                                    <v-icon>mdi-plus</v-icon>
+                                </v-btn>
+                            </template>
+
+                            <v-card light>
+                                <v-form method="POST" enctype="multipart/form-data" id="uploadForm" @submit.prevent="uploadPhotos" ref="uploadForm" autocomplete="off" lazy-validation>
+                                    <v-card-text>
+                                        <v-file-input v-model="photos" color="teal accent-4" outlined show-size counter multiple label="Photos" accept="image/png, image/jpeg" placeholder="Upload photos of your day" prepend-inner-icon="mdi-camera" prepend-icon="">
+                                            <template v-slot:selection="{ index, text }">
+                                                <v-chip
+                                                    v-if="index < 2"
+                                                    color="deep-purple accent-4"
+                                                    dark
+                                                    label
+                                                    small
+                                                >
+                                                    {{ text }}
+                                                </v-chip>
+                                                <span
+                                                    v-else-if="index === 2"
+                                                    class="overline grey--text text--darken-3 mx-2"
+                                                >
+                                                    +{{ photos.length - 2 }} Photo(s)
+                                                </span>
+                                            </template>
+                                        </v-file-input>
+                                    </v-card-text>
+
+                                    <v-divider></v-divider>
+
+                                    <v-card-actions>
+                                        <v-spacer></v-spacer>
+                                        <v-btn type="submit" color="teal accent-4" text>
+                                            Upload Photos
+                                        </v-btn>
+                                        <v-spacer></v-spacer>
+                                    </v-card-actions>
+                                </v-form>
+                            </v-card>
+                        </v-dialog>
                     </v-system-bar>
                 </div>
             </v-flex>
@@ -66,6 +106,8 @@
         props: ['id'],
         data() {
             return {
+                dialog: false,
+                photos: [],
                 fab: false,
                 fabBottom: true,
                 fabRight: true,
@@ -92,6 +134,22 @@
                     this.$router.push('/home')
                 })
             },
+            uploadPhotos() {
+                this.dialog = false
+
+                let uploadForm = new FormData()
+                if (typeof(this.photos) === 'object') {
+                    uploadForm.append('photos', this.photos);
+
+                }
+
+                axios.post('/api/memories/' + this.id + '/upload', uploadForm, { headers: { 'content-type': 'multipart/form-data' } })
+                .then(response => {
+                    this.getMemory()
+
+                    Event.$emit('success', response.data.message)
+                })
+            }
         },
         computed: {
             memoryDate() {

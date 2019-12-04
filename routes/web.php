@@ -34,6 +34,8 @@ Route::group(['middleware' => 'auth'], function () {
         Route::get('/reasons', 'ReasonController@index');
         Route::resource('/memories', 'MemoryController');
 
+        Route::post('/memories/{id}/upload', 'MemoryController@upload');
+
         // User account routes
         Route::get('/user', 'UserController@index');
         Route::post('/account', 'UserController@account');

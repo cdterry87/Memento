@@ -18,7 +18,6 @@ body {
 
 body .v-application,
 body #welcome {
-  font-family: "Nunito", sans-serif !important;
   background: #72ffad !important;
   background: linear-gradient(180deg, #48bebe 0%, #8ef3b8 100%) !important;
   filter: progid:DXImageTransform.Microsoft.gradient(startColorstr="#48bebe",endColorstr="#8ef3b8",GradientType=1) !important;

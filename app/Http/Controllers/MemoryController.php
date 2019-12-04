@@ -102,4 +102,23 @@ class MemoryController extends Controller
             'message' => $status ? 'Memory deleted successfully!' : 'Error deleting memory!'
         ]);
     }
+
+    public function upload(Request $request, Memory $memory)
+    {
+        if ($request->hasFile('photos')) {
+            echo "hasfile!<br>";
+            dd([$request, $memory]);
+
+            $file = $request->file('photo');
+
+            $filename = time() . '.' . $file->getClientOriginalExtension();
+            $imageFile = '/storage/memories/' . $filename;
+            $file->move(storage_path('app/public/memories'), $filename);
+
+            $request->request->add(['image' => $imageFile]);
+        } else {
+            echo "no files...<Br>";
+            dd([$request, $memory]);
+        }
+    }
 }
