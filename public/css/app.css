@@ -16,6 +16,10 @@ body {
   margin: 0;
 }
 
+body #welcome {
+  font-family: "Nunito", sans-serif !important;
+}
+
 body .v-application,
 body #welcome {
   background: #72ffad !important;
