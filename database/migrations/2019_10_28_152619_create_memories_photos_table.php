@@ -17,8 +17,7 @@ class CreateMemoriesPhotosTable extends Migration
             $table->bigIncrements('id');
             $table->bigInteger('memory_id')->unsigned();
             $table->foreign('memory_id')->references('id')->on('memories')->onDelete('cascade');
-            $table->string('name');
-            $table->string('filepath');
+            $table->string('filename');
             $table->timestamps();
         });
     }

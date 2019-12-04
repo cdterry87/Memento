@@ -43,21 +43,12 @@
                             <v-card light>
                                 <v-form method="POST" enctype="multipart/form-data" id="uploadForm" @submit.prevent="uploadPhotos" ref="uploadForm" autocomplete="off" lazy-validation>
                                     <v-card-text>
-                                        <v-file-input v-model="photos" color="teal accent-4" outlined show-size counter multiple label="Photos" accept="image/png, image/jpeg" placeholder="Upload photos of your day" prepend-inner-icon="mdi-camera" prepend-icon="">
+                                        <v-file-input v-model="photos" color="teal accent-4" outlined show-size counter multiple label="Photos" accept="image/*" placeholder="Upload photos of your day" prepend-inner-icon="mdi-camera" prepend-icon="">
                                             <template v-slot:selection="{ index, text }">
-                                                <v-chip
-                                                    v-if="index < 2"
-                                                    color="deep-purple accent-4"
-                                                    dark
-                                                    label
-                                                    small
-                                                >
+                                                <v-chip v-if="index < 2" color="deep-purple accent-4" dark label small>
                                                     {{ text }}
                                                 </v-chip>
-                                                <span
-                                                    v-else-if="index === 2"
-                                                    class="overline grey--text text--darken-3 mx-2"
-                                                >
+                                                <span v-else-if="index === 2" class="overline grey--text text--darken-3 mx-2">
                                                     +{{ photos.length - 2 }} Photo(s)
                                                 </span>
                                             </template>
@@ -107,7 +98,6 @@
         data() {
             return {
                 dialog: false,
-                photos: [],
                 fab: false,
                 fabBottom: true,
                 fabRight: true,
@@ -116,6 +106,8 @@
                 loading: true,
                 emotions: [],
                 reasons: [],
+                photos: [],
+                photo: '',
                 memory: ''
             }
         },
@@ -138,18 +130,22 @@
                 this.dialog = false
 
                 let uploadForm = new FormData()
-                if (typeof(this.photos) === 'object') {
-                    uploadForm.append('photos', this.photos);
+                uploadForm.append('memory_id', this.id)
+                for( var i = 0; i < this.photos.length; i++ ){
+                    let photo = this.photos[i];
 
+                    uploadForm.append('photos[' + i + ']', photo);
                 }
 
                 axios.post('/api/memories/' + this.id + '/upload', uploadForm, { headers: { 'content-type': 'multipart/form-data' } })
                 .then(response => {
                     this.getMemory()
-
-                    Event.$emit('success', response.data.message)
                 })
-            }
+            },
+            handleUpload(e) {
+                // this.photos = this.$refs.photos.files
+                this.photos = e
+            },
         },
         computed: {
             memoryDate() {

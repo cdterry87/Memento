@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Memory;
+use App\MemoryPhoto;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 
@@ -103,22 +104,26 @@ class MemoryController extends Controller
         ]);
     }
 
-    public function upload(Request $request, Memory $memory)
+    public function upload(Request $request)
     {
-        if ($request->hasFile('photos')) {
-            echo "hasfile!<br>";
-            dd([$request, $memory]);
+        $status = false;
 
-            $file = $request->file('photo');
+        if ($request->hasfile('photos')) {
+            foreach ($request->file('photos') as $photo) {
+                $filename = $photo->store('memories/' . $request->memory_id . '/photos');
 
-            $filename = time() . '.' . $file->getClientOriginalExtension();
-            $imageFile = '/storage/memories/' . $filename;
-            $file->move(storage_path('app/public/memories'), $filename);
+                MemoryPhoto::create([
+                    'memory_id' => $request->memory_id,
+                    'filename' => $filename
+                ]);
 
-            $request->request->add(['image' => $imageFile]);
-        } else {
-            echo "no files...<Br>";
-            dd([$request, $memory]);
+                $status = true;
+            }
         }
+
+        return response()->json([
+            'status' => $status,
+            'message' => $status ? 'Your photos were uploaded successfully!' : 'There was an error uploading your photos. Please try again.'
+        ]);
     }
 }

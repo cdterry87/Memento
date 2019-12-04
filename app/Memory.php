@@ -20,6 +20,11 @@ class Memory extends Model
         return $this->belongsToMany('App\Reason', 'memories_reasons')->withTimestamps();
     }
 
+    public function photos()
+    {
+        return $this->hasMany('App\MemoryPhotos');
+    }
+
     public function user()
     {
         return $this->belongsTo('App\User');
