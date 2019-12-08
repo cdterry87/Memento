@@ -33,7 +33,7 @@
                     <v-system-bar flat color="transparent" height="48" class="p-0">
                         <span>Photos</span>
                         <v-spacer></v-spacer>
-                        <v-dialog v-model="dialog" width="500">
+                        <!-- <v-dialog v-model="dialog" width="500">
                             <template v-slot:activator="{ on }">
                                 <v-btn icon small v-on="on">
                                     <v-icon>mdi-plus</v-icon>
@@ -66,8 +66,34 @@
                                     </v-card-actions>
                                 </v-form>
                             </v-card>
-                        </v-dialog>
+                        </v-dialog> -->
                     </v-system-bar>
+                    <v-container fluid class="pt-0 px-0">
+                        <v-form method="POST" enctype="multipart/form-data" id="uploadForm" @submit.prevent="uploadPhotos" ref="uploadForm" autocomplete="off" lazy-validation>
+                            <v-card-text>
+                                <v-file-input v-model="photos" color="teal accent-4" outlined show-size counter multiple label="Photos" accept="image/*" placeholder="Upload photos of your day" prepend-inner-icon="mdi-camera" prepend-icon="">
+                                    <template v-slot:selection="{ index, text }">
+                                        <v-chip v-if="index < 2" color="deep-purple accent-4" dark label small>
+                                            {{ text }}
+                                        </v-chip>
+                                        <span v-else-if="index === 2" class="overline grey--text text--darken-3 mx-2">
+                                            +{{ photos.length - 2 }} Photo(s)
+                                        </span>
+                                    </template>
+                                </v-file-input>
+                            </v-card-text>
+
+                            <v-divider></v-divider>
+
+                            <v-card-actions>
+                                <v-spacer></v-spacer>
+                                <v-btn type="submit" color="teal accent-4" text>
+                                    Upload Photos
+                                </v-btn>
+                                <v-spacer></v-spacer>
+                            </v-card-actions>
+                        </v-form>
+                    </v-container>
                     <v-container fluid class="pt-0 px-0">
                         <v-row v-if="memory.photos.length > 0">
                             <v-col v-for="photo in memory.photos" :key="photo.id" cols="4 px-2">
