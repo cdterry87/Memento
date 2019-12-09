@@ -19,6 +19,29 @@
             </v-toolbar>
 
             <v-content>
+
+                <v-form method="POST" enctype="multipart/form-data" id="uploadForm" @submit.prevent="uploadPhotos" ref="uploadForm" autocomplete="off" lazy-validation>
+                    <v-card-text>
+                        <v-file-input v-model="photos" color="teal accent-4" outlined show-size counter multiple label="Photos" accept="image/*" placeholder="Upload photos of your day" prepend-inner-icon="mdi-camera" prepend-icon="">
+                            <template v-slot:selection="{ index, text }">
+                                <v-chip v-if="index < 2" color="deep-purple accent-4" dark label small>
+                                    {{ text }}
+                                </v-chip>
+                                <span v-else-if="index === 2" class="overline grey--text text--darken-3 mx-2">
+                                    +{{ photos.length - 2 }} Photo(s)
+                                </span>
+                            </template>
+                        </v-file-input>
+                    </v-card-text>
+                    <v-card-actions>
+                        <v-spacer></v-spacer>
+                        <v-btn type="submit" color="white" outlined>
+                            Upload Photos
+                        </v-btn>
+                        <v-spacer></v-spacer>
+                    </v-card-actions>
+                </v-form>
+
                 <router-view></router-view>
 
                 <v-snackbar v-model="snackbar.enabled" :color="snackbar.color" :bottom="true" :timeout="snackbar.timeout">
@@ -42,12 +65,24 @@ export default {
     props: ['title'],
     data() {
         return {
+            photos: [],
             snackbar: {
                 enabled: false,
                 message: '',
                 timeout: 5000,
                 color: ''
             },
+        }
+    },
+    methods: {
+        uploadPhotos() {
+            let uploadForm = new FormData()
+            uploadForm.append('memory_id', this.id)
+            for( var i = 0; i < this.photos.length; i++ ){
+                let photo = this.photos[i];
+
+                uploadForm.append('photos[' + i + ']', photo);
+            }
         }
     },
     created() {
