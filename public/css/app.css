@@ -56,6 +56,10 @@ a {
   position: fixed;
 }
 
+.radius {
+  border-radius: 5px !important;
+}
+
 /* Removes the weird gap on the toolbar */
 
 .v-toolbar {

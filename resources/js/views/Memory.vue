@@ -87,22 +87,22 @@
                         </v-row>
                     </v-container>
 
-                    <v-dialog v-model="photo">
+                    <v-dialog v-model="photo" fullscreen hide-overlay transition="dialog-bottom-transition">
                         <v-card light>
-                            <v-img :src="selectedPhoto.filename" width="100%">
-                                <v-btn @click="photo = false" small class="float-right ma-2">
-                                    <v-icon>mdi-close</v-icon>
-                                </v-btn>
-                            </v-img>
-
-                            <v-card-actions>
-                                <v-spacer></v-spacer>
-                                <v-btn @click="deletePhoto(selectedPhoto.id)" dark color="red accent-4">
-                                    <v-icon>mdi-trash-can</v-icon>
-                                    Delete
-                                </v-btn>
-                                <v-spacer></v-spacer>
-                            </v-card-actions>
+                            <v-container>
+                                <v-system-bar flat color="transparent" height="48" class="py-3">
+                                    <v-btn @click="deletePhoto(selectedPhoto.id)" icon color="red accent-4">
+                                        <v-icon>mdi-trash-can</v-icon>
+                                    </v-btn>
+                                    <v-spacer></v-spacer>
+                                    <v-btn @click="photo = false" icon>
+                                        <v-icon>mdi-close</v-icon>
+                                    </v-btn>
+                                </v-system-bar>
+                                <v-content align="center" justify="center" class="px-5 mt-5">
+                                    <v-img :src="selectedPhoto.filename" class="radius elevation-4" position="center" contain></v-img>
+                                </v-content>
+                            </v-container>
                         </v-card>
                     </v-dialog>
                 </div>
@@ -202,3 +202,4 @@
         },
     }
 </script>
+
