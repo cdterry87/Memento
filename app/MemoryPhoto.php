@@ -59,6 +59,10 @@ class MemoryPhoto extends Model
                             }
                         }
                     }
+                } catch (Exception $e) {
+                    // echo "error:";
+                    // echo $e;
+                    // echo "error";
                 }
             }
         }
