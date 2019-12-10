@@ -133,6 +133,11 @@ class MemoryController extends Controller
     public function deletePhoto($id)
     {
         $photo = MemoryPhoto::find($id);
+
+        // Delete file from server
+        unlink('./' . $photo->filename);
+
+        // Delete file from database
         $status = $photo->delete();
 
         return response()->json([
