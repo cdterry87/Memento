@@ -101,7 +101,7 @@
                                 </v-system-bar>
                                 <v-content align="center" justify="center" class="px-5 mt-5">
                                     <!-- <v-img :src="selectedPhoto.filename" class="radius elevation-4" position="center" contain></v-img> -->
-                                    <img :src="selectedPhoto.filename" width="100%" class="radius elevation-4" style="image-orientation: from-image;" alt="">
+                                    <img :src="selectedPhoto.filename" width="100%" class="radius elevation-4" alt="">
                                 </v-content>
                                 <v-system-bar flat color="transparent" height="48" class="py-3 mt-5">
                                     <v-btn icon>
@@ -227,3 +227,8 @@
     }
 </script>
 
+<style lang="scss">
+    img {
+        image-orientation: from-image !important;
+    }
+</style>
