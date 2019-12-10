@@ -120,6 +120,8 @@ class MemoryController extends Controller
 
                 $status = true;
             }
+
+            MemoryPhoto::correctImageOrientation('storage/memories/' . $request->memory_id);
         }
 
         return response()->json([
