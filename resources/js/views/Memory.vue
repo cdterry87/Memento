@@ -91,17 +91,27 @@
                         <v-card light>
                             <v-container>
                                 <v-system-bar flat color="transparent" height="48" class="py-3">
-                                    <v-btn @click="deletePhoto(selectedPhoto.id)" icon color="red accent-4">
-                                        <v-icon>mdi-trash-can</v-icon>
+                                    <v-btn @click="deletePhoto(selectedPhoto.id)" icon>
+                                        <v-icon color="red accent-4">mdi-trash-can</v-icon>
                                     </v-btn>
                                     <v-spacer></v-spacer>
                                     <v-btn @click="photo = false" icon>
-                                        <v-icon>mdi-close</v-icon>
+                                        <v-icon color="deep-purple">mdi-close</v-icon>
                                     </v-btn>
                                 </v-system-bar>
                                 <v-content align="center" justify="center" class="px-5 mt-5">
-                                    <v-img :src="selectedPhoto.filename" class="radius elevation-4" position="center" contain></v-img>
+                                    <!-- <v-img :src="selectedPhoto.filename" class="radius elevation-4" position="center" contain></v-img> -->
+                                    <img :src="selectedPhoto.filename" width="100%" class="radius elevation-4" style="image-orientation: from-image;" alt="">
                                 </v-content>
+                                <v-system-bar flat color="transparent" height="48" class="py-3 mt-5">
+                                    <v-btn icon>
+                                        <v-icon color="teal accent-4">mdi-arrow-left-thick</v-icon>
+                                    </v-btn>
+                                    <v-spacer></v-spacer>
+                                    <v-btn icon>
+                                        <v-icon color="teal accent-4">mdi-arrow-right-thick</v-icon>
+                                    </v-btn>
+                                </v-system-bar>
                             </v-container>
                         </v-card>
                     </v-dialog>
@@ -125,6 +135,7 @@
 
 <script>
     import Loading from './../components/Loading'
+    import Event from './../events'
 
     export default {
         name: 'Memory',
@@ -162,6 +173,8 @@
                 axios.delete('/api/memories/' + this.id)
                 .then(response => {
                     this.$router.push('/home')
+
+                    Event.$emit('error', response.data.message)
                 })
             },
             uploadPhotos() {
@@ -178,6 +191,10 @@
                 axios.post('/api/memories/' + this.id + '/upload', uploadForm, { headers: { 'content-type': 'multipart/form-data' } })
                 .then(response => {
                     this.getMemory()
+
+                    Event.$emit('success', response.data.message)
+
+                    this.photos = []
                 })
             },
             selectPhoto(id, filename) {
@@ -190,6 +207,13 @@
             },
             deletePhoto(id) {
                 this.photo = false
+
+                axios.delete('/api/photo/' + id)
+                .then(response => {
+                    this.getMemory()
+
+                    Event.$emit('error', response.data.message)
+                })
             }
         },
         computed: {

@@ -129,4 +129,15 @@ class MemoryController extends Controller
             'message' => $status ? 'Your photos were uploaded successfully!' : 'There was an error uploading your photos. Please try again.'
         ]);
     }
+
+    public function deletePhoto($id)
+    {
+        $photo = MemoryPhoto::find($id);
+        $status = $photo->delete();
+
+        return response()->json([
+            'status' => $status,
+            'message' => $status ? 'Photo deleted successfully!' : 'Error deleting photo!'
+        ]);
+    }
 }
