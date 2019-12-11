@@ -43,13 +43,13 @@
                             <v-card light>
                                 <v-form method="POST" enctype="multipart/form-data" id="uploadForm" @submit.prevent="uploadPhotos" ref="uploadForm" autocomplete="off" lazy-validation>
                                     <v-card-text>
-                                        <v-file-input v-model="photos" color="teal accent-4" outlined show-size counter multiple label="Photos" accept="image/*" placeholder="Upload photos of your day" prepend-inner-icon="mdi-camera" prepend-icon="">
+                                        <v-file-input v-model="uploads" color="teal accent-4" outlined show-size counter multiple label="Photos" accept="image/*" placeholder="Upload photos of your day" prepend-inner-icon="mdi-camera" prepend-icon="">
                                             <template v-slot:selection="{ index, text }">
                                                 <v-chip v-if="index < 2" color="deep-purple accent-4" dark label small>
                                                     {{ text }}
                                                 </v-chip>
                                                 <span v-else-if="index === 2" class="overline grey--text text--darken-3 mx-2">
-                                                    +{{ photos.length - 2 }} Photo(s)
+                                                    +{{ uploads.length - 2 }} Photo(s)
                                                 </span>
                                             </template>
                                         </v-file-input>
@@ -87,7 +87,7 @@
                         </v-row>
                     </v-container>
 
-                    <v-dialog v-model="photo" fullscreen hide-overlay transition="dialog-bottom-transition">
+                    <v-dialog v-model="photo" hide-overlay transition="dialog-bottom-transition">
                         <v-card light>
                             <v-container>
                                 <v-system-bar flat color="transparent" height="48" class="py-3">
@@ -100,15 +100,14 @@
                                     </v-btn>
                                 </v-system-bar>
                                 <v-content align="center" justify="center" class="px-5 mt-5">
-                                    <!-- <v-img :src="selectedPhoto.filename" class="radius elevation-4" position="center" contain></v-img> -->
                                     <img :src="selectedPhoto.filename" width="100%" class="radius elevation-4" alt="">
                                 </v-content>
                                 <v-system-bar flat color="transparent" height="48" class="py-3 mt-5">
-                                    <v-btn icon>
+                                    <v-btn icon @click="prevPhoto()">
                                         <v-icon color="teal accent-4">mdi-arrow-left-thick</v-icon>
                                     </v-btn>
                                     <v-spacer></v-spacer>
-                                    <v-btn icon>
+                                    <v-btn icon @click="nextPhoto()">
                                         <v-icon color="teal accent-4">mdi-arrow-right-thick</v-icon>
                                     </v-btn>
                                 </v-system-bar>
@@ -155,7 +154,7 @@
                 loading: true,
                 emotions: [],
                 reasons: [],
-                photos: [],
+                uploads: [],
                 selectedPhoto: '',
                 memory: ''
             }
@@ -165,6 +164,7 @@
                 axios.get('/api/memories/' + this.id)
                 .then(response => {
                     this.memory = response.data
+                    this.photos = response.data.photos
 
                     this.loading = false
                 })
@@ -182,8 +182,8 @@
 
                 let uploadForm = new FormData()
                 uploadForm.append('memory_id', this.id)
-                for( var i = 0; i < this.photos.length; i++ ){
-                    let photo = this.photos[i];
+                for( var i = 0; i < this.uploads.length; i++ ){
+                    let photo = this.uploads[i];
 
                     uploadForm.append('photos[' + i + ']', photo);
                 }
@@ -194,7 +194,7 @@
 
                     Event.$emit('success', response.data.message)
 
-                    this.photos = []
+                    this.uploads = []
                 })
             },
             selectPhoto(id, filename) {
@@ -214,6 +214,36 @@
 
                     Event.$emit('error', response.data.message)
                 })
+            },
+            findPhoto(id) {
+                return this.photos.find((photo) => {
+                    return photo.id === id
+                })
+            },
+            prevPhoto() {
+                let photo = ''
+
+                const index = this.photos.findIndex((photo) => photo.id === this.selectedPhoto.id)
+                let len = this.photos.length - 1;
+                if (index == 0) {
+                    photo = this.photos[this.photos.length - 1]
+                } else {
+                    photo = this.photos[index - 1]
+                }
+
+                this.selectPhoto(photo.id, photo.filename)
+            },
+            nextPhoto() {
+                let photo = ''
+
+                const index = this.photos.findIndex((photo) => photo.id === this.selectedPhoto.id)
+                if(index >= 0 && index < this.photos.length - 1) {
+                    photo = this.photos[index + 1]
+                } else {
+                    photo = this.photos[0]
+                }
+
+                this.selectPhoto(photo.id, photo.filename)
             }
         },
         computed: {
