@@ -6,6 +6,7 @@ use App\Memory;
 use App\MemoryPhoto;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Storage;
 
 class MemoryController extends Controller
 {
@@ -97,6 +98,10 @@ class MemoryController extends Controller
     public function destroy(Memory $memory)
     {
         $status = $memory->delete();
+
+        if ($status) {
+            Storage::deleteDirectory('./storage/memories/' . $memory->id);
+        }
 
         return response()->json([
             'status' => $status,
