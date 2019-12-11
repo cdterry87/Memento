@@ -126,6 +126,7 @@
                 </v-btn>
             </template>
             <v-btn fab dark small color="red accent-4" @click="deleteMemory"><v-icon>mdi-trash-can</v-icon></v-btn>
+            <v-btn fab dark small color="deep-purple"><v-icon>mdi-camera</v-icon></v-btn>
             <v-btn fab dark small color="deep-purple"><v-icon>mdi-square-edit-outline</v-icon></v-btn>
         </v-speed-dial>
     </v-container>
