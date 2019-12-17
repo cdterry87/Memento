@@ -328,9 +328,11 @@
 <style lang="scss" scoped>
     .card {
         pointer-events: none;
+        user-select: none;
     }
     .v-btn {
         pointer-events: auto !important;
+        user-select: auto !important;
     }
     .card-two {
         transform: translate(5%, 5%);
