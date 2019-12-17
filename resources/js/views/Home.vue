@@ -328,6 +328,7 @@
 <style lang="scss" scoped>
     .card {
         pointer-events: none;
+        user-select: none;
     }
     .v-btn {
         pointer-events: auto !important;
