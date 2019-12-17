@@ -60,7 +60,7 @@
                 </v-row>
 
                 <v-row justify="center" v-if="index + 1 < memories.length">
-                    <v-card light class="my-3 card-two fixed" style="height: 325px; width: 280px; z-index: 2;">
+                    <v-card light class="my-3 card card-two fixed" style="height: 325px; width: 280px; z-index: 2;">
                         <v-card-text>
                             <h1 class="title">{{ next.title }}</h1>
                             <div class="mt-2">
@@ -79,7 +79,7 @@
                 </v-row>
 
                 <v-row justify="center" v-if="index + 2 < memories.length">
-                    <v-card light class="my-3 card-three fixed" style="height: 325px; width: 280px; z-index: 1;"></v-card>
+                    <v-card light class="my-3 card card-three fixed" style="height: 325px; width: 280px; z-index: 1;"></v-card>
                 </v-row>
 
 
@@ -326,6 +326,9 @@
 </script>
 
 <style lang="scss" scoped>
+    .card {
+        pointer-events: none;
+    }
     .card-two {
         transform: translate(5%, 5%);
     }
