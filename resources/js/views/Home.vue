@@ -30,10 +30,11 @@
                 <v-row justify="center" v-if="current">
                     <Vue2InteractDraggable
                         v-if="isVisible"
-                        :interact-out-of-sight-x-coordinate="1000"
+                        :interact-out-of-sight-x-coordinate="300"
                         :interact-max-rotation="15"
-                        :interact-x-threshold="200"
-                        :interact-y-threshold="200"
+                        :interact-x-threshold="50"
+                        :interact-y-threshold="50"
+                        interact-lock-y-axis
                         interact-block-drag-down
                         interact-block-drag-up
                         @draggedLeft="dragLeft()"
