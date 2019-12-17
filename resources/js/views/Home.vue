@@ -38,7 +38,7 @@
                         interact-block-drag-up
                         @draggedLeft="dragLeft()"
                         @draggedRight="dragRight()"
-                        class="fixed"
+                        class=""
                         style="width: 280px; z-index: 3;">
                         <v-card light class="my-3 card" style="height: 325px;">
                             <v-card-text>
@@ -59,7 +59,7 @@
                     </Vue2InteractDraggable>
                 </v-row>
 
-                <v-row justify="center" v-if="index + 1 < memories.length">
+                <!-- <v-row justify="center" v-if="index + 1 < memories.length">
                     <v-card light class="my-3 card card-two fixed" style="height: 325px; width: 280px; z-index: 2;">
                         <v-card-text>
                             <h1 class="title">{{ next.title }}</h1>
@@ -80,7 +80,7 @@
 
                 <v-row justify="center" v-if="index + 2 < memories.length">
                     <v-card light class="my-3 card card-three fixed" style="height: 325px; width: 280px; z-index: 1;"></v-card>
-                </v-row>
+                </v-row> -->
 
 
                 <v-dialog v-model="dialog" fullscreen hide-overlay transition="dialog-bottom-transition">
