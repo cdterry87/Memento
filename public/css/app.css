@@ -22,6 +22,10 @@ body #welcome {
 
 body .v-application,
 body #welcome {
+  -webkit-user-select: none;
+     -moz-user-select: none;
+      -ms-user-select: none;
+          user-select: none;
   background: #72ffad !important;
   background: -webkit-gradient(linear, left top, left bottom, from(#48bebe), to(#8ef3b8)) !important;
   background: linear-gradient(180deg, #48bebe 0%, #8ef3b8 100%) !important;
