@@ -69,3 +69,11 @@ export default {
     }
 }
 </script>
+
+<style lang="scss" scoped>
+    .inspire {
+        pointer-events: none;
+        user-select: none;
+        touch-action: none;
+    }
+</style>
