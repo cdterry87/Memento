@@ -1,5 +1,5 @@
 # Memento
-Keep track of your memories with Memento!
+Keep track of your memories with Memento! (Based on the Reflectly app)
 
 ## Requirements:
 PHP 7.2
