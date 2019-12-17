@@ -23,7 +23,7 @@
                 </v-list>
                 -->
 
-                <v-row align="center" justify="center">
+                <v-row id="counter" align="center" justify="center">
                     ({{ this.index + 1 }} / {{ this.memories.length }})
                 </v-row>
 
@@ -326,7 +326,7 @@
 </script>
 
 <style lang="scss" scoped>
-    .card {
+    .card, #counter {
         pointer-events: none;
         user-select: none;
         touch-action: none;
