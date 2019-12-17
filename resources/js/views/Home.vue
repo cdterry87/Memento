@@ -326,9 +326,6 @@
 </script>
 
 <style lang="scss" scoped>
-    .card {
-        pointer-events: none;
-    }
     .card-two {
         transform: translate(5%, 5%);
     }
