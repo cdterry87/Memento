@@ -16,11 +16,6 @@ body {
   margin: 0;
 }
 
-body {
-  position: fixed;
-  width: 100%;
-}
-
 body #welcome {
   font-family: "Nunito", sans-serif !important;
 }
