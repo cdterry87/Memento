@@ -1,7 +1,7 @@
 <template>
    <v-container fluid grid-list-md id="home">
        <Loading v-if="loading" />
-        <v-layout row v-else style="overflow: hidden; position: fixed; width: 100%;">
+        <v-layout row v-else style="overflow: hidden;">
             <v-flex xs12>
                 <!--
                 <v-list dark color="transparent" shaped two-line>
