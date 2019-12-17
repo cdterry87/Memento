@@ -18,7 +18,7 @@
                     </v-tooltip>
                     <v-tooltip top color="deep-purple" v-for="(reason, index) in memory.reasons" :key="index">
                         <template v-slot:activator="{ on }">
-                            <v-btn text v-on="on"><v-icon>{{ reason.icon }}</v-icon></v-btn>
+                            <v-btn text v-on="on" class="mx-1"><v-icon>{{ reason.icon }}</v-icon></v-btn>
                         </template>
                         <span>{{ reason.reason }}</span>
                     </v-tooltip>
@@ -127,7 +127,7 @@
             </template>
             <v-btn fab dark small color="red accent-4" @click="deleteMemory"><v-icon>mdi-trash-can</v-icon></v-btn>
             <v-btn fab dark small color="deep-purple"><v-icon>mdi-camera</v-icon></v-btn>
-            <v-btn fab dark small color="deep-purple"><v-icon>mdi-square-edit-outline</v-icon></v-btn>
+            <v-btn fab dark small color="deep-purple" @click="edit = true"><v-icon>mdi-square-edit-outline</v-icon></v-btn>
         </v-speed-dial>
     </v-container>
 </template>
@@ -146,20 +146,38 @@
             return {
                 dialog: false,
                 photo: false,
+                loading: true,
+                edit: false,
                 fab: false,
                 fabBottom: true,
                 fabRight: true,
                 fabDirection: 'left',
                 fabTransition: 'slide-y-reverse-transition',
-                loading: true,
+                title: '',
+                date: new Date().toISOString().substr(0, 10),
+                emotion: 6,
+                details: '',
                 emotions: [],
                 reasons: [],
+                selectedReasons: [],
                 uploads: [],
                 selectedPhoto: '',
                 memory: ''
             }
         },
         methods: {
+            getEmotions() {
+                axios.get('/api/emotions')
+                .then(response => {
+                    this.emotions = response.data
+                })
+            },
+            getReasons() {
+                axios.get('/api/reasons')
+                .then(response => {
+                    this.reasons = response.data
+                })
+            },
             getMemory() {
                 axios.get('/api/memories/' + this.id)
                 .then(response => {
@@ -249,9 +267,17 @@
         computed: {
             memoryDate() {
                 return moment(this.memory.date).format("dddd, MMM Do YYYY")
+            },
+            why() {
+                if (this.emotions.length > 0) {
+                    return this.emotions[this.emotion - 1].emotion
+                }
+                return false
             }
         },
         created () {
+            this.getEmotions()
+            this.getReasons()
             this.getMemory()
         },
     }
