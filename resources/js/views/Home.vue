@@ -332,7 +332,6 @@
     }
     .v-btn {
         pointer-events: auto !important;
-        user-select: auto !important;
     }
     .card-two {
         transform: translate(5%, 5%);
