@@ -1,7 +1,7 @@
 <template>
    <v-container fluid grid-list-md id="home">
        <Loading v-if="loading" />
-        <v-layout row v-else>
+        <v-layout row v-else style="overflow: hidden;">
             <v-flex xs12>
                 <!--
                 <v-list dark color="transparent" shaped two-line>
@@ -47,7 +47,7 @@
                                     {{ formatDate(current.date) }}
                                 </div>
                                 <div class="mt-2" v-if="current.details">
-                                    {{ current.details }}
+                                    {{ current.details | truncate(100) }}
                                 </div>
                             </v-card-text>
                             <v-card-actions>

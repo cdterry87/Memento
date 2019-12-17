@@ -8,7 +8,6 @@ html, body {
     font-weight: 200;
     height: 100vh;
     margin: 0;
-    overflow: hidden;
 }
 
 body #welcome {
@@ -36,7 +35,7 @@ a {
     font-family: 'Leckerli One', sans-serif !important;
 }
 
-.v-application .v-content .headline, .headline {
+.v-application .v-content .headline, .headline, .v-content .title, .title, .v-content .subheading, .subheading {
     font-family: 'Nunito', sans-serif !important;
     font-weight: bold;
 }
@@ -55,6 +54,10 @@ a {
 
 .radius {
     border-radius: 5px !important;
+}
+
+.theme--dark.v-system-bar, .theme--dark.v-system-bar .v-icon {
+    color: inherit !important;
 }
 
 /* Removes the weird gap on the toolbar */
