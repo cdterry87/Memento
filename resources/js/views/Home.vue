@@ -1,5 +1,5 @@
 <template>
-   <v-container fluid grid-list-md>
+   <v-container fluid grid-list-md id="home">
        <Loading v-if="loading" />
         <v-layout row v-else>
             <v-flex xs12>
@@ -326,6 +326,9 @@
 </script>
 
 <style lang="scss" scoped>
+    #home {
+        user-select: none !important;
+    }
     .card {
         pointer-events: none;
         user-select: none;
