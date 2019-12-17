@@ -326,6 +326,12 @@
 </script>
 
 <style lang="scss" scoped>
+    .card {
+        pointer-events: none;
+    }
+    .v-btn {
+        pointer-events: auto !important;
+    }
     .card-two {
         transform: translate(5%, 5%);
     }
