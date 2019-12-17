@@ -15,8 +15,6 @@ body #welcome {
 }
 
 body .v-application, body #welcome {
-    user-select: none !important;
-
     background: #72ffad !important;
     background: -moz-linear-gradient(180deg, #8ef3b8 0%, #48bebe 100%) !important;
     background: -webkit-linear-gradient(180deg, #8ef3b8 0%, #48bebe 100%) !important;
@@ -48,6 +46,10 @@ a {
 
 .fixed {
     position: fixed;
+}
+
+.footer {
+    user-select: none !important;
 }
 
 .radius {

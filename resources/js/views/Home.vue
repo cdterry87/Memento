@@ -326,9 +326,6 @@
 </script>
 
 <style lang="scss" scoped>
-    #home {
-        user-select: none !important;
-    }
     .card {
         pointer-events: none;
         user-select: none;
