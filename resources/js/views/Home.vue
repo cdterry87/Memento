@@ -2,9 +2,9 @@
    <v-container fluid grid-list-md id="home">
        <Loading v-if="loading" />
         <v-layout row v-else>
-            <v-flex xs12>
+            <v-flex xs12 class="mx-4">
                 <v-row justify="center" v-if="memories.length > 0">
-                    <v-card light class="my-3 card" style="width: 90%;" v-for="(memory, index) in memories" :key="index" :to="'memory/' + memory.id">
+                    <v-card light class="my-3 card" style="width: 100%;" v-for="(memory, index) in memories" :key="index" :to="'memory/' + memory.id">
                         <v-img v-if="memory.photo" class="align-end" height="150px" :src="memory.photo"></v-img>
                         <v-card-text>
                             <v-icon size="64" color="grey lighten-3" class="float-right">{{ getEmotion(memory.emotion_id) }}</v-icon>
@@ -18,9 +18,12 @@
                         </v-card-text>
                     </v-card>
                 </v-row>
-                <v-row v-else class="mx-2">
-                    <div class="title">You have not added any memories yet.</div>
-                    <div class="title mt-2">Click the "+" below to get started!</div>
+                <v-row v-else align="center" justify="center">
+                    <div class="my-3"><v-icon size="160">mdi-thought-bubble-outline</v-icon></div>
+                    <div class="title my-3">You haven't added any memories yet.</div>
+                    <div class="title my-3">
+                        <v-btn outlined x-large color="white" @click="dialog = true">Get Started!</v-btn>
+                    </div>
                 </v-row>
 
                 <v-dialog v-model="dialog" fullscreen hide-overlay transition="dialog-bottom-transition">
