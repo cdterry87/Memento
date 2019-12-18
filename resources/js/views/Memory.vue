@@ -1,5 +1,5 @@
 <template>
-    <v-container fluid grid-list-md>
+    <v-container fluid grid-list-md >
         <Loading v-if="loading" />
         <v-layout row v-else>
             <v-flex xs10 offset-xs1>

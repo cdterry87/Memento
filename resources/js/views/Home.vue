@@ -1,87 +1,22 @@
 <template>
    <v-container fluid grid-list-md id="home">
        <Loading v-if="loading" />
-        <v-layout row v-else style="overflow: hidden;">
+        <v-layout row v-else>
             <v-flex xs12>
-                <!--
-                <v-list dark color="transparent" shaped two-line>
-                    <v-list-item-group color="deep-purple" v-if="memories.length > 0">
-                        <v-list-item v-for="(memory, i) in memories" :key="i" :to="'memory/' + memory.id">
-                            <v-list-item-icon>
-                                <v-icon v-if="emotions.length > 0" v-text="emotions[memory.emotion_id - 1].icon"></v-icon>
-                            </v-list-item-icon>
-                            <v-list-item-content>
-                                <v-list-item-title v-text="memory.title"></v-list-item-title>
-                                <v-list-item-subtitle>{{ formatDate(memory.date) }}</v-list-item-subtitle>
-                            </v-list-item-content>
-                        </v-list-item>
-                    </v-list-item-group>
-                    <div v-else class="mt-3">
-                        <p>You haven't added any memories.</p>
-                        <p>Get started by adding some below!</p>
-                    </div>
-                </v-list>
-                -->
-
-                <v-row id="counter" align="center" justify="center">
-                    ({{ this.index + 1 }} / {{ this.memories.length }})
-                </v-row>
-
-                <v-row justify="center" v-if="current">
-                    <Vue2InteractDraggable
-                        v-if="isVisible"
-                        :interact-out-of-sight-x-coordinate="300"
-                        :interact-max-rotation="15"
-                        :interact-x-threshold="50"
-                        :interact-y-threshold="50"
-                        interact-lock-y-axis
-                        interact-block-drag-down
-                        interact-block-drag-up
-                        @draggedLeft="dragLeft()"
-                        @draggedRight="dragRight()"
-                        style="width: 280px; z-index: 3;">
-                        <v-card light class="my-3 card" style="height: 325px;">
-                            <v-card-text>
-                                <h1 class="title">{{ current.title }}</h1>
-                                <div class="mt-2">
-                                    {{ formatDate(current.date) }}
-                                </div>
-                                <div class="mt-2" v-if="current.details">
-                                    {{ current.details | truncate(100) }}
-                                </div>
-                            </v-card-text>
-                            <v-card-actions>
-                                <v-spacer></v-spacer>
-                                <v-btn outlined block color="teal accent-4" class="text--white" :to="'memory/' + current.id">View</v-btn>
-                                <v-spacer></v-spacer>
-                            </v-card-actions>
-                        </v-card>
-                    </Vue2InteractDraggable>
-                </v-row>
-
-                <!-- <v-row justify="center" v-if="index + 1 < memories.length">
-                    <v-card light class="my-3 card card-two fixed" style="height: 325px; width: 280px; z-index: 2;">
+                <v-row justify="center" v-for="(memory, index) in memories" :key="index">
+                    <v-card light class="my-3 card" style="width: 300px;" :to="'memory/' + memory.id">
                         <v-card-text>
-                            <h1 class="title">{{ next.title }}</h1>
-                            <div class="mt-2">
-                                {{ formatDate(next.date) }}
+                            <v-icon size="64" color="grey lighten-3" class="float-right">{{ getEmotion(memory.emotion_id) }}</v-icon>
+                            <h1 class="title">{{ memory.title | truncate(20) }}</h1>
+                            <div class="mt-1 grey--text caption">
+                                {{ formatDate(memory.date) }}
                             </div>
-                            <div class="mt-2" v-if="next.details">
-                                {{ next.details }}
+                            <div class="mt-2" v-if="memory.details">
+                                {{ memory.details | truncate(100) }}
                             </div>
                         </v-card-text>
-                        <v-card-actions>
-                            <v-spacer></v-spacer>
-                            <v-btn outlined block color="teal accent-4" class="text--white" :to="'memory/' + next.id">View</v-btn>
-                            <v-spacer></v-spacer>
-                        </v-card-actions>
                     </v-card>
                 </v-row>
-
-                <v-row justify="center" v-if="index + 2 < memories.length">
-                    <v-card light class="my-3 card card-three fixed" style="height: 325px; width: 280px; z-index: 1;"></v-card>
-                </v-row> -->
-
 
                 <v-dialog v-model="dialog" fullscreen hide-overlay transition="dialog-bottom-transition">
                     <template v-slot:activator="{ on }">
@@ -206,22 +141,18 @@
 
 <script>
     import Loading from './../components/Loading'
-    import { Vue2InteractDraggable } from 'vue2-interact'
 
     export default {
         name: 'Home',
         components: {
             Loading,
-            Vue2InteractDraggable
         },
         data() {
             return {
                 loading: true,
                 dialog: false,
-                isVisible: true,
                 panel: 1,
                 title: '',
-                index: 0,
                 date: new Date().toISOString().substr(0, 10),
                 emotion: 6,
                 details: '',
@@ -232,22 +163,11 @@
             }
         },
         methods: {
-            dragLeft() {
-                setTimeout(() => this.isVisible = false, 200)
-                setTimeout(() => {
-                    this.index--
-                    this.isVisible = true
-                }, 200)
-            },
-            dragRight() {
-                setTimeout(() => this.isVisible = false, 200)
-                setTimeout(() => {
-                    this.index++
-                    this.isVisible = true
-                }, 200)
-            },
             formatDate(date) {
                 return moment(date).format("dddd, MMM Do YYYY")
+            },
+            getEmotion(id) {
+                return this.emotions.find(emotion => emotion.id == id).icon
             },
             getEmotions() {
                 axios.get('/api/emotions')
@@ -301,18 +221,6 @@
             },
         },
         computed: {
-            current() {
-                if ((this.index > (this.memories.length - 1))) {
-                    this.index = 0
-                }
-                if (this.index < 0) {
-                    this.index = this.memories.length - 1
-                }
-                return this.memories[this.index]
-            },
-            next() {
-                return this.memories[this.index + 1]
-            },
             why() {
                 return this.emotions[this.emotion - 1].emotion
             }
@@ -325,19 +233,3 @@
     }
 </script>
 
-<style lang="scss" scoped>
-    .card, #counter {
-        pointer-events: none;
-        user-select: none;
-        touch-action: none;
-    }
-    .v-btn {
-        pointer-events: auto !important;
-    }
-    .card-two {
-        transform: translate(5%, 5%);
-    }
-    .card-three {
-        transform: translate(10%, 10%);
-    }
-</style>
