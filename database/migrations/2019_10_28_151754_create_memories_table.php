@@ -22,6 +22,7 @@ class CreateMemoriesTable extends Migration
             $table->date('date');
             $table->string('title', 50)->nullable();
             $table->text('details')->nullable();
+            $table->string('photo')->nullable();
             $table->timestamps();
         });
     }
