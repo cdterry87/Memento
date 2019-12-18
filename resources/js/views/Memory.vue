@@ -33,7 +33,7 @@
                     <v-system-bar flat color="transparent" height="48" class="p-0">
                         <span class="title">Photos</span>
                         <v-spacer></v-spacer>
-                        <v-dialog v-model="dialog" width="500">
+                        <v-dialog v-model="uploadPhotosDialog" width="500">
                             <template v-slot:activator="{ on }">
                                 <v-btn icon small v-on="on">
                                     <v-icon>mdi-plus</v-icon>
@@ -87,7 +87,7 @@
                         </v-row>
                     </v-container>
 
-                    <v-dialog v-model="photo" hide-overlay transition="dialog-bottom-transition">
+                    <v-dialog v-model="viewPhotosDialog" hide-overlay transition="dialog-bottom-transition">
                         <v-card light>
                             <v-container>
                                 <v-system-bar flat color="transparent" height="48" class="py-3">
@@ -118,6 +118,22 @@
             </v-flex>
         </v-layout>
 
+        <v-dialog v-model="deleteMemoryPrompt" width="300px">
+            <v-card light>
+                <v-card-text class="py-4 title text-center">
+                    <div >
+                        Are you sure you want to delete this memory?
+                    </div>
+                </v-card-text>
+                <v-card-actions class="py-4">
+                    <v-spacer></v-spacer>
+                    <v-btn small color="red" outlined @click="deleteMemory">Delete Memory</v-btn>
+                    <v-btn small outlined @click="deleteMemoryPrompt = false">Cancel</v-btn>
+                    <v-spacer></v-spacer>
+                </v-card-actions>
+            </v-card>
+        </v-dialog>
+
         <v-speed-dial class="mb-3 fixed" v-model="fab" :bottom="fabBottom" :right="fabRight" :direction="fabDirection" :transition="fabTransition">
             <template v-slot:activator>
                 <v-btn v-model="fab" color="deep-purple" dark fab >
@@ -125,8 +141,8 @@
                     <v-icon v-else>mdi-dots-horizontal</v-icon>
                 </v-btn>
             </template>
-            <v-btn fab dark small color="red accent-4" @click="deleteMemory"><v-icon>mdi-trash-can</v-icon></v-btn>
-            <v-btn fab dark small color="deep-purple"><v-icon>mdi-camera</v-icon></v-btn>
+            <v-btn fab dark small color="red accent-4" @click="deleteMemoryPrompt = true"><v-icon>mdi-trash-can</v-icon></v-btn>
+            <v-btn fab dark small color="deep-purple" @click="primaryPhotoDialog = true"><v-icon>mdi-camera</v-icon></v-btn>
             <v-btn fab dark small color="deep-purple" @click="edit = true"><v-icon>mdi-square-edit-outline</v-icon></v-btn>
         </v-speed-dial>
     </v-container>
@@ -144,8 +160,10 @@
         props: ['id'],
         data() {
             return {
-                dialog: false,
-                photo: false,
+                uploadPhotosDialog: false,
+                viewPhotosDialog: false,
+                deleteMemoryPrompt: false,
+                primaryPhotoDialog: false,
                 loading: true,
                 edit: false,
                 fab: false,
