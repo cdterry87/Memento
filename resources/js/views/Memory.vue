@@ -72,7 +72,7 @@
                         <v-row v-if="memory.photos.length > 0">
                             <v-col v-for="photo in memory.photos" :key="photo.id" cols="4 px-2" align="center">
                                 <v-avatar :size="($vuetify.breakpoint.lgAndUp ? 160 : 80)" class="pointer elevation-4">
-                                    <v-img @click="selectPhoto(photo.id, photo.filename)" :src="photo.filename" aspect-ratio="1" class="deep-purple" :title="photo.filename">
+                                    <v-img @click="selectPhoto(photo.id, photo.filename)" :src="photo.filename" aspect-ratio="1" class="deep-purple">
                                         <template v-slot:placeholder>
                                             <v-row class="fill-height ma-0" align="center" justify="center" >
                                                 <v-progress-circular indeterminate color="teal accent-4"></v-progress-circular>
@@ -95,6 +95,8 @@
                                         <v-icon color="red accent-4">mdi-trash-can</v-icon>
                                     </v-btn>
                                     <v-spacer></v-spacer>
+                                    <span class="title" v-if="selectedPhoto.filename == memory.photo">Primary Image</span>
+                                    <v-spacer></v-spacer>
                                     <v-btn @click="viewPhotosDialog = false" icon>
                                         <v-icon color="deep-purple">mdi-close</v-icon>
                                     </v-btn>
@@ -106,6 +108,9 @@
                                     <v-btn icon @click="prevPhoto()">
                                         <v-icon color="teal accent-4">mdi-arrow-left-thick</v-icon>
                                     </v-btn>
+                                    <v-spacer></v-spacer>
+                                    <v-btn outlined v-if="selectedPhoto.filename != memory.photo">Make Primary</v-btn>
+                                    <v-btn outlined v-else>Remove Primary</v-btn>
                                     <v-spacer></v-spacer>
                                     <v-btn icon @click="nextPhoto()">
                                         <v-icon color="teal accent-4">mdi-arrow-right-thick</v-icon>
@@ -137,30 +142,33 @@
         <v-dialog v-model="primaryPhotoDialog" width="300px">
             <v-card light>
                 <v-card-text>
-                    <v-list flat>
-                        <v-subheader class="subheading">Select a primary photo</v-subheader>
-                        <v-list-item-group>
-                            <v-list-item v-for="(photo, index) in memory.photos" :key="index" @click="selectPrimaryPhoto(photo.filename)">
-                                <template v-slot:default="{ active, toggle }">
-                                    <v-list-item-content>
-                                        <v-img :src="photo.filename" aspect-ratio="1" class="deep-purple elevation-4" :title="photo.filename">
-                                            <template v-slot:placeholder>
-                                                <v-row class="fill-height ma-0" align="center" justify="center" >
-                                                    <v-progress-circular indeterminate color="teal accent-4"></v-progress-circular>
-                                                </v-row>
-                                            </template>
-                                        </v-img>
-                                    </v-list-item-content>
-                                    <v-list-item-action>
-                                        <v-checkbox v-model="active" color="deep-purple" @click="toggle"></v-checkbox>
-                                    </v-list-item-action>
-                                </template>
-                            </v-list-item>
-                        </v-list-item-group>
-                    </v-list>
+                    <v-subheader class="subheading">Select a primary photo for this memory</v-subheader>
+                    <v-container fluid grid-list-md fill-height>
+                        <v-layout row wrap align-center>
+                            <v-flex xs6 class="text-center pointer" @click="selectPrimaryPhoto">
+                                <v-icon size="48" title="Remove primary photo">mdi-cancel</v-icon>
+                            </v-flex>
+                            <v-flex xs6 v-for="photo in memory.photos" :key="photo.id" @click="selectPrimaryPhoto(photo.filename)">
+                                <v-img :src="photo.filename" aspect-ratio="1" class="pointer deep-purple elevation-4">
+                                    <template v-slot:placeholder>
+                                        <v-row class="fill-height ma-0" align="center" justify="center" >
+                                            <v-progress-circular indeterminate color="teal accent-4"></v-progress-circular>
+                                        </v-row>
+                                    </template>
+                                    <v-row align="end" class="pa-0 fill-height float-right" v-if="photo.filename == memory.photo">
+                                         <v-col>
+                                            <v-icon size="32" color="teal accent-4">mdi-check-circle-outline</v-icon>
+                                         </v-col>
+                                    </v-row>
+                                </v-img>
+                            </v-flex>
+                        </v-layout>
+                    </v-container>
                 </v-card-text>
                 <v-card-actions>
-
+                    <v-spacer></v-spacer>
+                    <v-btn outlined @click="primaryPhotoDialog = false">Cancel</v-btn>
+                    <v-spacer></v-spacer>
                 </v-card-actions>
             </v-card>
         </v-dialog>
