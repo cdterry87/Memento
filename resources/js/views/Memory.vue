@@ -2,7 +2,7 @@
     <v-container fluid grid-list-md >
         <Loading v-if="loading" />
         <v-layout row v-else>
-            <v-flex xs12 class="mx-2">
+            <v-flex xs10 offset-xs1>
                 <div class="headline">
                     {{ memory.title }}
                 </div>
