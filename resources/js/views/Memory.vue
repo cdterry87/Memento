@@ -95,7 +95,7 @@
                                         <v-icon color="red accent-4">mdi-trash-can</v-icon>
                                     </v-btn>
                                     <v-spacer></v-spacer>
-                                    <v-btn @click="photo = false" icon>
+                                    <v-btn @click="viewPhotosDialog = false" icon>
                                         <v-icon color="deep-purple">mdi-close</v-icon>
                                     </v-btn>
                                 </v-system-bar>
