@@ -118,7 +118,7 @@
             </v-flex>
         </v-layout>
 
-        <v-dialog v-model="deleteMemoryPrompt" width="300px">
+        <v-dialog v-model="deleteMemoryPrompt" hide-overlay width="300px">
             <v-card light>
                 <v-card-text class="py-4 title text-center">
                     <div >
@@ -130,6 +130,37 @@
                     <v-btn small color="red" outlined @click="deleteMemory">Delete Memory</v-btn>
                     <v-btn small outlined @click="deleteMemoryPrompt = false">Cancel</v-btn>
                     <v-spacer></v-spacer>
+                </v-card-actions>
+            </v-card>
+        </v-dialog>
+
+        <v-dialog v-model="primaryPhotoDialog" width="300px">
+            <v-card light>
+                <v-card-text>
+                    <v-list flat>
+                        <v-subheader class="subheading">Select a primary photo</v-subheader>
+                        <v-list-item-group>
+                            <v-list-item v-for="(photo, index) in memory.photos" :key="index" @click="selectPrimaryPhoto(photo.filename)">
+                                <template v-slot:default="{ active, toggle }">
+                                    <v-list-item-content>
+                                        <v-img :src="photo.filename" aspect-ratio="1" class="deep-purple elevation-4" :title="photo.filename">
+                                            <template v-slot:placeholder>
+                                                <v-row class="fill-height ma-0" align="center" justify="center" >
+                                                    <v-progress-circular indeterminate color="teal accent-4"></v-progress-circular>
+                                                </v-row>
+                                            </template>
+                                        </v-img>
+                                    </v-list-item-content>
+                                    <v-list-item-action>
+                                        <v-checkbox v-model="active" color="deep-purple" @click="toggle"></v-checkbox>
+                                    </v-list-item-action>
+                                </template>
+                            </v-list-item>
+                        </v-list-item-group>
+                    </v-list>
+                </v-card-text>
+                <v-card-actions>
+
                 </v-card-actions>
             </v-card>
         </v-dialog>
@@ -240,6 +271,9 @@
                 }
 
                 this.photo = true
+            },
+            selectPrimaryPhoto(filename) {
+                console.log('primary photo selected', filename)
             },
             deletePhoto(id) {
                 this.photo = false
