@@ -141,12 +141,16 @@
 
         <v-dialog v-model="primaryPhotoDialog" width="300px">
             <v-card light>
-                <v-card-text>
+                <v-card-text class="pt-4">
                     <v-subheader class="subheading">Select a primary photo for this memory</v-subheader>
                     <v-container fluid grid-list-md fill-height>
                         <v-layout row wrap align-center>
-                            <v-flex xs6 class="text-center pointer" @click="selectPrimaryPhoto">
-                                <v-icon size="48" title="Remove primary photo">mdi-cancel</v-icon>
+                            <v-flex xs6 class="text-center" @click="selectPrimaryPhoto">
+                                <v-img aspect-ratio="1" class="pointer transparent elevation-4">
+                                    <v-row class="fill-height ma-0" align="center" justify="center">
+                                        <v-icon size="48" title="Remove primary photo">mdi-cancel</v-icon>
+                                    </v-row>
+                                </v-img>
                             </v-flex>
                             <v-flex xs6 v-for="photo in memory.photos" :key="photo.id" @click="selectPrimaryPhoto(photo.filename)">
                                 <v-img :src="photo.filename" aspect-ratio="1" class="pointer deep-purple elevation-4">
@@ -165,7 +169,7 @@
                         </v-layout>
                     </v-container>
                 </v-card-text>
-                <v-card-actions>
+                <v-card-actions class="pb-4">
                     <v-spacer></v-spacer>
                     <v-btn outlined @click="primaryPhotoDialog = false">Cancel</v-btn>
                     <v-spacer></v-spacer>
