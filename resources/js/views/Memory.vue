@@ -109,8 +109,8 @@
                                         <v-icon color="teal accent-4">mdi-arrow-left-thick</v-icon>
                                     </v-btn>
                                     <v-spacer></v-spacer>
-                                    <v-btn outlined v-if="selectedPhoto.filename != memory.photo">Make Primary</v-btn>
-                                    <v-btn outlined v-else>Remove Primary</v-btn>
+                                    <v-btn outlined v-if="selectedPhoto.filename != memory.photo" @click="selectPrimaryPhoto(selectedPhoto.filename)">Make Primary</v-btn>
+                                    <v-btn outlined v-else @click="selectPrimaryPhoto()">Remove Primary</v-btn>
                                     <v-spacer></v-spacer>
                                     <v-btn icon @click="nextPhoto()">
                                         <v-icon color="teal accent-4">mdi-arrow-right-thick</v-icon>
@@ -145,10 +145,15 @@
                     <v-subheader class="subheading">Select a primary photo for this memory</v-subheader>
                     <v-container fluid grid-list-md fill-height>
                         <v-layout row wrap align-center>
-                            <v-flex xs6 class="text-center" @click="selectPrimaryPhoto">
+                            <v-flex xs6 class="text-center" @click="selectPrimaryPhoto()">
                                 <v-img aspect-ratio="1" class="pointer transparent elevation-4">
                                     <v-row class="fill-height ma-0" align="center" justify="center">
                                         <v-icon size="48" title="Remove primary photo">mdi-cancel</v-icon>
+                                    </v-row>
+                                    <v-row align="end" class="pa-0 fill-height float-right" v-if="memory.photo == ''">
+                                         <v-col>
+                                            <v-icon size="32" color="teal accent-4">mdi-check-circle-outline</v-icon>
+                                         </v-col>
                                     </v-row>
                                 </v-img>
                             </v-flex>
@@ -286,9 +291,12 @@
             },
             selectPrimaryPhoto(photo) {
                 let id = this.id
+
                 if (typeof(photo) == 'undefined') {
                     photo = ''
                 }
+
+                console.log('photo', photo)
 
                 axios.post('/api/memories/' + id + '/photo', { id, photo })
                 .then(response => {
