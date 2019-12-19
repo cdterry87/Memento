@@ -36,6 +36,7 @@ Route::group(['middleware' => 'auth'], function () {
 
         Route::post('/memories/{id}/upload', 'MemoryController@upload');
         Route::delete('/photo/{id}', 'MemoryController@deletePhoto');
+        Route::post('/memories/{id}/photo', 'MemoryController@setPrimaryPhoto');
 
         // User account routes
         Route::get('/user', 'UserController@index');

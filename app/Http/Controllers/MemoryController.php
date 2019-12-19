@@ -7,6 +7,7 @@ use App\MemoryPhoto;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Facades\DB;
 
 class MemoryController extends Controller
 {
@@ -148,6 +149,20 @@ class MemoryController extends Controller
         return response()->json([
             'status' => $status,
             'message' => $status ? 'Photo deleted successfully!' : 'Error deleting photo!'
+        ]);
+    }
+
+    public function setPrimaryPhoto(Request $request)
+    {
+        $memory = Memory::find($request->id);
+
+        $status = $memory->update(
+            $request->only(['photo'])
+        );
+
+        return response()->json([
+            'status' => $status,
+            'message' => $status ? 'Primary photo updated successfully!' : 'Error updating primary photo!'
         ]);
     }
 }

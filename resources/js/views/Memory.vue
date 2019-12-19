@@ -284,8 +284,17 @@
 
                 this.viewPhotosDialog = true
             },
-            selectPrimaryPhoto(filename) {
-                console.log('primary photo selected', filename)
+            selectPrimaryPhoto(photo) {
+                let id = this.id
+                if (typeof(photo) == 'undefined') {
+                    photo = ''
+                }
+
+                axios.post('/api/memories/' + id + '/photo', { id, photo })
+                .then(response => {
+                    Event.$emit('success', response.data.message)
+                    this.getMemory();
+                })
             },
             deletePhoto(id) {
                 this.viewPhotosDialog = false
