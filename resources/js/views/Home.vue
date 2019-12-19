@@ -5,7 +5,7 @@
             <v-flex xs12 class="mx-4">
                 <v-row justify="center" v-if="memories.length > 0">
                     <v-card light class="my-3 card" style="width: 100%;" v-for="(memory, index) in memories" :key="index" :to="'memory/' + memory.id">
-                        <v-img v-if="memory.photo" class="align-end" height="150px" :src="memory.photo"></v-img>
+                        <v-img v-if="memory.photo" height="225px" :src="memory.photo"></v-img>
                         <v-card-text>
                             <v-icon size="64" color="grey lighten-3" class="float-right">{{ getEmotion(memory.emotion_id) }}</v-icon>
                             <h1 class="title">{{ memory.title | truncate(20) }}</h1>

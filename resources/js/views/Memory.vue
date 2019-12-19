@@ -270,13 +270,13 @@
                     filename: filename
                 }
 
-                this.photo = true
+                this.viewPhotosDialog = true
             },
             selectPrimaryPhoto(filename) {
                 console.log('primary photo selected', filename)
             },
             deletePhoto(id) {
-                this.photo = false
+                this.viewPhotosDialog = false
 
                 axios.delete('/api/photo/' + id)
                 .then(response => {
