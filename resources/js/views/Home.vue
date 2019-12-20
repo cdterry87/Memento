@@ -11,7 +11,7 @@
                     </div>
                 </v-row>
                 <v-row justify="center" v-for="(memory, index) in memories" :key="index">
-                    <v-card light class="my-3 card" width="100%" :to="'memory/' + memory.id">
+                    <v-card light class="my-3 card animated home-card" v-view="viewHandler" width="100%" :to="'memory/' + memory.id">
                         <v-img v-if="memory.photo" height="225px" :src="memory.photo" :title="memory.title"></v-img>
                         <v-card-text>
                             <v-icon size="64" color="grey lighten-3" class="float-right">{{ getEmotion(memory.emotion_id) }}</v-icon>
@@ -174,7 +174,9 @@
                 return moment(date).format("dddd, MMM Do YYYY")
             },
             getEmotion(id) {
-                return this.emotions.find(emotion => emotion.id == id).icon
+                if (this.emotions.length > 0) {
+                    return this.emotions.find(emotion => emotion.id == id).icon
+                }
             },
             getEmotions() {
                 axios.get('/api/emotions')
@@ -226,6 +228,13 @@
                 this.title = ''
                 this.selectedReasons = []
             },
+            viewHandler(e) {
+                let target = e.target
+
+                if (target.classes['view-in--full']) {
+                    target.element.classList.add('fadeInUp')
+                }
+            }
         },
         computed: {
             why() {

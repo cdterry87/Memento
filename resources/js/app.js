@@ -24,6 +24,9 @@ const router = new VueRouter({
     routes,
 })
 
+import checkView from 'vue-check-view'
+Vue.use(checkView)
+
 // Filters
 Vue.filter('truncate', function (string, length) {
     if (!string) return ''
