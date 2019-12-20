@@ -1,5 +1,5 @@
 <template>
-    <v-container fluid grid-list-md >
+    <v-container fluid grid-list-md>
         <Loading v-if="loading" />
         <v-layout row v-else>
             <v-flex xs10 offset-xs1 v-if="editMode" class="animated" :class="{ fadeInUp: editMode }">
@@ -43,7 +43,7 @@
                     <span class="mt-4">{{ memory.details }}</span>
                 </div>
                 <div class="mt-2">
-                    <v-tooltip top color="deep-purple">
+                    <v-tooltip top color="deep-purple" v-if="memory.emotion">
                         <template v-slot:activator="{ on }">
                             <v-btn icon text v-on="on"><v-icon>{{ memory.emotion.icon }}</v-icon></v-btn>
                         </template>
@@ -104,7 +104,7 @@
                             </v-card>
                         </v-dialog>
                     </v-system-bar>
-                    <v-container fluid class="pt-0 px-0" v-if="!editMode">
+                    <v-container fluid class="pt-0 px-0" v-if="memory.photos">
                         <v-row v-if="memory.photos.length > 0">
                             <v-col v-for="photo in memory.photos" :key="photo.id" cols="4 px-2" align="center">
                                 <v-avatar :size="($vuetify.breakpoint.lgAndUp ? 160 : 80)" class="pointer elevation-4">
@@ -283,6 +283,8 @@
                 })
             },
             getMemory() {
+                let vm = this
+
                 axios.get('/api/memories/' + this.id)
                 .then(response => {
                     this.memory = response.data
@@ -290,6 +292,11 @@
 
                     this.loading = false
                 })
+                .catch(function (error) {
+                    vm.loading = false
+                    vm.$router.push('/home')
+                    Event.$emit('error', 'An error occurred while loading this memory. Try again later.')
+                });
             },
             saveMemory() {
                 if (this.$refs.saveForm.validate()) {
@@ -348,8 +355,6 @@
                 if (typeof(photo) == 'undefined') {
                     photo = ''
                 }
-
-                console.log('photo', photo)
 
                 axios.post('/api/memories/' + id + '/photo', { id, photo })
                 .then(response => {

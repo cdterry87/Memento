@@ -59,7 +59,10 @@ class MemoryController extends Controller
      */
     public function show(Memory $memory)
     {
-        return response()->json($memory->where('id', $memory->id)->with('emotion')->with(['reasons', 'photos'])->first());
+        if (auth()->id() == $memory->user_id) {
+            return response()->json($memory->where('id', $memory->id)->with('emotion')->with(['reasons', 'photos'])->first());
+        }
+        return false;
     }
 
     /**
