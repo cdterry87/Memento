@@ -19,6 +19,9 @@ class ReasonSeeder extends Seeder
             ['reason' => 'Friends', 'icon' => 'mdi-account-group'],
             ['reason' => 'School', 'icon' => 'mdi-school'],
             ['reason' => 'Travel', 'icon' => 'mdi-earth'],
+            ['reason' => 'Entertainment', 'icon' => 'mdi-star'],
+            ['reason' => 'Personal Goals', 'icon' => 'mdi-finance'],
+            ['reason' => 'Finances', 'icon' => 'mdi-currency-usd'],
             ['reason' => 'Other', 'icon' => 'mdi-plus']
         ]);
     }
