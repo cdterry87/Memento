@@ -2,15 +2,11 @@
     <div>
         <v-app class="inspire">
             <v-toolbar color="transparent" flat>
-                <v-toolbar-title>
-                    <a href="/home" class="display-1 logo">{{ title }}</a>
-                </v-toolbar-title>
+                <router-link to="/home">
+                    <v-toolbar-title  class="display-1 logo">{{ title }}</v-toolbar-title>
+                </router-link>
                 <v-spacer></v-spacer>
                 <v-toolbar-items>
-                    <v-btn text to="/home" v-if="this.$router.currentRoute.name != 'home'">
-                        <v-icon>mdi-home</v-icon>
-                        <span class="ml-3" v-if="$vuetify.breakpoint.mdAndUp">Home</span>
-                    </v-btn>
                     <v-btn text to="/account">
                         <v-icon>mdi-account-circle</v-icon>
                         <span class="ml-3" v-if="$vuetify.breakpoint.mdAndUp">My Account</span>
