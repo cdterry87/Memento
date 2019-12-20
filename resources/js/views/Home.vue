@@ -3,13 +3,14 @@
        <Loading v-if="loading" />
         <v-layout row v-else>
             <v-flex xs10 offset-xs1>
-                <v-row v-if="memories.length == 0" align="center" justify="center">
+                <div v-if="memories.length == 0" align="center" justify="center">
                     <div class="my-3"><v-icon size="160">mdi-thought-bubble-outline</v-icon></div>
                     <div class="title my-3">You haven't added any memories yet.</div>
+                    <br>
                     <div class="title my-3">
                         <v-btn outlined x-large color="white" @click="dialog = true">Get Started!</v-btn>
                     </div>
-                </v-row>
+                </div>
                 <v-row justify="center" v-for="(memory, index) in memories" :key="index">
                     <v-card light class="my-3 card animated home-card" v-view="viewHandler" width="100%" :to="'memory/' + memory.id">
                         <v-img v-if="memory.photo" height="225px" :src="memory.photo" :title="memory.title"></v-img>
