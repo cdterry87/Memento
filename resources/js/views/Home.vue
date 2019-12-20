@@ -25,7 +25,7 @@
                         </v-card-text>
                     </v-card>
                 </v-row>
-                <v-row style="margin-top: 125px;">&nbsp;</v-row>
+                <v-row style="margin-top: 150px;">&nbsp;</v-row>
                 <v-dialog v-model="dialog" fullscreen hide-overlay transition="dialog-bottom-transition">
                     <template v-slot:activator="{ on }">
                         <v-btn class="fixed" color="deep-purple" dark large absolute bottom right fab @click="dialog = true" style="margin-bottom: 50px;">

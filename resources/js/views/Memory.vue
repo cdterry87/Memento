@@ -2,29 +2,65 @@
     <v-container fluid grid-list-md >
         <Loading v-if="loading" />
         <v-layout row v-else>
-            <v-flex xs10 offset-xs1>
-                <div class="headline">
-                    {{ memory.title }}
+            <v-flex xs10 offset-xs1 v-if="editMode" class="animated" :class="{ fadeInUp: editMode }">
+                <v-form method="POST" id="saveForm" @submit.prevent="saveMemory" ref="saveForm" autocomplete="off" lazy-validation>
+                    <div>
+                        <v-text-field outlined hide-details v-model="memory.title" label="Title" color="white" prepend-inner-icon="mdi-book-open-page-variant" :rules="[v => !!v || 'Title is required']" required></v-text-field>
+                    </div>
+                    <div class="my-3">
+                        <v-dialog ref="datePicker" v-model="datePickerDialog" :return-value.sync="date" width="300px">
+                            <template v-slot:activator="{ on }">
+                                <v-text-field v-model="memory.date" label="Date" hide-details prepend-inner-icon="mdi-calendar" readonly color="white" v-on="on" outlined :rules="[v => !!v || 'Date is required']" required></v-text-field>
+                            </template>
+                            <v-date-picker light color="deep-purple" v-model="memory.date" scrollable>
+                                <v-spacer></v-spacer>
+                                <v-btn text @click="datePickerDialog = false">Cancel</v-btn>
+                                <v-btn text color="teal accent-4" @click="$refs.datePicker.save(memory.date)">OK</v-btn>
+                            </v-date-picker>
+                        </v-dialog>
+                    </div>
+                    <div class="my-4">
+                        <v-textarea outlined hide-details label="Details" v-model="memory.details" color="white" auto-grow></v-textarea>
+                    </div>
+                    <div class="my-3">
+                        <div class="text-center my-3">
+                            <v-spacer></v-spacer>
+                            <v-btn color="white" rounded outlined dark class="mx-2" @click="editMode = false">Cancel</v-btn>
+                            <v-btn type="submit" color="deep-purple" rounded dark class="mx-2">Save</v-btn>
+                            <v-spacer></v-spacer>
+                        </div>
+                    </div>
+                </v-form>
+            </v-flex>
+            <v-flex xs10 offset-xs1 v-else class="animated" :class="{ fadeOutDown: editMode, fadeIn: !editMode }">
+                <div>
+                    <span class="headline">{{ memory.title }}</span>
                 </div>
-                <div class="subheading mt-2">
-                    {{ memoryDate }}
+                <div class="my-3">
+                    <span class="mt-2 subheading">{{ memoryDate }}</span>
+                </div>
+                <div class="my-4">
+                    <span class="mt-4">{{ memory.details }}</span>
                 </div>
                 <div class="mt-2">
                     <v-tooltip top color="deep-purple">
                         <template v-slot:activator="{ on }">
-                            <v-btn text v-on="on"><v-icon>{{ memory.emotion.icon }}</v-icon></v-btn>
+                            <v-btn icon text v-on="on"><v-icon>{{ memory.emotion.icon }}</v-icon></v-btn>
                         </template>
                         <span>{{ memory.emotion.emotion }}</span>
                     </v-tooltip>
                     <v-tooltip top color="deep-purple" v-for="(reason, index) in memory.reasons" :key="index">
                         <template v-slot:activator="{ on }">
-                            <v-btn text v-on="on" class="mx-1"><v-icon>{{ reason.icon }}</v-icon></v-btn>
+                            <v-btn icon text v-on="on" class="mx-2"><v-icon>{{ reason.icon }}</v-icon></v-btn>
                         </template>
                         <span>{{ reason.reason }}</span>
                     </v-tooltip>
-                </div>
-                <div class="mt-4">
-                    {{ memory.details }}
+                    <v-tooltip top color="deep-purple">
+                        <template v-slot:activator="{ on }">
+                            <v-btn color="deep-purple" dark icon v-on="on" class="mx-2" @click="editEmojiDialog = true"><v-icon>mdi-square-edit-outline</v-icon></v-btn>
+                        </template>
+                        <span>Edit Emojis</span>
+                    </v-tooltip>
                 </div>
                 <div class="mt-5">
                     <v-divider></v-divider>
@@ -68,7 +104,7 @@
                             </v-card>
                         </v-dialog>
                     </v-system-bar>
-                    <v-container fluid class="pt-0 px-0">
+                    <v-container fluid class="pt-0 px-0" v-if="!editMode">
                         <v-row v-if="memory.photos.length > 0">
                             <v-col v-for="photo in memory.photos" :key="photo.id" cols="4 px-2" align="center">
                                 <v-avatar :size="($vuetify.breakpoint.lgAndUp ? 160 : 80)" class="pointer elevation-4">
@@ -95,7 +131,7 @@
                                         <v-icon color="red accent-4">mdi-trash-can</v-icon>
                                     </v-btn>
                                     <v-spacer></v-spacer>
-                                    <span class="title" v-if="selectedPhoto.filename == memory.photo">Primary Image</span>
+                                    <span class="caption" v-if="selectedPhoto.filename == memory.photo">Primary Image</span>
                                     <v-spacer></v-spacer>
                                     <v-btn @click="viewPhotosDialog = false" icon>
                                         <v-icon color="deep-purple">mdi-close</v-icon>
@@ -109,8 +145,8 @@
                                         <v-icon color="teal accent-4">mdi-arrow-left-thick</v-icon>
                                     </v-btn>
                                     <v-spacer></v-spacer>
-                                    <v-btn outlined v-if="selectedPhoto.filename != memory.photo" @click="selectPrimaryPhoto(selectedPhoto.filename)">Make Primary</v-btn>
-                                    <v-btn outlined v-else @click="selectPrimaryPhoto()">Remove Primary</v-btn>
+                                    <v-btn outlined small rounded v-if="selectedPhoto.filename != memory.photo" @click="selectPrimaryPhoto(selectedPhoto.filename)">Make Primary</v-btn>
+                                    <v-btn outlined small rounded v-else @click="selectPrimaryPhoto()">Remove Primary</v-btn>
                                     <v-spacer></v-spacer>
                                     <v-btn icon @click="nextPhoto()">
                                         <v-icon color="teal accent-4">mdi-arrow-right-thick</v-icon>
@@ -132,8 +168,8 @@
                 </v-card-text>
                 <v-card-actions class="py-4">
                     <v-spacer></v-spacer>
-                    <v-btn small color="red" outlined @click="deleteMemory">Delete Memory</v-btn>
-                    <v-btn small outlined @click="deleteMemoryPrompt = false">Cancel</v-btn>
+                    <v-btn small rounded outlined @click="deleteMemoryPrompt = false">Cancel</v-btn>
+                    <v-btn small rounded color="red" outlined @click="deleteMemory">Delete Memory</v-btn>
                     <v-spacer></v-spacer>
                 </v-card-actions>
             </v-card>
@@ -176,7 +212,7 @@
                 </v-card-text>
                 <v-card-actions class="pb-4">
                     <v-spacer></v-spacer>
-                    <v-btn outlined @click="primaryPhotoDialog = false">Cancel</v-btn>
+                    <v-btn rounded small outlined @click="primaryPhotoDialog = false">Cancel</v-btn>
                     <v-spacer></v-spacer>
                 </v-card-actions>
             </v-card>
@@ -191,7 +227,7 @@
             </template>
             <v-btn fab dark small color="red accent-4" @click="deleteMemoryPrompt = true"><v-icon>mdi-trash-can</v-icon></v-btn>
             <v-btn fab dark small color="deep-purple" @click="primaryPhotoDialog = true"><v-icon>mdi-camera</v-icon></v-btn>
-            <v-btn fab dark small color="deep-purple" @click="edit = true"><v-icon>mdi-square-edit-outline</v-icon></v-btn>
+            <v-btn fab dark small color="deep-purple" @click="editMode = true"><v-icon>mdi-square-edit-outline</v-icon></v-btn>
         </v-speed-dial>
     </v-container>
 </template>
@@ -212,8 +248,10 @@
                 viewPhotosDialog: false,
                 deleteMemoryPrompt: false,
                 primaryPhotoDialog: false,
+                datePickerDialog: false,
+                editEmojiDialog: false,
                 loading: true,
-                edit: false,
+                editMode: false,
                 fab: false,
                 fabBottom: true,
                 fabRight: true,
@@ -252,6 +290,21 @@
 
                     this.loading = false
                 })
+            },
+            saveMemory() {
+                if (this.$refs.saveForm.validate()) {
+                    let date = this.memory.date
+                    let title = this.memory.title
+                    let details = this.memory.details
+                    let user_id = this.memory.user_id
+
+                    axios.put('/api/memories/' + this.id, { date, title, details, user_id })
+                    .then(response => {
+                        Event.$emit('success', response.data.message)
+
+                        this.editMode = false
+                    })
+                }
             },
             deleteMemory() {
                 axios.delete('/api/memories/' + this.id)

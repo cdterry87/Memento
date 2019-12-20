@@ -75,13 +75,8 @@ class MemoryController extends Controller
             $status = false;
         } else {
             $status = $memory->update(
-                $request->only(['date', 'title', 'emotion', 'details'])
+                $request->only(['date', 'title', 'details'])
             );
-
-            //Pivot table relationship for reasons attached to this memory.
-            foreach ($request->reasons as $reason_id => $status) {
-                $memory->reasons()->attach($reason_id);
-            }
         }
 
         return response()->json([
