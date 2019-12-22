@@ -65,7 +65,7 @@
                                     <v-container grid-list-md>
                                         <v-layout row>
                                             <v-flex xs10 offset-xs1>
-                                                <v-slider v-model="emotion" min="1" max="11" color="deep-purple" track-color="teal accent-4"></v-slider>
+                                                <v-slider v-model="emotion" hide-details min="1" max="11" color="deep-purple" track-color="teal accent-4"></v-slider>
                                             </v-flex>
                                         </v-layout>
                                         <v-layout row>

@@ -55,12 +55,6 @@
                         </template>
                         <span>{{ reason.reason }}</span>
                     </v-tooltip>
-                    <v-tooltip top color="deep-purple">
-                        <template v-slot:activator="{ on }">
-                            <v-btn color="deep-purple" dark fab x-small v-on="on" class="mx-2" @click="editEmojiDialog = true"><v-icon>mdi-circle-edit-outline</v-icon></v-btn>
-                        </template>
-                        <span>Edit Emojis</span>
-                    </v-tooltip>
                 </div>
                 <div class="mt-5">
                     <v-divider></v-divider>
@@ -173,8 +167,32 @@
 
         <v-dialog v-model="editEmojiDialog" hide-overlay width="300px">
             <v-card light>
-                <v-card-text class="py-4 title text-center">
-
+                <v-card-text class="title text-center">
+                    <v-icon color="deep-purple" size="150" v-show="memory.emotion_id == e.id" v-for="(e, index) in emotions" :key="index">{{ e.icon }}</v-icon>
+                    <v-container grid-list-md>
+                        <v-layout row>
+                            <v-flex xs10 offset-xs1>
+                                <v-slider v-model="memory.emotion_id" hide-details min="1" max="11" color="deep-purple" track-color="teal accent-4"></v-slider>
+                            </v-flex>
+                        </v-layout>
+                    </v-container>
+                    <v-divider class="my-3"></v-divider>
+                    <v-list class="text-left" v-if="memory.reasons">
+                        <v-list-item v-for="(reason, index) in reasons" :key="index">
+                            <v-list-item-action>
+                                <v-icon color="deep-purple">{{ reason.icon }}</v-icon>
+                            </v-list-item-action>
+                            <v-list-item-content>
+                                <v-list-item-title>{{ reason.reason }}</v-list-item-title>
+                            </v-list-item-content>
+                            <v-list-item-action>
+                                <v-checkbox
+                                    color="teal accent-4"
+                                    v-model="selectedReasons[index]"
+                                ></v-checkbox>
+                            </v-list-item-action>
+                        </v-list-item>
+                    </v-list>
                 </v-card-text>
                 <v-card-actions class="py-4">
                     <v-spacer></v-spacer>
@@ -237,6 +255,7 @@
             </template>
             <v-btn fab dark small color="red accent-4" @click="deleteMemoryPrompt = true"><v-icon>mdi-trash-can</v-icon></v-btn>
             <v-btn fab dark small color="deep-purple" @click="primaryPhotoDialog = true"><v-icon>mdi-camera</v-icon></v-btn>
+            <v-btn fab dark small color="deep-purple" @click="editEmojiDialog = true"><v-icon>mdi-emoticon-excited-outline</v-icon></v-btn>
             <v-btn fab dark small color="deep-purple" @click="editMode = true"><v-icon>mdi-square-edit-outline</v-icon></v-btn>
         </v-speed-dial>
     </v-container>
@@ -300,6 +319,8 @@
                     this.memory = response.data
                     this.photos = response.data.photos
 
+                    this.getSelectedReasons()
+
                     this.loading = false
                 })
                 .catch(function (error) {
@@ -307,6 +328,18 @@
                     vm.$router.push('/home')
                     Event.$emit('error', 'An error occurred while loading this memory. Try again later.')
                 });
+            },
+            // Define the reasons that are already selected for this memory
+            getSelectedReasons() {
+                this.selectedReasons = []
+
+                this.reasons.forEach(reason => {
+                    if (this.memory.reasons.find(rsn => rsn.id == reason.id)) {
+                        this.selectedReasons.push(true)
+                    } else {
+                        this.selectedReasons.push(false)
+                    }
+                })
             },
             saveMemory() {
                 if (this.$refs.saveForm.validate()) {
@@ -324,7 +357,21 @@
                 }
             },
             saveEmojis() {
+                let id = this.id
+                let emotion_id = this.memory.emotion_id
+                let reasons = this.selectedReasons
+                let user_id = this.memory.user_id
 
+                axios.post('/api/memories/' + this.id + '/emojis', { id, emotion_id, reasons, user_id })
+                .then(response => {
+                    this.getMemory()
+
+                    this.getSelectedReasons()
+
+                    Event.$emit('success', response.data.message)
+
+                    this.editEmojiDialog = false
+                })
             },
             deleteMemory() {
                 axios.delete('/api/memories/' + this.id)

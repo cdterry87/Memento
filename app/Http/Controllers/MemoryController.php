@@ -89,6 +89,40 @@ class MemoryController extends Controller
     }
 
     /**
+     * Update the specified resource in storage.
+     *
+     * @param  \Illuminate\Http\Request  $request
+     * @return \Illuminate\Http\Response
+     */
+    public function updateEmojis(Request $request)
+    {
+        if (auth()->id() != $request->user_id) {
+            $status = false;
+        } else {
+            $memory = Memory::find($request->id);
+
+            $status = $memory->update(
+                $request->only(['emotion_id'])
+            );
+
+            // Delete all current memory reasons so they can be re-added.
+            $memory->reasons()->detach();
+
+            //Pivot table relationship for selected reasons attached to this memory.
+            foreach ($request->reasons as $id => $value) {
+                if ($value) {
+                    $memory->reasons()->attach($id + 1);
+                }
+            }
+        }
+
+        return response()->json([
+            'status' => $status,
+            'message' => $status ? 'Memory updated successfully!' : 'Error updating memory!'
+        ]);
+    }
+
+    /**
      * Remove the specified resource from storage.
      *
      * @param  \App\Memory $memory
