@@ -17,12 +17,10 @@ class EmotionSeeder extends Seeder
             ['emotion' => 'Awful', 'icon' => 'mdi-emoticon-cry-outline'],
             ['emotion' => 'Bad', 'icon' => 'mdi-emoticon-sad-outline'],
             ['emotion' => 'Frustrating', 'icon' => 'mdi-emoticon-angry-outline'],
-            ['emotion' => 'Confusing', 'icon' => 'mdi-emoticon-confusing-outline'],
             ['emotion' => 'Okay', 'icon' => 'mdi-emoticon-neutral-outline'],
             ['emotion' => 'Good', 'icon' => 'mdi-emoticon-happy-outline'],
             ['emotion' => 'Great', 'icon' => 'mdi-emoticon-outline'],
             ['emotion' => 'Fun', 'icon' => 'mdi-emoticon-tongue-outline'],
-            ['emotion' => 'Hilarious', 'icon' => 'mdi-emoticon-lol-outline'],
             ['emotion' => 'Awesome', 'icon' => 'mdi-emoticon-cool-outline'],
             ['emotion' => 'Romantic', 'icon' => 'mdi-emoticon-kiss-outline'],
             ['emotion' => 'Exciting', 'icon' => 'mdi-emoticon-excited-outline']
