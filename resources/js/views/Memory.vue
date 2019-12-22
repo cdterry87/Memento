@@ -25,8 +25,8 @@
                     <div class="my-3">
                         <div class="text-center my-3">
                             <v-spacer></v-spacer>
-                            <v-btn color="white" rounded outlined dark class="mx-2" @click="editMode = false">Cancel</v-btn>
-                            <v-btn type="submit" color="deep-purple" rounded dark class="mx-2">Save</v-btn>
+                            <v-btn color="white" outlined dark class="mx-2" @click="editMode = false">Cancel</v-btn>
+                            <v-btn type="submit" color="deep-purple" outlined dark class="mx-2">Save</v-btn>
                             <v-spacer></v-spacer>
                         </div>
                     </div>
@@ -57,7 +57,7 @@
                     </v-tooltip>
                     <v-tooltip top color="deep-purple">
                         <template v-slot:activator="{ on }">
-                            <v-btn color="deep-purple" dark icon v-on="on" class="mx-2" @click="editEmojiDialog = true"><v-icon>mdi-square-edit-outline</v-icon></v-btn>
+                            <v-btn color="deep-purple" dark fab x-small v-on="on" class="mx-2" @click="editEmojiDialog = true"><v-icon>mdi-circle-edit-outline</v-icon></v-btn>
                         </template>
                         <span>Edit Emojis</span>
                     </v-tooltip>
@@ -90,14 +90,10 @@
                                             </template>
                                         </v-file-input>
                                     </v-card-text>
-
-                                    <v-divider></v-divider>
-
                                     <v-card-actions>
                                         <v-spacer></v-spacer>
-                                        <v-btn type="submit" color="teal accent-4" text>
-                                            Upload Photos
-                                        </v-btn>
+                                        <v-btn small text @click="uploadPhotosDialog = false">Cancel</v-btn>
+                                        <v-btn type="submit" color="teal accent-4" small text>Upload Photos</v-btn>
                                         <v-spacer></v-spacer>
                                     </v-card-actions>
                                 </v-form>
@@ -145,8 +141,8 @@
                                         <v-icon color="teal accent-4">mdi-arrow-left-thick</v-icon>
                                     </v-btn>
                                     <v-spacer></v-spacer>
-                                    <v-btn outlined small rounded v-if="selectedPhoto.filename != memory.photo" @click="selectPrimaryPhoto(selectedPhoto.filename)">Make Primary</v-btn>
-                                    <v-btn outlined small rounded v-else @click="selectPrimaryPhoto()">Remove Primary</v-btn>
+                                    <v-btn small text v-if="selectedPhoto.filename != memory.photo" @click="selectPrimaryPhoto(selectedPhoto.filename)">Make Primary</v-btn>
+                                    <v-btn small text v-else @click="selectPrimaryPhoto()">Remove Primary</v-btn>
                                     <v-spacer></v-spacer>
                                     <v-btn icon @click="nextPhoto()">
                                         <v-icon color="teal accent-4">mdi-arrow-right-thick</v-icon>
@@ -168,8 +164,22 @@
                 </v-card-text>
                 <v-card-actions class="py-4">
                     <v-spacer></v-spacer>
-                    <v-btn small rounded outlined @click="deleteMemoryPrompt = false">Cancel</v-btn>
-                    <v-btn small rounded color="red" outlined @click="deleteMemory">Delete Memory</v-btn>
+                    <v-btn small text @click="deleteMemoryPrompt = false">Cancel</v-btn>
+                    <v-btn small text color="red" @click="deleteMemory">Delete Memory</v-btn>
+                    <v-spacer></v-spacer>
+                </v-card-actions>
+            </v-card>
+        </v-dialog>
+
+        <v-dialog v-model="editEmojiDialog" hide-overlay width="300px">
+            <v-card light>
+                <v-card-text class="py-4 title text-center">
+
+                </v-card-text>
+                <v-card-actions class="py-4">
+                    <v-spacer></v-spacer>
+                    <v-btn small text @click="editEmojiDialog = false">Cancel</v-btn>
+                    <v-btn small text color="teal accent-4" @click="saveEmojis">Save Emojis</v-btn>
                     <v-spacer></v-spacer>
                 </v-card-actions>
             </v-card>
@@ -212,7 +222,7 @@
                 </v-card-text>
                 <v-card-actions class="pb-4">
                     <v-spacer></v-spacer>
-                    <v-btn rounded small outlined @click="primaryPhotoDialog = false">Cancel</v-btn>
+                    <v-btn small text @click="primaryPhotoDialog = false">Cancel</v-btn>
                     <v-spacer></v-spacer>
                 </v-card-actions>
             </v-card>
@@ -312,6 +322,9 @@
                         this.editMode = false
                     })
                 }
+            },
+            saveEmojis() {
+
             },
             deleteMemory() {
                 axios.delete('/api/memories/' + this.id)
