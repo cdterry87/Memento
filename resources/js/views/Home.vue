@@ -1,5 +1,5 @@
 <template>
-   <v-container fluid grid-list-md id="home">
+   <v-container fluid grid-list-md id="home" class="mt-0 pt-0">
        <Loading v-if="loading" />
         <v-layout row v-else>
             <v-flex xs10 offset-xs1>
@@ -11,21 +11,23 @@
                         <v-btn outlined x-large color="white" @click="dialog = true">Get Started!</v-btn>
                     </div>
                 </div>
-                <v-row justify="center" v-for="(memory, index) in memories" :key="index">
-                    <v-card light class="my-3 card animated home-card" v-view="viewHandler" width="100%" :to="'memory/' + memory.id">
-                        <v-img v-if="memory.photo" height="225px" :src="memory.photo" :title="memory.title"></v-img>
-                        <v-card-text>
-                            <v-icon size="64" color="grey lighten-3" class="float-right">{{ getEmotion(memory.emotion_id) }}</v-icon>
-                            <h1 class="title">{{ memory.title | truncate(20) }}</h1>
-                            <div class="mt-1 grey--text caption">
-                                {{ formatDate(memory.date) }}
-                            </div>
-                            <div class="mt-2" v-if="memory.details">
-                                {{ memory.details | truncate(100) }}
-                            </div>
-                        </v-card-text>
-                    </v-card>
-                </v-row>
+                <v-layout row justify="center">
+                    <v-flex xs12 md6 lg4 v-for="(memory, index) in memories" :key="index">
+                        <v-card light class="my-3 card animated home-card" v-view="viewHandler" width="100%" :to="'memory/' + memory.id">
+                            <v-img v-if="memory.photo" height="225px" :src="memory.photo" :title="memory.title"></v-img>
+                            <v-card-text>
+                                <v-icon size="64" color="grey lighten-3" class="float-right">{{ getEmotion(memory.emotion_id) }}</v-icon>
+                                <h1 class="title">{{ memory.title | truncate(20) }}</h1>
+                                <div class="mt-1 grey--text caption">
+                                    {{ formatDate(memory.date) }}
+                                </div>
+                                <div class="mt-2" v-if="memory.details">
+                                    {{ memory.details | truncate(100) }}
+                                </div>
+                            </v-card-text>
+                        </v-card>
+                    </v-flex>
+                </v-layout>
                 <v-row style="margin-top: 150px;">&nbsp;</v-row>
                 <v-dialog v-model="dialog" fullscreen hide-overlay transition="dialog-bottom-transition">
                     <template v-slot:activator="{ on }">
