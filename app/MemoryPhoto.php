@@ -17,6 +17,11 @@ class MemoryPhoto extends Model
 
     public static function correctImageOrientation($directory)
     {
+        // Exif extension must be loaded for this to work
+        if (!extension_loaded('exif')) {
+            return;
+        }
+
         $scanned_directory = array_diff(scandir($directory), array('..', '.'));
         foreach ($scanned_directory as &$file) {
             if (is_dir($directory . "/" . $file)) {

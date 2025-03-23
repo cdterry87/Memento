@@ -60,7 +60,14 @@ npm run watch # Starts watching for js changes
 
 -   View the site at http://localhost:8000
 
-To start and stop the container after initial setup:
+### You may also need to do this for file uploads:
+
+```
+php artisan storage:link
+chmod -R 777 /var/www/storage /var/www/bootstrap/cache
+```
+
+### To start and stop the container after initial setup:
 
 ```
 # Start container
@@ -69,7 +76,8 @@ docker compose up -d
 # Go to the container terminal
 docker exec -it laravel_app bash
 
-# Run npm
+# Run npm to watch for changes
+npm run watch
 
 # Stop container
 docker compose down

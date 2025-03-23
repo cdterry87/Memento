@@ -20,11 +20,15 @@ RUN apt-get update && apt-get install -y \
     nodejs \
     npm \
     && docker-php-ext-configure gd --with-freetype --with-jpeg \
-    && docker-php-ext-install gd mbstring pdo_mysql tokenizer xml \
+    && docker-php-ext-install gd mbstring pdo_mysql tokenizer xml exif \
+    && docker-php-ext-enable exif \
     && rm -rf /var/lib/apt/lists/*
 
 # Install Composer
 COPY --from=composer:latest /usr/bin/composer /usr/bin/composer
+
+# Create a custom PHP configuration file to set upload limits
+# RUN echo "upload_max_filesize=16M\npost_max_size=16M" > /usr/local/etc/php/conf.d/uploads.ini
 
 # Copy Laravel application files
 COPY . .
