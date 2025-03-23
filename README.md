@@ -43,7 +43,8 @@ password: password
 -   Build the docker image using this command:
 
 ```
-docker compose up -d --build # if `docker compose` doesn't work, try `docker-compose`
+docker compose up -d --build
+# NOTE: If `docker compose` doesn't work, try `docker-compose`
 ```
 
 -   Go into the terminal of the container and install dependencies and perform the rest of the setup:
@@ -53,7 +54,23 @@ docker exec -it laravel_app bash
 composer install
 php artisan key:generate
 php artisan migrate:fresh --seed
-exit
+npm install
+npm run watch # Starts watching for js changes
 ```
 
 -   View the site at http://localhost:8000
+
+To start and stop the container after initial setup:
+
+```
+# Start container
+docker compose up -d
+
+# Go to the container terminal
+docker exec -it laravel_app bash
+
+# Run npm
+
+# Stop container
+docker compose down
+```
