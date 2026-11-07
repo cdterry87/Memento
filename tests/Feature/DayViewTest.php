@@ -58,7 +58,7 @@ it('rejects future and impossible dates', function (string $date) {
 
 it('returns to the day after saving a past day', function () {
     $this->actingAs($this->user)
-        ->put(route('days.update', '2026-10-31'), ['mood' => 'good', 'reasons' => []])
+        ->put(route('days.update', '2026-10-31'), ['mood' => 'good', 'reasons' => ['work']])
         ->assertRedirect(route('days.show', '2026-10-31'))
         ->assertSessionHas('status', 'check-in-saved');
 });
@@ -95,7 +95,7 @@ it('lets a day be checked in again after deleting it', function () {
     Memory::factory()->for($this->user)->create(['date' => '2026-10-31']);
 
     $this->actingAs($this->user)->delete(route('days.destroy', '2026-10-31'));
-    $this->actingAs($this->user)->put(route('days.update', '2026-10-31'), ['mood' => 'okay', 'reasons' => []]);
+    $this->actingAs($this->user)->put(route('days.update', '2026-10-31'), ['mood' => 'okay', 'reasons' => ['work']]);
 
     expect($this->user->memories()->sole()->mood->slug)->toBe('okay');
 });

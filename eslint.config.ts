@@ -9,7 +9,7 @@ export default defineConfigWithVueTs(
     },
     {
         name: 'app/files-to-ignore',
-        ignores: ['vendor/**', 'node_modules/**', 'public/**', 'bootstrap/ssr/**', 'storage/**'],
+        ignores: ['vendor/**', 'node_modules/**', 'public/**', 'bootstrap/ssr/**', 'storage/**', 'tests/reports/**'],
     },
     pluginVue.configs['flat/recommended'],
     vueTsConfigs.recommended,

@@ -18,8 +18,8 @@ it('can run again without creating duplicates', function () {
     $this->seed(LookupSeeder::class);
     $this->seed(LookupSeeder::class);
 
-    expect(Mood::count())->toBe(12)
-        ->and(Reason::count())->toBe(11);
+    expect(Mood::count())->toBe(count(require database_path('data/moods.php')))
+        ->and(Reason::count())->toBe(count(require database_path('data/reasons.php')));
 });
 
 it('restores edited rows from the data files by slug', function () {

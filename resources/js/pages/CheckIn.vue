@@ -61,7 +61,14 @@ const cancelUrl = computed(() =>
 const dayLabel = computed(() => (props.isToday ? 'Today' : formatLongDate(props.date)));
 const selectedMood = computed(() => props.moods.find((mood) => mood.slug === form.mood));
 const isMessageTooLong = computed(() => characterCount(draft.text.value) > 255);
-const canSave = computed(() => !!form.mood && !isMessageTooLong.value && !form.processing);
+const hasReason = computed(() => form.reasons.length > 0);
+const isLastStep = computed(() => step.value === steps.length);
+
+/** Each step must be answered before the next, except the optional last one. */
+const canContinue = computed(() => (step.value === 1 ? !!form.mood : hasReason.value));
+const canSave = computed(
+    () => !!form.mood && hasReason.value && !isMessageTooLong.value && !form.processing,
+);
 
 function save(): void {
     form.transform((data) => ({ ...data, body: data.body.trim() })).put(`/days/${props.date}`, {
@@ -99,12 +106,15 @@ function save(): void {
                     <span aria-hidden="true">{{ selectedMood.emoji }}</span>
                     {{ selectedMood.label }}.
                 </span>
-                Choose as many as you like, or none.
+                Pick at least one.
             </template>
             <template v-else>A few words or a photo, if you feel like it.</template>
         </p>
 
         <v-alert v-if="form.errors.mood" type="error" class="mb-4">{{ form.errors.mood }}</v-alert>
+        <v-alert v-if="form.errors.reasons" type="error" class="mb-4">
+            {{ form.errors.reasons }}
+        </v-alert>
 
         <EmojiPicker v-if="step === 1" v-model="form.mood" :options="moods" legend="Mood" />
 
@@ -114,6 +124,7 @@ function save(): void {
             :options="reasons"
             legend="Reasons"
             multiple
+            :columns="4"
         />
 
         <div v-else class="d-flex flex-column ga-4">
@@ -133,17 +144,17 @@ function save(): void {
             <v-spacer />
 
             <v-btn
-                v-if="step < steps.length && form.mood"
-                variant="tonal"
+                v-if="!isLastStep && form.mood"
                 color="primary"
                 :append-icon="mdiArrowRight"
+                :disabled="!canContinue"
                 @click="step++"
             >
                 Next
             </v-btn>
 
             <v-btn
-                v-if="form.mood"
+                v-if="isLastStep"
                 color="primary"
                 :prepend-icon="mdiCheck"
                 :disabled="!canSave"

@@ -229,10 +229,10 @@ A short flow with one question per screen, a visible progress indicator, and aut
 | Step | Prompt | Input | Rules |
 |---|---|---|---|
 | 1 | "How was your day?" | Emoji grid, one choice. Selecting advances automatically | **Required** |
-| 2 | "What made it that way?" | Emoji grid, multiple choice | Optional |
-| 3 | "Anything to remember?" | Message box with a live counter, plus add-photo and record-voice buttons | All optional. The message is gently encouraged by placeholder text, never enforced |
+| 2 | "What made it that way?" | Emoji grid, multiple choice, at most four columns | **Required**, at least one |
+| 3 | "Anything to remember?" | Message box with a live counter, plus an add-photo button | All optional. The message is gently encouraged by placeholder text, never enforced |
 
-- The save button is always reachable after step 1, so a mood-only check-in takes one or two taps.
+- The save button appears only on step 3, so nobody saves without seeing the last step. Step 3 stays optional: a quick check-in is a mood, a reason, Next, then Save.
 - The label of a selected emoji is shown as a caption ("Great") and is always available to screen readers.
 - Saving ends with a small celebratory animation, which respects `prefers-reduced-motion`.
 - An unsaved message is kept as a local draft, so an accidental refresh doesn't lose it.
@@ -259,6 +259,8 @@ A short flow with one question per screen, a visible progress indicator, and aut
 - HEIC must be tested on real iPhones. Safari usually converts on upload, but that needs confirming. If it doesn't, HEIC support requires Imagick with libheif.
 
 ### 6.4 Voice messages
+
+> **Deferred.** Voice is not part of the first release (see section 12). The notes below are kept for when it is picked up.
 
 - Recording uses the native `MediaRecorder` API with a custom UI: tap to record, a live timer, automatic stop at 60 seconds, then preview, re-record, or keep.
 - **Format negotiation** via `MediaRecorder.isTypeSupported`: prefer `audio/mp4` (AAC), since it plays on every target browser, then fall back to `audio/webm;codecs=opus`. No server transcoding is planned, which avoids an ffmpeg dependency.
@@ -713,9 +715,8 @@ QUEUE_CONNECTION=database
 
 ### Release acceptance criteria
 
-- [ ] A one-tap mood check-in saves in a single flow from the Today screen
-- [ ] A complete check-in with photos, voice, and message works on iOS Safari and Android Chrome
-- [ ] A voice note recorded on one platform plays on the other
+- [ ] A quick check-in (mood and reasons) saves in a single flow from the Today screen
+- [ ] A complete check-in with photos and message works on iOS Safari and Android Chrome
 - [ ] One entry per day is enforced by the database
 - [ ] Past days can be scrolled, opened, edited, and deleted
 - [ ] "On this day" appears only when there are matches
@@ -790,14 +791,14 @@ Things to note:
 | 3 | Check-in core | Schema, data-driven moods and reasons, check-in flow, message, policies, and the cross-user test suite |
 | 4 | Timeline and day view | Infinite scroll, day view, edit, delete |
 | 5 | Photos | R2 storage, signed URLs, processing, upload, lightbox, reorder |
-| 6 | Voice | Recorder, player, cross-device testing |
+| 6 | ~~Voice~~ | Deferred to a later release (section 12) |
 | 7 | Today | Quotes and hide setting, on this day, final home screen |
 | 8 | Recap | Builder service, SVG charts, story layout |
 | 9 | Email | Queue, scheduler, reminders, on-this-day email, unsubscribe |
 | 10 | Demo mode | Demo flag, restrictions, seeded data, nightly reset |
 | 11 | Release polish | Export, account deletion, privacy page, accessibility audit, performance, deployment |
 
-Voice is the highest-risk item because of browser differences, so its cross-device check should happen early in milestone 6, before building the full UI.
+Voice was the highest-risk item because of browser differences. It is deferred, and when it is picked up, its cross-device check should happen first, before building the full UI.
 
 ## 11. Decisions
 
@@ -858,6 +859,7 @@ Not part of the first release:
 
 - A mobile app, backed by a new API
 - Search and mood filtering
+- Voice messages (section 6.4)
 - A calendar view
 - Custom reasons per user
 - Gentle streaks, without penalties
