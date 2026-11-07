@@ -3,11 +3,13 @@
 namespace App\Models;
 
 use App\Enums\Theme;
+use Carbon\CarbonImmutable;
 use Database\Factories\UserFactory;
 use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Database\Eloquent\Attributes\Fillable;
 use Illuminate\Database\Eloquent\Attributes\Hidden;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 
@@ -43,5 +45,22 @@ class User extends Authenticatable implements MustVerifyEmail
             'on_this_day_emails' => 'boolean',
             'is_demo' => 'boolean',
         ];
+    }
+
+    /**
+     * @return HasMany<Memory, $this>
+     */
+    public function memories(): HasMany
+    {
+        return $this->hasMany(Memory::class);
+    }
+
+    /**
+     * Today's date on the user's own calendar, which decides what "today"
+     * means for check-ins and which dates are in the future.
+     */
+    public function today(): CarbonImmutable
+    {
+        return CarbonImmutable::now($this->timezone)->startOfDay();
     }
 }

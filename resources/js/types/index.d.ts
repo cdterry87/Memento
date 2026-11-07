@@ -11,6 +11,27 @@ export interface CurrentUser {
     theme: ThemePreference;
 }
 
+/** A pickable option in the check-in, shaped by MoodResource and ReasonResource. */
+export interface EmojiOption {
+    slug: string;
+    label: string;
+    emoji: string;
+}
+
+export interface Mood extends EmojiOption {
+    score: number;
+}
+
+export type Reason = EmojiOption;
+
+/** One day's check-in, shaped by MemoryResource. */
+export interface Memory {
+    date: string;
+    mood: Mood;
+    reasons: Reason[];
+    body: string | null;
+}
+
 declare module '@inertiajs/core' {
     export interface InertiaConfig {
         sharedPageProps: {
