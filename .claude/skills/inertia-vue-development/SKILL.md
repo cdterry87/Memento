@@ -26,7 +26,7 @@ Use `search-docs` for detailed Inertia v3 Vue patterns and documentation.
 
 ### Page Components Location
 
-Vue page components should be placed in the `resources/js/Pages` directory.
+Vue page components should be placed in the `resources/js/pages` directory.
 
 ### Page Component Structure
 
