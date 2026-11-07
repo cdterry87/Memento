@@ -27,14 +27,10 @@ describe('Welcome', () => {
         expect(mountWelcome().find('h1').text()).toBe('Memento');
     });
 
-    it('switches to the dark theme', async () => {
-        const wrapper = mountWelcome();
+    it('links into the app', () => {
+        const link = mountWelcome().find('a');
 
-        await wrapper
-            .findAll('button')
-            .find((button) => button.text() === 'Dark')!
-            .trigger('click');
-
-        expect(vuetify.theme.global.name.value).toBe('dark');
+        expect(link.text()).toBe('Take a look');
+        expect(link.attributes('href')).toBe('/today');
     });
 });
