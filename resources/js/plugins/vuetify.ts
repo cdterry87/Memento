@@ -1,4 +1,4 @@
-import { readStoredTheme } from '@/composables/useAppTheme';
+import { readInitialTheme } from '@/composables/useAppTheme';
 import { createVuetify, type ThemeDefinition } from 'vuetify';
 import { aliases, mdi } from 'vuetify/iconsets/mdi-svg';
 import 'vuetify/styles';
@@ -79,7 +79,7 @@ const fieldDefaults = { variant: 'solo-filled', flat: true, rounded: 'lg' } as c
 
 export default createVuetify({
     theme: {
-        defaultTheme: readStoredTheme(),
+        defaultTheme: readInitialTheme(),
         themes: { light, dark },
     },
     icons: {
@@ -95,6 +95,7 @@ export default createVuetify({
         VTextField: fieldDefaults,
         VTextarea: fieldDefaults,
         VSelect: fieldDefaults,
+        VAutocomplete: fieldDefaults,
         VSwitch: { color: 'primary', inset: true, hideDetails: 'auto' },
         VBtnToggle: { rounded: 'pill', color: 'primary' },
         VBottomNavigation: { elevation: 0 },

@@ -1,0 +1,32 @@
+<?php
+
+namespace App\Http\Resources;
+
+use App\Models\User;
+use Illuminate\Http\Request;
+use Illuminate\Http\Resources\Json\JsonResource;
+
+/**
+ * The signed-in user, as shared with every page. Only what the interface
+ * needs, so nothing else leaks to the browser.
+ *
+ * @mixin User
+ */
+class CurrentUserResource extends JsonResource
+{
+    /**
+     * Transform the resource into an array.
+     *
+     * @return array{name: string, email: string, emailVerified: bool, timezone: string, theme: string}
+     */
+    public function toArray(Request $request): array
+    {
+        return [
+            'name' => $this->name,
+            'email' => $this->email,
+            'emailVerified' => $this->hasVerifiedEmail(),
+            'timezone' => $this->timezone,
+            'theme' => $this->theme->value,
+        ];
+    }
+}

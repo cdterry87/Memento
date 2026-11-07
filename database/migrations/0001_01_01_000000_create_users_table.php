@@ -18,6 +18,13 @@ return new class extends Migration
             $table->timestamp('email_verified_at')->nullable();
             $table->string('password');
             $table->rememberToken();
+            $table->string('timezone')->default('UTC');
+            $table->string('theme')->default('system');
+            $table->boolean('show_quotes')->default(true);
+            $table->boolean('reminder_emails')->default(false);
+            $table->time('reminder_time')->default('20:00');
+            $table->boolean('on_this_day_emails')->default(false);
+            $table->boolean('is_demo')->default(false);
             $table->timestamps();
         });
 

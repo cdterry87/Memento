@@ -1,29 +1,35 @@
 import vuetify from '@/plugins/vuetify';
 import { flushPromises, mount } from '@vue/test-utils';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
-import { defineComponent, h, reactive } from 'vue';
+import { h, reactive } from 'vue';
 import AppLayout from './AppLayout.vue';
 
 const inertia = vi.hoisted(() => ({
-    page: { url: '/today' },
+    page: { url: '/today', props: { auth: { user: { name: 'Ada' } } } },
     visit: vi.fn(),
+    post: vi.fn(),
 }));
 
-vi.mock('@inertiajs/vue3', async (importOriginal) => ({
-    ...(await importOriginal<typeof import('@inertiajs/vue3')>()),
-    usePage: () => inertia.page,
-    router: { visit: inertia.visit },
-    Link: defineComponent({
-        props: { href: { type: String, required: true } },
-        setup:
-            (props, { slots }) =>
-            () =>
-                h('a', { href: props.href }, slots.default?.()),
-    }),
-}));
+vi.mock('@inertiajs/vue3', async (importOriginal) => {
+    // Imported here because the mock can load before this file's own imports.
+    const { defineComponent, h } = await import('vue');
+
+    return {
+        ...(await importOriginal<typeof import('@inertiajs/vue3')>()),
+        usePage: () => inertia.page,
+        router: { visit: inertia.visit, post: inertia.post },
+        Link: defineComponent({
+            props: { href: { type: String, required: true } },
+            setup:
+                (props, { slots }) =>
+                () =>
+                    h('a', { href: props.href }, slots.default?.()),
+        }),
+    };
+});
 
 function mountLayout(url: string) {
-    inertia.page = reactive({ url });
+    inertia.page = reactive({ url, props: { auth: { user: { name: 'Ada' } } } });
 
     return mount(AppLayout, {
         attachTo: document.body,
@@ -45,11 +51,11 @@ function barLink(wrapper: Layout, label: string) {
     return barLinks(wrapper).find((link) => link.text() === label)!;
 }
 
-async function openMenu(wrapper: Layout): Promise<HTMLAnchorElement[]> {
+async function openMenu(wrapper: Layout): Promise<HTMLElement> {
     await wrapper.find('button[aria-label="Menu"]').trigger('click');
     await flushPromises();
 
-    return [...document.body.querySelectorAll<HTMLAnchorElement>('.v-overlay .v-list a')];
+    return document.body.querySelector<HTMLElement>('.v-overlay--active .v-list')!;
 }
 
 describe('AppLayout', () => {
@@ -57,6 +63,7 @@ describe('AppLayout', () => {
 
     beforeEach(() => {
         inertia.visit.mockClear();
+        inertia.post.mockClear();
     });
 
     afterEach(() => {
@@ -77,8 +84,13 @@ describe('AppLayout', () => {
             ['Today', '/today'],
             ['Timeline', '/timeline'],
             ['Recap', '/recap'],
-            ['Account', '/account'],
         ]);
+    });
+
+    it("shows the signed-in user's name on the account menu", () => {
+        wrapper = mountLayout('/today');
+
+        expect(wrapper.find('button[aria-haspopup="menu"]').text()).toBe('Ada');
     });
 
     it('marks the current screen, including pages beneath it', () => {
@@ -107,7 +119,8 @@ describe('AppLayout', () => {
     it('offers every screen from the menu button on narrow screens', async () => {
         wrapper = mountLayout('/timeline');
 
-        const links = await openMenu(wrapper);
+        const menu = await openMenu(wrapper);
+        const links = [...menu.querySelectorAll('a')];
 
         expect(links.map((link) => [link.textContent?.trim(), link.getAttribute('href')])).toEqual([
             ['Today', '/today'],
@@ -116,5 +129,18 @@ describe('AppLayout', () => {
             ['Account', '/account'],
         ]);
         expect(links[1].getAttribute('aria-current')).toBe('page');
+    });
+
+    it('signs out from the menu', async () => {
+        wrapper = mountLayout('/today');
+
+        const menu = await openMenu(wrapper);
+        const signOut = [...menu.querySelectorAll<HTMLElement>('.v-list-item')].find(
+            (item) => item.textContent?.trim() === 'Sign out',
+        )!;
+
+        signOut.click();
+
+        expect(inertia.post).toHaveBeenCalledWith('/logout');
     });
 });

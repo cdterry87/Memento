@@ -1,29 +1,24 @@
+import type { ThemePreference } from '@/types';
+import { router, usePage } from '@inertiajs/vue3';
 import { computed, type WritableComputedRef } from 'vue';
 import { useTheme } from 'vuetify';
 
-export type ThemePreference = 'system' | 'light' | 'dark';
-
 /**
- * Where the theme choice is kept until accounts exist. Milestone 2 moves it
- * to `users.theme` so that it follows the user across devices. The inline
- * script in app.blade.php reads the same key before the first paint.
+ * Where a signed-out visitor's theme choice is kept. Signed-in users have
+ * theirs saved in `users.theme`. The inline script in app.blade.php reads
+ * the same key before the first paint.
  */
 export const THEME_STORAGE_KEY = 'memento.theme';
 
-const preferences: ThemePreference[] = ['system', 'light', 'dark'];
+/**
+ * The theme to start with, read from the page before the app mounts. The
+ * server sets `data-theme` for a signed-in user's saved choice, and the
+ * inline script sets it from local storage for visitors.
+ */
+export function readInitialTheme(): ThemePreference {
+    const theme = document.documentElement.dataset.theme;
 
-function isThemePreference(value: unknown): value is ThemePreference {
-    return preferences.includes(value as ThemePreference);
-}
-
-export function readStoredTheme(): ThemePreference {
-    try {
-        const stored = window.localStorage.getItem(THEME_STORAGE_KEY);
-
-        return isThemePreference(stored) ? stored : 'system';
-    } catch {
-        return 'system';
-    }
+    return theme === 'light' || theme === 'dark' ? theme : 'system';
 }
 
 function storeTheme(preference: ThemePreference): void {
@@ -52,13 +47,22 @@ function applyDocumentTheme(preference: ThemePreference): void {
 
 export function useAppTheme(): { preference: WritableComputedRef<ThemePreference> } {
     const theme = useTheme();
+    const page = usePage();
 
     const preference = computed<ThemePreference>({
         get: () => (theme.isSystem.value ? 'system' : (theme.global.name.value as ThemePreference)),
         set: (value) => {
             theme.change(value);
-            storeTheme(value);
             applyDocumentTheme(value);
+            storeTheme(value);
+
+            if (page.props.auth.user) {
+                router.patch(
+                    '/account/preferences',
+                    { theme: value },
+                    { preserveScroll: true, preserveState: true },
+                );
+            }
         },
     });
 
