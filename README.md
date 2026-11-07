@@ -31,10 +31,10 @@ You don't need PHP, Composer, or Node installed locally. Everything runs inside 
     cd Memento
     ```
 
-2. Install the PHP dependencies, using a temporary container that includes Composer:
+2. Install the PHP dependencies, using a temporary container that includes Composer. Sail doesn't publish a PHP 8.5 Composer image yet, so this uses the 8.4 one and skips the platform check:
 
     ```bash
-    docker run --rm -u "$(id -u):$(id -g)" -v "$(pwd):/var/www/html" -w /var/www/html laravelsail/php85-composer:latest composer install --ignore-platform-reqs
+    docker run --rm -u "$(id -u):$(id -g)" -v "$(pwd):/var/www/html" -w /var/www/html laravelsail/php84-composer:latest composer install --ignore-platform-reqs
     ```
 
 3. Create your environment file:
