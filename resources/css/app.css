@@ -1,0 +1,25 @@
+@import '@fontsource-variable/nunito';
+@import '@fontsource/leckerli-one';
+
+:root {
+    --v-font-body: 'Nunito Variable', system-ui, sans-serif;
+    --font-logo: 'Leckerli One', cursive;
+}
+
+/* Matches the Vuetify background before the app mounts, avoiding a flash. */
+html,
+body {
+    background: #fbfaff;
+}
+
+@media (prefers-color-scheme: dark) {
+    html,
+    body {
+        background: #17162b;
+    }
+}
+
+.font-logo {
+    font-family: var(--font-logo);
+    font-weight: 400;
+}
