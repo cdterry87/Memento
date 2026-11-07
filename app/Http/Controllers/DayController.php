@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Actions\DeleteMemory;
 use App\Actions\StoreMemory;
 use App\Http\Requests\StoreMemoryRequest;
 use App\Http\Resources\MemoryResource;
@@ -23,6 +24,26 @@ use Inertia\Response;
  */
 class DayController extends Controller
 {
+    /**
+     * The day view. A day without an entry goes straight to the check-in.
+     */
+    public function show(Request $request, CarbonImmutable $date): Response|RedirectResponse
+    {
+        /** @var User $user */
+        $user = $request->user();
+        $memory = $this->memoryFor($user, $date);
+
+        if (! $memory) {
+            return to_route('days.check-in', $date->toDateString());
+        }
+
+        return Inertia::render('Day', [
+            'date' => $date->toDateString(),
+            'isToday' => $this->isToday($user, $date),
+            'memory' => (new MemoryResource($memory))->resolve($request),
+        ]);
+    }
+
     /**
      * The check-in flow for a new or existing entry.
      */
@@ -46,7 +67,7 @@ class DayController extends Controller
 
         return Inertia::render('CheckIn', [
             'date' => $date->toDateString(),
-            'isToday' => $date->toDateString() === $user->today()->toDateString(),
+            'isToday' => $this->isToday($user, $date),
             'memory' => $memory ? (new MemoryResource($memory))->resolve($request) : null,
             'moods' => MoodResource::collection($moods)->resolve($request),
             'reasons' => ReasonResource::collection($reasons)->resolve($request),
@@ -64,7 +85,29 @@ class DayController extends Controller
 
         $storeMemory->handle($user, $date, $request->mood(), $request->reasons(), $request->body());
 
-        return to_route('today')->with('status', 'check-in-saved');
+        $destination = $this->isToday($user, $date)
+            ? to_route('today')
+            : to_route('days.show', $date->toDateString());
+
+        return $destination->with('status', 'check-in-saved');
+    }
+
+    /**
+     * Delete the entry for this date.
+     */
+    public function destroy(Request $request, CarbonImmutable $date, DeleteMemory $deleteMemory): RedirectResponse
+    {
+        /** @var User $user */
+        $user = $request->user();
+
+        $deleteMemory->handle($user->memories()->where('date', $date->toDateString())->firstOrFail());
+
+        return to_route('timeline')->with('status', 'memory-deleted');
+    }
+
+    private function isToday(User $user, CarbonImmutable $date): bool
+    {
+        return $date->isSameDay($user->today());
     }
 
     private function memoryFor(User $user, CarbonImmutable $date): ?Memory

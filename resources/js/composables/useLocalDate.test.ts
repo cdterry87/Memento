@@ -1,10 +1,39 @@
 import { describe, expect, it } from 'vitest';
-import { characterCount, formatLongDate, greetingFor } from './useLocalDate';
+import {
+    characterCount,
+    dayOfMonth,
+    formatLongDate,
+    formatMonthYear,
+    formatShortWeekday,
+    greetingFor,
+    monthKey,
+} from './useLocalDate';
 
 describe('formatLongDate', () => {
     it('formats the calendar date without shifting it to another day', () => {
         expect(formatLongDate('2026-11-06')).toContain('November 6');
         expect(formatLongDate('2026-11-06')).toContain('Friday');
+        expect(formatLongDate('2026-11-06')).not.toContain('2026');
+    });
+
+    it('adds the year when asked', () => {
+        expect(formatLongDate('2025-01-01', { withYear: true })).toContain('2025');
+    });
+});
+
+describe('timeline date helpers', () => {
+    it('formats the first and last day of a month as that month', () => {
+        expect(formatMonthYear('2026-11-01')).toBe('November 2026');
+        expect(formatMonthYear('2026-10-31')).toBe('October 2026');
+    });
+
+    it('formats the weekday and day of the month', () => {
+        expect(formatShortWeekday('2026-11-06')).toBe('Fri');
+        expect(dayOfMonth('2026-11-06')).toBe(6);
+    });
+
+    it('groups dates by calendar month', () => {
+        expect(monthKey('2026-11-06')).toBe('2026-11');
     });
 });
 

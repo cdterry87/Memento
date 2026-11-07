@@ -47,6 +47,10 @@ watch(
     },
 );
 
+/** Cancelling goes back to where an existing past entry lives, otherwise to Today. */
+const cancelUrl = computed(() =>
+    props.memory && !props.isToday ? `/days/${props.date}` : '/today',
+);
 const dayLabel = computed(() => (props.isToday ? 'Today' : formatLongDate(props.date)));
 const selectedMood = computed(() => props.moods.find((mood) => mood.slug === form.mood));
 const isMessageTooLong = computed(() => characterCount(draft.text.value) > 255);
@@ -67,7 +71,7 @@ function save(): void {
             <p class="text-overline text-medium-emphasis">
                 {{ dayLabel }} · Step {{ step }} of {{ steps.length }}
             </p>
-            <Link href="/today" class="text-body-2 text-primary">Cancel</Link>
+            <Link :href="cancelUrl" class="text-body-2 text-primary">Cancel</Link>
         </div>
 
         <v-progress-linear
