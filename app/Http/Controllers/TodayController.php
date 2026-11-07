@@ -22,7 +22,7 @@ class TodayController extends Controller
         $today = $user->today();
 
         $memory = $user->memories()
-            ->with(['mood', 'reasons'])
+            ->with(['mood', 'reasons', 'photos'])
             ->where('date', $today->toDateString())
             ->first();
 

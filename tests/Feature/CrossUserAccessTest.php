@@ -1,11 +1,13 @@
 <?php
 
 use App\Models\Memory;
+use App\Models\MemoryPhoto;
 use App\Models\User;
 use Carbon\CarbonImmutable;
 use Database\Seeders\LookupSeeder;
 use Illuminate\Routing\Route as RoutingRoute;
 use Illuminate\Support\Facades\Route;
+use Illuminate\Support\Facades\Storage;
 
 /*
  * Every journal record is reached through the signed-in user, so another
@@ -25,6 +27,11 @@ beforeEach(function () {
         'date' => '2026-11-07',
         'body' => $this->secret,
     ]);
+
+    Storage::fake('media');
+    $this->ownersPhoto = MemoryPhoto::factory()->for($this->ownersMemory)->create();
+    Storage::disk('media')->put($this->ownersPhoto->path, 'photo');
+    Storage::disk('media')->put($this->ownersPhoto->thumbnail_path, 'thumbnail');
 });
 
 afterEach(function () {
@@ -42,16 +49,40 @@ function signedInRoutes(): array
         ->all();
 }
 
+/**
+ * Fills a route's parameters with the owner's records.
+ */
 function urlFor(RoutingRoute $route): string
 {
-    $unknown = array_diff($route->parameterNames(), ['date']);
+    $values = [
+        '{date}' => '2026-11-07',
+        '{photo}' => test()->ownersPhoto->ulid,
+        '{variant}' => 'thumb',
+    ];
+
+    $unknown = array_diff($route->parameterNames(), array_map(fn ($key) => trim($key, '{}'), array_keys($values)));
 
     if ($unknown !== []) {
         throw new RuntimeException("Add a cross-user case for {$route->uri()}, which takes: ".implode(', ', $unknown));
     }
 
-    return '/'.ltrim(str_replace('{date}', '2026-11-07', $route->uri()), '/');
+    return '/'.ltrim(strtr($route->uri(), $values), '/');
 }
+
+it("returns not found for every route that names one of the owner's photos", function () {
+    $routes = collect(signedInRoutes())->filter(fn (RoutingRoute $route) => in_array('photo', $route->parameterNames(), true));
+
+    expect($routes)->not->toBeEmpty();
+
+    foreach ($routes as $route) {
+        $method = strtolower(collect($route->methods())->first());
+
+        $this->actingAs($this->stranger)->{$method}(urlFor($route))->assertNotFound();
+    }
+
+    expect($this->ownersPhoto->fresh())->not->toBeNull();
+    Storage::disk('media')->assertExists([$this->ownersPhoto->path, $this->ownersPhoto->thumbnail_path]);
+});
 
 it("never shows the owner's entry to anyone else", function () {
     $routes = collect(signedInRoutes())->filter(fn (RoutingRoute $route) => in_array('GET', $route->methods(), true));
@@ -82,7 +113,9 @@ it("never changes the owner's entry from anyone else's request", function () {
 
     expect($memory->body)->toBe($this->secret)
         ->and($memory->mood_id)->toBe($this->ownersMemory->mood_id)
-        ->and($memory->reasons)->toHaveCount(0);
+        ->and($memory->reasons)->toHaveCount(0)
+        ->and($memory->photos)->toHaveCount(1);
+    Storage::disk('media')->assertExists([$this->ownersPhoto->path, $this->ownersPhoto->thumbnail_path]);
 });
 
 it("gives a stranger their own blank day at the owner's date", function () {

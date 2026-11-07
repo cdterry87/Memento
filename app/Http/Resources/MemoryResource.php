@@ -25,6 +25,7 @@ class MemoryResource extends JsonResource
             'mood' => (new MoodResource($this->mood))->resolve($request),
             'reasons' => ReasonResource::collection($this->reasons)->resolve($request),
             'body' => $this->body,
+            'photos' => PhotoResource::collection($this->photos)->resolve($request),
         ];
     }
 }

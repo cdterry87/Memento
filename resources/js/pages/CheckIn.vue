@@ -1,8 +1,10 @@
 <script setup lang="ts">
 import EmojiPicker from '@/components/EmojiPicker.vue';
 import MessageBox from '@/components/MessageBox.vue';
+import PhotoPicker from '@/components/PhotoPicker.vue';
 import { useDraft } from '@/composables/useDraft';
 import { characterCount, formatLongDate } from '@/composables/useLocalDate';
+import { usePhotoUploads } from '@/composables/usePhotoUploads';
 import type { Memory, Mood, Reason } from '@/types';
 import { Head, Link, useForm } from '@inertiajs/vue3';
 import { mdiArrowLeft, mdiArrowRight, mdiCheck } from '@mdi/js';
@@ -33,6 +35,11 @@ const form = useForm({
     body: draft.text.value,
 });
 
+/** New photos wait here until the entry is saved, then upload one by one. */
+const newPhotos = ref<File[]>([]);
+const photoUploads = usePhotoUploads();
+const uploadingForDay = photoUploads.pendingFor(props.date);
+
 watch(draft.text, (value) => {
     form.body = value;
 });
@@ -58,7 +65,10 @@ const canSave = computed(() => !!form.mood && !isMessageTooLong.value && !form.p
 
 function save(): void {
     form.transform((data) => ({ ...data, body: data.body.trim() })).put(`/days/${props.date}`, {
-        onSuccess: () => draft.clear(),
+        onSuccess: () => {
+            draft.clear();
+            photoUploads.enqueue(props.date, newPhotos.value);
+        },
     });
 }
 </script>
@@ -91,7 +101,7 @@ function save(): void {
                 </span>
                 Choose as many as you like, or none.
             </template>
-            <template v-else>A few words, if you feel like it.</template>
+            <template v-else>A few words or a photo, if you feel like it.</template>
         </p>
 
         <v-alert v-if="form.errors.mood" type="error" class="mb-4">{{ form.errors.mood }}</v-alert>
@@ -106,7 +116,14 @@ function save(): void {
             multiple
         />
 
-        <MessageBox v-else v-model="draft.text.value" :error-messages="form.errors.body" />
+        <div v-else class="d-flex flex-column ga-4">
+            <MessageBox v-model="draft.text.value" :error-messages="form.errors.body" />
+            <PhotoPicker
+                v-model="newPhotos"
+                :existing="memory?.photos"
+                :uploading-count="uploadingForDay.length"
+            />
+        </div>
 
         <div class="check-in__actions">
             <v-btn v-if="step > 1" variant="text" :prepend-icon="mdiArrowLeft" @click="step--">

@@ -113,7 +113,7 @@ class DayController extends Controller
     private function memoryFor(User $user, CarbonImmutable $date): ?Memory
     {
         return $user->memories()
-            ->with(['mood', 'reasons'])
+            ->with(['mood', 'reasons', 'photos'])
             ->where('date', $date->toDateString())
             ->first();
     }

@@ -2,9 +2,16 @@
 import MemoryCard from '@/components/MemoryCard.vue';
 import { useLinkNavigation } from '@/composables/useLinkNavigation';
 import { formatLongDate } from '@/composables/useLocalDate';
-import type { Memory } from '@/types';
+import type { Memory, Photo } from '@/types';
 import { Head, Link, router, usePage } from '@inertiajs/vue3';
-import { mdiArrowLeft, mdiDeleteOutline, mdiPencil } from '@mdi/js';
+import {
+    mdiArrowLeft,
+    mdiChevronLeft,
+    mdiChevronRight,
+    mdiDeleteOutline,
+    mdiImageAlbum,
+    mdiPencil,
+} from '@mdi/js';
 import { computed, ref } from 'vue';
 
 const props = defineProps<{
@@ -20,10 +27,40 @@ const longDate = computed(() => formatLongDate(props.date, { withYear: true }));
 const checkInUrl = computed(() => `/days/${props.date}/check-in`);
 
 const justSaved = computed(() => page.props.status === 'check-in-saved');
-const snackbar = ref(justSaved.value);
+const snackbar = ref(justSaved.value ? 'Saved.' : '');
 
 const confirmingDelete = ref(false);
 const deleting = ref(false);
+
+const photoVisitOptions = { preserveScroll: true, preserveState: true } as const;
+
+/** Moves a photo to a new place. Whichever is first becomes the cover. */
+function movePhoto(from: number, to: number): void {
+    const ids = props.memory.photos.map((photo) => photo.id);
+    const [moved] = ids.splice(from, 1);
+    ids.splice(to, 0, moved);
+
+    router.patch(`/days/${props.date}/photos/order`, { photos: ids }, photoVisitOptions);
+}
+
+const photoToDelete = ref<Photo | null>(null);
+const deletingPhoto = ref(false);
+
+function deletePhoto(): void {
+    if (!photoToDelete.value) {
+        return;
+    }
+
+    router.delete(`/days/${props.date}/photos/${photoToDelete.value.id}`, {
+        ...photoVisitOptions,
+        onStart: () => (deletingPhoto.value = true),
+        onSuccess: () => (snackbar.value = 'Photo deleted.'),
+        onFinish: () => {
+            deletingPhoto.value = false;
+            photoToDelete.value = null;
+        },
+    });
+}
 
 function deleteEntry(): void {
     router.delete(`/days/${props.date}`, {
@@ -68,13 +105,75 @@ function deleteEntry(): void {
                     </v-btn>
                 </div>
             </template>
+            <template #photo-actions="{ photo, index }">
+                <template v-if="photo && memory.photos.length > 1">
+                    <v-btn
+                        v-if="index > 0"
+                        :icon="mdiImageAlbum"
+                        variant="text"
+                        aria-label="Make this the cover photo"
+                        title="Make cover"
+                        @click="movePhoto(index, 0)"
+                    />
+                    <v-btn
+                        :icon="mdiChevronLeft"
+                        variant="text"
+                        :disabled="index === 0"
+                        aria-label="Move this photo earlier"
+                        title="Move earlier"
+                        @click="movePhoto(index, index - 1)"
+                    />
+                    <v-btn
+                        :icon="mdiChevronRight"
+                        variant="text"
+                        :disabled="index === memory.photos.length - 1"
+                        aria-label="Move this photo later"
+                        title="Move later"
+                        @click="movePhoto(index, index + 1)"
+                    />
+                </template>
+                <v-btn
+                    v-if="photo"
+                    :icon="mdiDeleteOutline"
+                    variant="text"
+                    aria-label="Delete this photo"
+                    title="Delete photo"
+                    @click="photoToDelete = photo"
+                />
+            </template>
         </MemoryCard>
+
+        <v-dialog
+            :model-value="!!photoToDelete"
+            max-width="420"
+            @update:model-value="photoToDelete = null"
+        >
+            <v-card>
+                <v-card-title class="text-h6 pt-5 px-6">Delete this photo?</v-card-title>
+                <v-card-text class="px-6"
+                    >It will be removed for good. This can't be undone.</v-card-text
+                >
+                <v-card-actions class="px-6 pb-5">
+                    <v-spacer />
+                    <v-btn variant="text" @click="photoToDelete = null">Keep it</v-btn>
+                    <v-btn
+                        color="error"
+                        variant="flat"
+                        :loading="deletingPhoto"
+                        @click="deletePhoto"
+                    >
+                        Delete
+                    </v-btn>
+                </v-card-actions>
+            </v-card>
+        </v-dialog>
 
         <v-dialog v-model="confirmingDelete" max-width="420">
             <v-card>
                 <v-card-title class="text-h6 pt-5 px-6">Delete this day?</v-card-title>
                 <v-card-text class="px-6">
-                    Your check-in for {{ longDate }} will be removed for good. This can't be undone.
+                    Your check-in for {{ longDate }}, including its photos, will be removed for
+                    good. This can't be undone.
                 </v-card-text>
                 <v-card-actions class="px-6 pb-5">
                     <v-spacer />
@@ -86,7 +185,13 @@ function deleteEntry(): void {
             </v-card>
         </v-dialog>
 
-        <v-snackbar v-model="snackbar" :timeout="2500">Saved.</v-snackbar>
+        <v-snackbar
+            :model-value="!!snackbar"
+            :timeout="2500"
+            @update:model-value="(open: boolean) => !open && (snackbar = '')"
+        >
+            {{ snackbar }}
+        </v-snackbar>
     </section>
 </template>
 

@@ -10,6 +10,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 
 /**
  * One day's check-in. Each user has at most one per date, and `date` is the
@@ -22,6 +23,7 @@ use Illuminate\Database\Eloquent\Relations\BelongsToMany;
  * @property string|null $body
  * @property-read Mood $mood
  * @property-read Collection<int, Reason> $reasons
+ * @property-read Collection<int, MemoryPhoto> $photos
  */
 #[Fillable(['mood_id', 'date', 'body'])]
 class Memory extends Model
@@ -63,5 +65,15 @@ class Memory extends Model
     public function reasons(): BelongsToMany
     {
         return $this->belongsToMany(Reason::class)->orderBy('position');
+    }
+
+    /**
+     * The day's photos, cover first.
+     *
+     * @return HasMany<MemoryPhoto, $this>
+     */
+    public function photos(): HasMany
+    {
+        return $this->hasMany(MemoryPhoto::class)->orderBy('position')->orderBy('id');
     }
 }

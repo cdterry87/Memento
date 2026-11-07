@@ -33,6 +33,7 @@ function memory(date: string, overrides: Partial<Memory> = {}): Memory {
         mood: { slug: 'good', label: 'Good', emoji: '🙂', score: 4 },
         reasons: [],
         body: null,
+        photos: [],
         ...overrides,
     };
 }
