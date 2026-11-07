@@ -1,0 +1,96 @@
+name: CI
+
+on:
+    pull_request:
+    push:
+        branches: [main]
+
+concurrency:
+    group: ci-${{ github.ref }}
+    cancel-in-progress: true
+
+permissions:
+    contents: read
+
+jobs:
+    php:
+        name: PHP
+        runs-on: ubuntu-latest
+
+        services:
+            mysql:
+                image: mysql:8.4
+                env:
+                    MYSQL_DATABASE: testing
+                    MYSQL_USER: sail
+                    MYSQL_PASSWORD: password
+                    MYSQL_ROOT_PASSWORD: password
+                ports:
+                    - 3306:3306
+                options: >-
+                    --health-cmd="mysqladmin ping -ppassword"
+                    --health-interval=10s
+                    --health-timeout=5s
+                    --health-retries=5
+
+        env:
+            DB_HOST: 127.0.0.1
+            DB_PORT: 3306
+            DB_USERNAME: sail
+            DB_PASSWORD: password
+
+        steps:
+            - uses: actions/checkout@v7
+
+            - uses: shivammathur/setup-php@v2
+              with:
+                  php-version: '8.5'
+                  extensions: pdo_mysql, mbstring, exif, gd
+                  coverage: none
+
+            - name: Install Composer dependencies
+              run: composer install --no-interaction --no-progress --prefer-dist
+
+            - name: Prepare environment
+              run: |
+                  cp .env.example .env
+                  php artisan key:generate
+
+            - name: Check formatting (Pint)
+              run: composer lint:check
+
+            - name: Static analysis (Larastan)
+              run: composer analyse
+
+            - name: Tests (Pest)
+              run: php artisan test --compact
+
+    javascript:
+        name: JavaScript
+        runs-on: ubuntu-latest
+
+        steps:
+            - uses: actions/checkout@v7
+
+            - uses: actions/setup-node@v7
+              with:
+                  node-version: 24
+                  cache: npm
+
+            - name: Install npm dependencies
+              run: npm ci
+
+            - name: Lint (ESLint)
+              run: npm run lint:check
+
+            - name: Check formatting (Prettier)
+              run: npm run format:check
+
+            - name: Type check (vue-tsc)
+              run: npm run typecheck
+
+            - name: Tests (Vitest)
+              run: npm run test
+
+            - name: Production build
+              run: npm run build

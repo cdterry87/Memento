@@ -1,84 +1,105 @@
 # Memento
 
-Keep track of your memories with Memento! (Based on the Reflectly app)
+Memento is a private, short-form journal. Each day you record your mood and what caused it as emoji, and you can add a few photos, a short voice message, and a message of up to 255 characters. You can scroll back through past days, see "on this day" reminders, and read a yearly recap of your good memories.
 
-## Requirements:
+It's for you alone, with no friends, followers, or sharing.
 
-PHP 7.2
+The full product and technical specification is in [docs/spec.md](docs/spec.md). The original 2019 version of the app is preserved on the [`archive-2019`](https://github.com/cdterry87/Memento/tree/archive-2019) branch.
 
-## Installation:
+## Stack
 
-1. Clone the project to your local PC.
+- Laravel 13 on PHP 8.5
+- Vue 3.5 with TypeScript, connected through Inertia 3
+- Vuetify 4, with light and dark themes
+- MySQL 8.4
+- Laravel Sail for local development, including Mailpit for email and RustFS as local S3-compatible storage
+- Pest, Larastan, and Pint for PHP; Vitest, ESLint, Prettier, and `vue-tsc` for the frontend
 
-```
-git clone https://github.com/cdterry87/Memento.git
-```
+## Requirements
 
-2. Setup the application:
+- Docker
+- Git
 
-```
-composer install              # Install dependencies with composer
-cp .env.example .env          # Create your .env file based on the .env.example file and change the appropriate values
-php artisan key:generate      # Generate an application key for your project
-npm install                   # Installs dependencies with npm
-npm run prod                  # Builds the javascript part of the application for production
+You don't need PHP, Composer, or Node installed locally. Everything runs inside Sail's containers.
 
-php artisan migrate --seed    # Run database migrations and seed with default data
-php artisan storage:link      # Allow file uploads
+## First-time setup
 
-php artisan serve             # Runs the application on a local web server
-```
+1. Clone the repository:
 
-3. Login to the application with the following credentials:
+    ```bash
+    git clone https://github.com/cdterry87/Memento.git
+    cd Memento
+    ```
 
-```
-username: admin
-password: password
-```
+2. Install the PHP dependencies, using a temporary container that includes Composer. Sail doesn't publish a PHP 8.5 Composer image yet, so this uses the 8.4 one and skips the platform check:
 
-## 2025 Update - Using Docker Development Environment
+    ```bash
+    docker run --rm -u "$(id -u):$(id -g)" -v "$(pwd):/var/www/html" -w /var/www/html laravelsail/php84-composer:latest composer install --ignore-platform-reqs
+    ```
 
--   Clone the project as mentioned above
--   Copy the .env.example as .env as mentioned above
--   Build the docker image using this command:
+3. Create your environment file:
 
-```
-docker compose up -d --build
-# NOTE: If `docker compose` doesn't work, try `docker-compose`
-```
+    ```bash
+    cp .env.example .env
+    ```
 
--   Go into the terminal of the container and install dependencies and perform the rest of the setup:
+4. Start the containers. The first run builds the images and takes a few minutes:
 
-```
-docker exec -it laravel_app bash
-composer install
-php artisan key:generate
-php artisan migrate:fresh --seed
-npm install
-npm run watch # Starts watching for js changes
-```
+    ```bash
+    ./vendor/bin/sail up -d
+    ```
 
--   View the site at http://localhost:8000
+5. Generate the app key, run migrations, and install and build the frontend:
 
-### You may also need to do this for file uploads:
+    ```bash
+    ./vendor/bin/sail artisan key:generate
+    ./vendor/bin/sail artisan migrate
+    ./vendor/bin/sail npm ci
+    ./vendor/bin/sail npm run build
+    ```
 
-```
-php artisan storage:link
-chmod -R 777 /var/www/storage /var/www/bootstrap/cache
-```
+6. Open http://localhost.
 
-### To start and stop the container after initial setup:
+### Port conflicts
 
-```
-# Start container
-docker compose up -d
+If another project already uses one of Sail's default ports, `sail up` fails with "port is already allocated". Override the port in `.env`, then run `./vendor/bin/sail up -d` again:
 
-# Go to the container terminal
-docker exec -it laravel_app bash
+| Service | Variable | Default |
+|---|---|---|
+| App | `APP_PORT` | 80 |
+| MySQL | `FORWARD_DB_PORT` | 3306 |
+| Mailpit SMTP | `FORWARD_MAILPIT_PORT` | 1025 |
+| Mailpit dashboard | `FORWARD_MAILPIT_DASHBOARD_PORT` | 8025 |
+| Vite | `VITE_PORT` | 5173 |
+| RustFS API | `FORWARD_RUSTFS_PORT` | 9000 |
+| RustFS console | `FORWARD_RUSTFS_CONSOLE_PORT` | 9001 |
 
-# Run npm to watch for changes
-npm run watch
+If you change `APP_PORT`, update `APP_URL` to match.
 
-# Stop container
-docker compose down
-```
+## Everyday development
+
+Tip: add an alias, such as `alias sail='./vendor/bin/sail'`, to shorten these commands.
+
+| Task | Command |
+|---|---|
+| Start the containers | `./vendor/bin/sail up -d` |
+| Stop the containers | `./vendor/bin/sail stop` |
+| Run the Vite dev server with hot reload | `./vendor/bin/sail npm run dev` |
+| Run Artisan commands | `./vendor/bin/sail artisan <command>` |
+| Read email sent by the app | Open the Mailpit dashboard, at http://localhost:8025 by default |
+
+## Quality checks
+
+CI runs all of these on every pull request.
+
+| Check | Command |
+|---|---|
+| PHP tests (Pest) | `./vendor/bin/sail artisan test` |
+| PHP formatting (Pint) | `./vendor/bin/sail composer lint` to fix, `lint:check` to check |
+| PHP static analysis (Larastan) | `./vendor/bin/sail composer analyse` |
+| Frontend tests (Vitest) | `./vendor/bin/sail npm run test` |
+| Frontend linting (ESLint) | `./vendor/bin/sail npm run lint` to fix, `lint:check` to check |
+| Frontend formatting (Prettier) | `./vendor/bin/sail npm run format` to fix, `format:check` to check |
+| Type checking (`vue-tsc`) | `./vendor/bin/sail npm run typecheck` |
+
+PHP tests run against a separate `testing` database, which Sail's MySQL container creates automatically.

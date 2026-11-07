@@ -1,21 +1,12 @@
 <?php
 
-namespace Tests\Feature;
+use Inertia\Testing\AssertableInertia as Assert;
 
-use Tests\TestCase;
-use Illuminate\Foundation\Testing\RefreshDatabase;
-
-class ExampleTest extends TestCase
-{
-    /**
-     * A basic test example.
-     *
-     * @return void
-     */
-    public function testBasicTest()
-    {
-        $response = $this->get('/');
-
-        $response->assertStatus(200);
-    }
-}
+it('renders the welcome page at the home route', function () {
+    $this->get(route('home'))
+        ->assertOk()
+        ->assertInertia(fn (Assert $page) => $page
+            ->component('Welcome')
+            ->where('appName', config('app.name'))
+        );
+});
