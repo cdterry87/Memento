@@ -11,6 +11,7 @@
         "infer-conventions",
         "deploying-to-cloud",
         "laravel-best-practices",
-        "testing-best-practices"
+        "testing-best-practices",
+        "inertia-vue-development"
     ]
 }
