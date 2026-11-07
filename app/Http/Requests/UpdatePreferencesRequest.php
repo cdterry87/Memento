@@ -31,6 +31,7 @@ class UpdatePreferencesRequest extends FormRequest
         return [
             'theme' => ['sometimes', Rule::enum(Theme::class)],
             'timezone' => ['sometimes', 'string', 'timezone:all_with_bc'],
+            'show_quotes' => ['sometimes', 'boolean'],
         ];
     }
 }

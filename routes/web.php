@@ -33,9 +33,10 @@ Route::middleware(['auth', 'verified'])->group(function () {
         ->name('media.photos');
 
     /*
-     * Placeholder screen. A later milestone replaces it with a controller.
+     * Placeholder screens. A later milestone replaces them with a controller.
      */
     Route::inertia('/recap', 'Recap')->name('recap');
+    Route::inertia('/recap/{year}', 'Recap')->whereNumber('year')->name('recap.show');
 
     Route::get('/account', [AccountController::class, 'show'])->name('account');
     Route::patch('/account/preferences', [AccountController::class, 'updatePreferences'])->name('account.preferences');

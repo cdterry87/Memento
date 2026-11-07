@@ -9,6 +9,7 @@ export interface CurrentUser {
     emailVerified: boolean;
     timezone: string;
     theme: ThemePreference;
+    showQuotes: boolean;
 }
 
 /** A pickable option in the check-in, shaped by MoodResource and ReasonResource. */
@@ -40,6 +41,12 @@ export interface Memory {
     reasons: Reason[];
     body: string | null;
     photos: Photo[];
+}
+
+/** The quote of the day, shaped by QuoteResource. */
+export interface Quote {
+    text: string;
+    author: string;
 }
 
 declare module '@inertiajs/core' {

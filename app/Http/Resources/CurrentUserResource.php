@@ -17,7 +17,7 @@ class CurrentUserResource extends JsonResource
     /**
      * Transform the resource into an array.
      *
-     * @return array{name: string, email: string, emailVerified: bool, timezone: string, theme: string}
+     * @return array{name: string, email: string, emailVerified: bool, timezone: string, theme: string, showQuotes: bool}
      */
     public function toArray(Request $request): array
     {
@@ -27,6 +27,7 @@ class CurrentUserResource extends JsonResource
             'emailVerified' => $this->hasVerifiedEmail(),
             'timezone' => $this->timezone,
             'theme' => $this->theme->value,
+            'showQuotes' => $this->show_quotes,
         ];
     }
 }

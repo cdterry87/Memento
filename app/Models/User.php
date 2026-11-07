@@ -31,6 +31,16 @@ class User extends Authenticatable implements MustVerifyEmail
     use HasFactory, Notifiable;
 
     /**
+     * Defaults that match the database, so a user who was just created
+     * behaves the same as one loaded from the database.
+     *
+     * @var array<string, mixed>
+     */
+    protected $attributes = [
+        'show_quotes' => true,
+    ];
+
+    /**
      * Get the attributes that should be cast.
      *
      * @return array<string, string>

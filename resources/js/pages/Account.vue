@@ -30,6 +30,22 @@ watch(
     { immediate: true },
 );
 
+function saveShowQuotes(showQuotes: boolean | null): void {
+    router.patch(
+        '/account/preferences',
+        { show_quotes: !!showQuotes },
+        {
+            preserveScroll: true,
+            onSuccess: () => {
+                snackbarText.value = showQuotes
+                    ? 'Quotes are back on Today.'
+                    : 'Quotes are hidden.';
+                snackbar.value = true;
+            },
+        },
+    );
+}
+
 function saveTimezone(timezone: string | null): void {
     if (!timezone || timezone === user.value.timezone) {
         return;
@@ -137,6 +153,22 @@ function saveTimezone(timezone: string | null): void {
             </p>
 
             <ThemeSwitcher />
+        </v-card>
+
+        <v-card class="pa-6">
+            <h2 class="text-subtitle-1 font-weight-bold mb-1">Today screen</h2>
+            <p class="text-body-2 text-medium-emphasis mb-2">
+                A short quote to start the day, different every day.
+            </p>
+
+            <v-switch
+                label="Show a daily quote"
+                color="primary"
+                inset
+                hide-details
+                :model-value="user.showQuotes"
+                @update:model-value="saveShowQuotes"
+            />
         </v-card>
 
         <v-card class="pa-6">

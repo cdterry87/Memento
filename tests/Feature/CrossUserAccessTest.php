@@ -58,6 +58,7 @@ function urlFor(RoutingRoute $route): string
         '{date}' => '2026-11-07',
         '{photo}' => test()->ownersPhoto->ulid,
         '{variant}' => 'thumb',
+        '{year}' => '2026',
     ];
 
     $unknown = array_diff($route->parameterNames(), array_map(fn ($key) => trim($key, '{}'), array_keys($values)));
