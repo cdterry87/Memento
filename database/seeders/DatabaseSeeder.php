@@ -15,7 +15,7 @@ class DatabaseSeeder extends Seeder
      */
     public function run(): void
     {
-        $this->call(LookupSeeder::class);
+        $this->call([LookupSeeder::class, QuoteSeeder::class]);
 
         if (app()->isLocal()) {
             User::factory()->create([

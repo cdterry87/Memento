@@ -7,6 +7,8 @@ import {
     formatShortWeekday,
     greetingFor,
     monthKey,
+    yearsAgoLabel,
+    yearsBetween,
 } from './useLocalDate';
 
 describe('formatLongDate', () => {
@@ -52,5 +54,17 @@ describe('characterCount', () => {
         expect('🎉🎉'.length).toBe(4);
         expect(characterCount('🎉🎉')).toBe(2);
         expect(characterCount('Coffee with Sam 🎉')).toBe(17);
+    });
+});
+
+describe('yearsBetween and yearsAgoLabel', () => {
+    it('counts calendar years, including a leap day shown on February 28', () => {
+        expect(yearsBetween('2025-11-07', '2026-11-07')).toBe(1);
+        expect(yearsBetween('2024-02-29', '2027-02-28')).toBe(3);
+    });
+
+    it('says "1 year ago" or "N years ago"', () => {
+        expect(yearsAgoLabel(1)).toBe('1 year ago');
+        expect(yearsAgoLabel(4)).toBe('4 years ago');
     });
 });

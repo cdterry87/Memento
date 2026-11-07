@@ -39,6 +39,16 @@ export function monthKey(date: string): string {
     return date.slice(0, 7);
 }
 
+/** Whole calendar years between two dates' years, such as 3 for 2023 and 2026. */
+export function yearsBetween(earlier: string, later: string): number {
+    return Number(later.slice(0, 4)) - Number(earlier.slice(0, 4));
+}
+
+/** "1 year ago" or "3 years ago". */
+export function yearsAgoLabel(years: number): string {
+    return years === 1 ? '1 year ago' : `${years} years ago`;
+}
+
 /** A greeting for the current hour in the given time zone. */
 export function greetingFor(timezone: string, now: Date = new Date()): string {
     const hour = Number(

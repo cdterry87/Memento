@@ -70,6 +70,7 @@ it('shares only the fields the interface needs about the signed-in user', functi
                 'emailVerified' => true,
                 'timezone' => 'Europe/London',
                 'theme' => 'system',
+                'showQuotes' => true,
             ])
         );
 });
