@@ -20,6 +20,14 @@ afterEach(function () {
 });
 
 /**
+ * How many options a lookup data file defines, so adding one never breaks these tests.
+ */
+function seededCount(string $table): int
+{
+    return count(require database_path("data/{$table}.php"));
+}
+
+/**
  * @param  array<string, mixed>  $overrides
  * @return array<string, mixed>
  */
@@ -35,7 +43,7 @@ it('offers the mood grid on today until there is an entry', function () {
             ->component('Today')
             ->where('today', '2026-11-07')
             ->where('memory', null)
-            ->has('moods', 12)
+            ->has('moods', seededCount('moods'))
             ->where('moods.0', ['slug' => 'awful', 'label' => 'Awful', 'emoji' => '😭', 'score' => 1])
         );
 });
@@ -61,8 +69,8 @@ it('opens the check-in with the mood picked on today', function () {
             ->where('date', '2026-11-07')
             ->where('isToday', true)
             ->where('initialMood', 'great')
-            ->has('moods', 12)
-            ->has('reasons', 11)
+            ->has('moods', seededCount('moods'))
+            ->has('reasons', seededCount('reasons'))
         );
 });
 
@@ -86,15 +94,26 @@ it('saves a check-in for today and returns to today', function () {
         ->and($memory->body)->toBe('Coffee with Sam.');
 });
 
-it('saves a mood on its own', function () {
+it('saves with no message', function () {
     $this->actingAs($this->user)
-        ->put(route('days.update', '2026-11-07'), ['mood' => 'okay', 'reasons' => [], 'body' => null])
+        ->put(route('days.update', '2026-11-07'), ['mood' => 'okay', 'reasons' => ['work'], 'body' => null])
         ->assertSessionHasNoErrors();
 
     expect($this->user->memories()->sole())
         ->body->toBeNull()
-        ->reasons->toHaveCount(0);
+        ->reasons->toHaveCount(1);
 });
+
+it('requires at least one reason', function (array $input) {
+    $this->actingAs($this->user)
+        ->put(route('days.update', '2026-11-07'), checkIn($input))
+        ->assertSessionHasErrors(['reasons' => 'Pick at least one reason.']);
+
+    expect($this->user->memories()->count())->toBe(0);
+})->with([
+    'empty' => [['reasons' => []]],
+    'missing' => [['reasons' => null]],
+]);
 
 it('updates the same entry when saving the same day again', function () {
     $this->actingAs($this->user)->put(route('days.update', '2026-11-07'), checkIn());
@@ -196,8 +215,8 @@ it('shows a newly added mood and reason in the picker', function () {
     $this->actingAs($this->user)
         ->get(route('days.check-in', '2026-11-07'))
         ->assertInertia(fn (Assert $page) => $page
-            ->where('moods.12.slug', 'proud')
-            ->where('reasons.11.slug', 'pets')
+            ->where('moods.'.seededCount('moods').'.slug', 'proud')
+            ->where('reasons.'.seededCount('reasons').'.slug', 'pets')
         );
 });
 
@@ -207,7 +226,7 @@ it('hides a retired mood from the picker but keeps it on old entries', function 
 
     $this->actingAs($this->user)
         ->get(route('days.check-in', '2026-11-07'))
-        ->assertInertia(fn (Assert $page) => $page->has('moods', 12));
+        ->assertInertia(fn (Assert $page) => $page->has('moods', seededCount('moods')));
 
     $this->actingAs($this->user)
         ->put(route('days.update', '2026-11-07'), checkIn(['mood' => 'meh']))
@@ -216,7 +235,7 @@ it('hides a retired mood from the picker but keeps it on old entries', function 
     $this->actingAs($this->user)
         ->get(route('days.check-in', '2026-11-01'))
         ->assertInertia(fn (Assert $page) => $page
-            ->has('moods', 13)
+            ->has('moods', seededCount('moods') + 1)
             ->where('memory.mood.slug', 'meh')
         );
 

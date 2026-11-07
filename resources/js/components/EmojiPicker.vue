@@ -10,6 +10,8 @@ const props = defineProps<{
     options: EmojiOption[];
     legend: string;
     multiple?: boolean;
+    /** The most columns to show. Narrow screens still drop to fewer, so labels never break mid-word. */
+    columns?: number;
 }>();
 
 const selected = defineModel<string | string[] | null>({ required: true });
@@ -35,10 +37,22 @@ function toggle(slug: string): void {
 }
 
 const inputType = computed(() => (props.multiple ? 'checkbox' : 'radio'));
+
+const MIN_OPTION_WIDTH = '92px';
+const GAP = '10px';
+
+/** Fits as many 92px options as the width allows, capped at `columns` when given. */
+const gridColumns = computed(() => {
+    const width = props.columns
+        ? `max(${MIN_OPTION_WIDTH}, calc((100% - ${props.columns - 1} * ${GAP}) / ${props.columns}))`
+        : MIN_OPTION_WIDTH;
+
+    return `repeat(auto-fill, minmax(${width}, 1fr))`;
+});
 </script>
 
 <template>
-    <fieldset class="emoji-picker">
+    <fieldset class="emoji-picker" :style="{ gridTemplateColumns: gridColumns }">
         <legend class="visually-hidden">{{ legend }}</legend>
 
         <label
@@ -64,7 +78,6 @@ const inputType = computed(() => (props.multiple ? 'checkbox' : 'radio'));
 <style scoped>
 .emoji-picker {
     display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(92px, 1fr));
     gap: 10px;
     border: 0;
     margin: 0;

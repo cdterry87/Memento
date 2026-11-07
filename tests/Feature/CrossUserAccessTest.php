@@ -125,7 +125,7 @@ it("gives a stranger their own blank day at the owner's date", function () {
         ->assertInertia(fn ($page) => $page->where('memory', null));
 
     $this->actingAs($this->stranger)
-        ->put('/days/2026-11-07', ['mood' => 'okay', 'reasons' => [], 'body' => 'Mine'])
+        ->put('/days/2026-11-07', ['mood' => 'okay', 'reasons' => ['work'], 'body' => 'Mine'])
         ->assertSessionHasNoErrors();
 
     expect($this->stranger->memories()->sole()->body)->toBe('Mine')

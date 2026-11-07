@@ -103,7 +103,34 @@ describe('CheckIn', () => {
         await flushPromises();
 
         expect(wrapper.find('h1').text()).toBe('What made it that way?');
-        expect(button(wrapper, 'Save')).toBeDefined();
+    });
+
+    it('needs a reason before moving on to the last step', async () => {
+        const wrapper = mountCheckIn({ initialMood: 'great' });
+
+        expect(button(wrapper, 'Next')!.attributes('disabled')).toBeDefined();
+
+        await wrapper.findAll('input[type="checkbox"]')[0].trigger('change');
+
+        expect(button(wrapper, 'Next')!.attributes('disabled')).toBeUndefined();
+    });
+
+    it('offers Save only on the last step, where the note stays optional', async () => {
+        const wrapper = mountCheckIn({ initialMood: 'great' });
+
+        expect(button(wrapper, 'Save')).toBeUndefined();
+
+        await wrapper.findAll('input[type="checkbox"]')[0].trigger('change');
+        await button(wrapper, 'Next')!.trigger('click');
+
+        expect(wrapper.find('h1').text()).toBe('Anything to remember?');
+        expect(button(wrapper, 'Save')!.attributes('disabled')).toBeUndefined();
+    });
+
+    it('shows the reasons in at most four columns', () => {
+        const picker = mountCheckIn({ initialMood: 'great' }).find('fieldset');
+
+        expect(picker.attributes('style')).toContain('max(92px, 25% - 7.5px)');
     });
 
     it('starts at the reasons when a mood was picked on today', () => {
@@ -130,6 +157,7 @@ describe('CheckIn', () => {
     it('keeps an unsaved note as a draft for the day', async () => {
         const wrapper = mountCheckIn({ initialMood: 'okay' });
 
+        await wrapper.findAll('input[type="checkbox"]')[0].trigger('change');
         await button(wrapper, 'Next')!.trigger('click');
         await wrapper.find('textarea').setValue('Do not lose me');
 

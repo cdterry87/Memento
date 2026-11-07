@@ -20,5 +20,6 @@ return [
     ['slug' => 'personal-goals', 'label' => 'Personal goals', 'emoji' => '🎯'],
     ['slug' => 'finances', 'label' => 'Finances', 'emoji' => '💰'],
     ['slug' => 'health', 'label' => 'Health', 'emoji' => '💪'],
+    ['slug' => 'hobbies', 'label' => 'Hobbies', 'emoji' => '🎨'],
     ['slug' => 'other', 'label' => 'Other', 'emoji' => '✨'],
 ];

@@ -46,7 +46,7 @@ class StoreMemoryRequest extends FormRequest
                 'string',
                 Rule::in(Mood::pickable()->pluck('slug')->push($existing?->mood->slug)->filter()),
             ],
-            'reasons' => ['present', 'array'],
+            'reasons' => ['required', 'array', 'min:1'],
             'reasons.*' => [
                 'string',
                 'distinct',
@@ -65,6 +65,8 @@ class StoreMemoryRequest extends FormRequest
     {
         return [
             'mood.required' => 'Pick a mood for the day.',
+            'reasons.required' => 'Pick at least one reason.',
+            'reasons.min' => 'Pick at least one reason.',
             'body.max' => 'Keep it to 255 characters or fewer.',
         ];
     }
