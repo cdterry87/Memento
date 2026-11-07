@@ -24,12 +24,22 @@ export interface Mood extends EmojiOption {
 
 export type Reason = EmojiOption;
 
+/** A photo on a check-in, shaped by PhotoResource. URLs go through the authorizing media route. */
+export interface Photo {
+    id: string;
+    url: string;
+    thumbnailUrl: string;
+    width: number;
+    height: number;
+}
+
 /** One day's check-in, shaped by MemoryResource. */
 export interface Memory {
     date: string;
     mood: Mood;
     reasons: Reason[];
     body: string | null;
+    photos: Photo[];
 }
 
 declare module '@inertiajs/core' {

@@ -27,7 +27,7 @@ class TimelineController extends Controller
         return Inertia::render('Timeline', [
             'memories' => Inertia::scroll(fn () => MemoryResource::collection(
                 $user->memories()
-                    ->with(['mood', 'reasons'])
+                    ->with(['mood', 'reasons', 'photos'])
                     ->orderByDesc('date')
                     ->cursorPaginate(self::PER_PAGE)
             )),

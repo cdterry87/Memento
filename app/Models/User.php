@@ -10,6 +10,7 @@ use Illuminate\Database\Eloquent\Attributes\Fillable;
 use Illuminate\Database\Eloquent\Attributes\Hidden;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\Relations\HasManyThrough;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 
@@ -53,6 +54,14 @@ class User extends Authenticatable implements MustVerifyEmail
     public function memories(): HasMany
     {
         return $this->hasMany(Memory::class);
+    }
+
+    /**
+     * @return HasManyThrough<MemoryPhoto, Memory, $this>
+     */
+    public function photos(): HasManyThrough
+    {
+        return $this->hasManyThrough(MemoryPhoto::class, Memory::class);
     }
 
     /**

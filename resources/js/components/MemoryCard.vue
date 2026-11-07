@@ -1,10 +1,44 @@
 <script setup lang="ts">
-import type { Memory } from '@/types';
+import PhotoGrid from '@/components/PhotoGrid.vue';
+import PhotoLightbox from '@/components/PhotoLightbox.vue';
+import { formatLongDate } from '@/composables/useLocalDate';
+import { usePhotoUploads } from '@/composables/usePhotoUploads';
+import type { Memory, Photo } from '@/types';
+import { ref, watch } from 'vue';
 
-defineProps<{
+const props = defineProps<{
     memory: Memory;
     celebrate?: boolean;
 }>();
+
+defineSlots<{
+    actions?: () => unknown;
+    /** Controls for the photo shown in the lightbox. */
+    'photo-actions'?: (scope: { photo: Photo | undefined; index: number }) => unknown;
+}>();
+
+const pending = usePhotoUploads().pendingFor(props.memory.date);
+
+const lightboxOpen = ref(false);
+const lightboxIndex = ref(0);
+
+/** Keeps the lightbox on the same photo when the order changes. */
+watch(
+    () => props.memory.photos.map((photo) => photo.id),
+    (ids, previousIds) => {
+        const shownId = previousIds[lightboxIndex.value];
+        const newIndex = ids.indexOf(shownId);
+
+        if (newIndex !== -1) {
+            lightboxIndex.value = newIndex;
+        }
+    },
+);
+
+function openPhoto(index: number): void {
+    lightboxIndex.value = index;
+    lightboxOpen.value = true;
+}
 </script>
 
 <template>
@@ -23,6 +57,8 @@ defineProps<{
             </div>
         </div>
 
+        <PhotoGrid :photos="memory.photos" :pending="pending" class="mt-5" @open="openPhoto" />
+
         <div v-if="memory.reasons.length" class="d-flex flex-wrap ga-2 mt-5">
             <v-chip v-for="reason in memory.reasons" :key="reason.slug" size="small">
                 <span class="me-1" aria-hidden="true">{{ reason.emoji }}</span>
@@ -35,6 +71,17 @@ defineProps<{
         <div v-if="$slots.actions" class="mt-6">
             <slot name="actions" />
         </div>
+
+        <PhotoLightbox
+            v-model="lightboxOpen"
+            v-model:index="lightboxIndex"
+            :photos="memory.photos"
+            :label="formatLongDate(memory.date, { withYear: true })"
+        >
+            <template #actions="scope">
+                <slot name="photo-actions" v-bind="scope" />
+            </template>
+        </PhotoLightbox>
     </v-card>
 </template>
 

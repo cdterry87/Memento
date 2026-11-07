@@ -87,6 +87,19 @@ const reasonLabels = computed(() => props.memory.reasons.map((reason) => reason.
     letter-spacing: 0.1em;
 }
 
+.timeline-entry__photos {
+    display: flex;
+    gap: 6px;
+}
+
+.timeline-entry__photo {
+    width: 56px;
+    height: 56px;
+    border-radius: 10px;
+    object-fit: cover;
+    background: rgba(var(--v-theme-on-surface), 0.06);
+}
+
 .timeline-entry__body {
     display: -webkit-box;
     -webkit-line-clamp: 2;
