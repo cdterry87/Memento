@@ -1,15 +1,42 @@
 /**
- * Formats a calendar date (YYYY-MM-DD) for display. Dates are calendar
- * days with no time zone, so they are formatted in UTC to stop the
- * browser's own zone shifting them to the day before or after.
+ * Calendar dates (YYYY-MM-DD) have no time zone, so every formatter here
+ * works in UTC to stop the browser's own zone shifting a date to the day
+ * before or after.
  */
-export function formatLongDate(date: string): string {
-    return new Intl.DateTimeFormat(undefined, {
+function formatCalendarDate(date: string, options: Intl.DateTimeFormatOptions): string {
+    return new Intl.DateTimeFormat(undefined, { ...options, timeZone: 'UTC' }).format(
+        new Date(`${date}T00:00:00Z`),
+    );
+}
+
+/** "Friday, November 6", or "Friday, November 6, 2025" with the year. */
+export function formatLongDate(date: string, { withYear = false } = {}): string {
+    return formatCalendarDate(date, {
         weekday: 'long',
         month: 'long',
         day: 'numeric',
-        timeZone: 'UTC',
-    }).format(new Date(`${date}T00:00:00Z`));
+        year: withYear ? 'numeric' : undefined,
+    });
+}
+
+/** "November 2026", for month headings. */
+export function formatMonthYear(date: string): string {
+    return formatCalendarDate(date, { month: 'long', year: 'numeric' });
+}
+
+/** "Fri", for a compact date badge. */
+export function formatShortWeekday(date: string): string {
+    return formatCalendarDate(date, { weekday: 'short' });
+}
+
+/** The day of the month, such as 6. */
+export function dayOfMonth(date: string): number {
+    return Number(date.slice(8, 10));
+}
+
+/** "2026-11", for grouping dates by month. */
+export function monthKey(date: string): string {
+    return date.slice(0, 7);
 }
 
 /** A greeting for the current hour in the given time zone. */

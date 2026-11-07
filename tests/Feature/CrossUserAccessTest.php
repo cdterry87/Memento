@@ -98,3 +98,17 @@ it("gives a stranger their own blank day at the owner's date", function () {
     expect($this->stranger->memories()->sole()->body)->toBe('Mine')
         ->and($this->owner->memories()->sole()->body)->toBe($this->secret);
 });
+
+it("refuses to delete the owner's entry for anyone else", function () {
+    $this->actingAs($this->stranger)
+        ->delete('/days/2026-11-07')
+        ->assertNotFound();
+
+    expect($this->ownersMemory->fresh())->not->toBeNull();
+});
+
+it("sends a stranger to their own check-in at the owner's date", function () {
+    $this->actingAs($this->stranger)
+        ->get('/days/2026-11-07')
+        ->assertRedirect('/days/2026-11-07/check-in');
+});

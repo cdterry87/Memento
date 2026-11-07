@@ -72,7 +72,7 @@ it('ignores an unknown mood in the link', function () {
         ->assertInertia(fn (Assert $page) => $page->where('initialMood', null));
 });
 
-it('saves a check-in and returns to today', function () {
+it('saves a check-in for today and returns to today', function () {
     $this->actingAs($this->user)
         ->put(route('days.update', '2026-11-07'), checkIn())
         ->assertRedirect(route('today'))
