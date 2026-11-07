@@ -2,7 +2,7 @@
 
 | | |
 |---|---|
-| **Status** | Approved decisions recorded in [section 11](#11-decisions); rebuild not started |
+| **Status** | Approved decisions recorded in [section 11](#11-decisions); repository archived and Laravel scaffolded on the `rebuild` branch |
 | **Last updated** | 2026-11-06 |
 | **Legacy baseline** | `master` at `ce60584` (Laravel 5.8, Vue 2, Vuetify 2) |
 | **Rebuild target** | Laravel 13, Vue 3.5, Inertia 3, Vuetify 4, Laravel Sail, MySQL, Cloudflare R2 |
@@ -727,7 +727,7 @@ QUEUE_CONNECTION=database
 
 ### 10.1 Archive and reset the repository
 
-**Not yet run.** These steps change the remote, so they need a go-ahead before running.
+**Completed 2026-11-06.** Recorded for reference.
 
 ```bash
 # 1. Commit this spec on master and push
@@ -737,10 +737,11 @@ git commit -m "Add project specification"
 git push origin master
 
 # 2. Rename master to main, locally and on GitHub
+gh api -X POST repos/cdterry87/Memento/branches/master/rename -f new_name=main
+git fetch origin --prune
 git branch -m master main
-git push -u origin main
-gh repo edit cdterry87/Memento --default-branch main
-git push origin --delete master
+git branch -u origin/main main
+git remote set-head origin -a
 
 # 3. Archive the legacy code
 git branch archive-2019
@@ -756,6 +757,7 @@ git commit -m "Clear legacy application for rebuild"
 # 6. Scaffold in a temp directory, since create-project needs an empty target
 composer create-project laravel/laravel /tmp/memento-new
 rsync -a --exclude .git /tmp/memento-new/ ./
+composer require laravel/sail --dev
 php artisan sail:install --with=mysql,mailpit,rustfs
 ```
 
@@ -763,8 +765,9 @@ The rebuild merges into `main` through a pull request. This keeps the full histo
 
 Things to note:
 
-- The 11 stale Dependabot branches on the remote get deleted as part of this work.
-- The untracked local `.env`, `vendor/`, `node_modules/`, and `storage/` contents aren't touched by `git rm`, and need clearing by hand. The old app isn't deployed and its data isn't being kept, but check `storage/` for any photos you want first.
+- The 11 stale Dependabot branches were deleted, which closed their open pull requests.
+- Tailwind, which the Laravel skeleton includes, was removed from `package.json` and `vite.config.js`.
+- Default ports can clash with other local Docker projects. Override them in `.env` with `APP_PORT`, `FORWARD_DB_PORT`, `FORWARD_MAILPIT_PORT`, `FORWARD_MAILPIT_DASHBOARD_PORT`, and `VITE_PORT`.
 - The 8 MB compiled bundles remain in Git history, which is harmless.
 
 ### 10.2 Milestones
