@@ -379,7 +379,7 @@ Creating and editing check-ins with moods, reasons, and messages is allowed. Mes
 - **Airy:** generous whitespace, one idea per screen, and few visible controls.
 - **Light and uplifting:** soft pastel gradients on near-white, with big joyful emoji as the main decoration.
 - **Fun but calm:** springy micro-interactions on selection and completion, never in the way.
-- **Mobile first:** a single column, thumb-reachable actions, and a centred column of about 560px on desktop. The recap can widen for charts.
+- **Web app first:** a top app bar with menu navigation, like a web application rather than a mobile app. Wide screens show the links in the bar, and narrow screens collapse them into a menu button. Content sits in a centred column of about 560px, which the recap can widen for charts. It still works well on a phone.
 
 ### 7.2 Vuetify theme
 
@@ -432,6 +432,16 @@ const defaults = {
 }
 ```
 
+**Contrast check (milestone 1)**
+
+The final values live in `resources/js/plugins/vuetify.ts`. Checking the starting values against WCAG 2.2 AA changed these:
+
+- Light primary is deepened to `#6252e0` and light error to `#c03535`, so that both reach 4.5:1 on the gradient tint.
+- Each filled colour has an explicit `on-` colour: white on light primary and error, and dark text on everything else.
+- The light secondary is too pale for text, so it is used only as a fill.
+- Medium-emphasis text uses 70% opacity.
+- A `background-tint` colour is added as the far end of the page gradient.
+
 **Dark mode**
 
 - Users choose system, light, or dark in Account. The default is system.
@@ -450,7 +460,7 @@ const defaults = {
 
 ### 7.4 Core components
 
-Vuetify provides the foundations: `VApp`, `VBottomNavigation`, `VBtn`, `VCard`, `VTextField`, `VTextarea`, `VDialog`, `VSnackbar`, `VInfiniteScroll`, `VProgressLinear`, `VSwitch`, and `VSelect`.
+Vuetify provides the foundations: `VApp`, `VAppBar`, `VMenu`, `VBtn`, `VCard`, `VTextField`, `VTextarea`, `VDialog`, `VSnackbar`, `VInfiniteScroll`, `VProgressLinear`, `VSwitch`, and `VSelect`.
 
 Custom components are built on top of them: `EmojiPicker`, `MessageBox`, `PhotoPicker`, `PhotoLightbox`, `VoiceRecorder`, `VoicePlayer`, `MemoryCard`, `OnThisDayCarousel`, `QuoteCard`, `DemoBanner`, and the SVG charts `YearInPixels`, `TrendChart`, and `BarList`.
 

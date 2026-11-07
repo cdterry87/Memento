@@ -6,20 +6,64 @@
     --font-logo: 'Leckerli One', cursive;
 }
 
-/* Matches the Vuetify background before the app mounts, avoiding a flash. */
-html,
-body {
+/*
+ * The page background before the app mounts, matching the Vuetify theme.
+ * The inline script in app.blade.php sets data-theme when the user has
+ * chosen light or dark, and otherwise the device setting applies.
+ */
+html {
     background: #fbfaff;
+    color-scheme: light;
+}
+
+html[data-theme='dark'] {
+    background: #17162b;
+    color-scheme: dark;
 }
 
 @media (prefers-color-scheme: dark) {
-    html,
-    body {
+    html:not([data-theme='light']) {
         background: #17162b;
+        color-scheme: dark;
     }
 }
 
 .font-logo {
     font-family: var(--font-logo);
     font-weight: 400;
+}
+
+/*
+ * Turns off animation for people who ask for less motion. This is the only
+ * place that uses !important, because it has to win over Vuetify's own
+ * transitions.
+ */
+@media (prefers-reduced-motion: reduce) {
+    *,
+    *::before,
+    *::after {
+        animation-duration: 0.01ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: 0.01ms !important;
+        scroll-behavior: auto !important;
+    }
+}
+
+/* A soft gradient behind every page, from the theme background to its tint. */
+.app-background {
+    background: linear-gradient(
+        180deg,
+        rgb(var(--v-theme-background)) 0%,
+        rgb(var(--v-theme-background-tint)) 100%
+    );
+    background-attachment: fixed;
+}
+
+/* The single, centred column that holds each screen's content. */
+.page-column {
+    width: 100%;
+    max-width: 560px;
+    margin-inline: auto;
+    padding-inline: 16px;
+    padding-bottom: 24px;
 }

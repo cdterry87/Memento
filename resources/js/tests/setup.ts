@@ -22,3 +22,17 @@ class ResizeObserverStub {
 }
 
 window.ResizeObserver = ResizeObserverStub;
+
+// Vuetify's menus position themselves against the visual viewport.
+Object.defineProperty(window, 'visualViewport', {
+    writable: true,
+    value: {
+        width: window.innerWidth,
+        height: window.innerHeight,
+        offsetLeft: 0,
+        offsetTop: 0,
+        scale: 1,
+        addEventListener: vi.fn(),
+        removeEventListener: vi.fn(),
+    },
+});
