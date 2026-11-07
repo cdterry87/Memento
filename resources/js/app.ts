@@ -7,11 +7,11 @@ import { createInertiaApp } from '@inertiajs/vue3';
 const appName = import.meta.env.VITE_APP_NAME || 'Memento';
 
 /** Pages shown to signed-out visitors. Every other page uses the app layout. */
-const guestPages = ['Welcome'];
+const isGuestPage = (name: string): boolean => name === 'Welcome' || name.startsWith('auth/');
 
 createInertiaApp({
     pages: './pages',
-    layout: (name) => (guestPages.includes(name) ? GuestLayout : AppLayout),
+    layout: (name) => (isGuestPage(name) ? GuestLayout : AppLayout),
     title: (title) => (title ? `${title} · ${appName}` : appName),
     progress: {
         color: '#6252e0',

@@ -1,19 +1,26 @@
-import { THEME_STORAGE_KEY, readStoredTheme } from '@/composables/useAppTheme';
+import { THEME_STORAGE_KEY, readInitialTheme } from '@/composables/useAppTheme';
 import vuetify from '@/plugins/vuetify';
 import { mount } from '@vue/test-utils';
-import { beforeEach, describe, expect, it } from 'vitest';
+import { beforeEach, describe, expect, it, vi } from 'vitest';
 import ThemeSwitcher from './ThemeSwitcher.vue';
 
-function mountSwitcher() {
-    return mount(ThemeSwitcher, {
+const inertia = vi.hoisted(() => ({
+    page: { props: { auth: { user: null as object | null } } },
+    patch: vi.fn(),
+}));
+
+vi.mock('@inertiajs/vue3', async (importOriginal) => ({
+    ...(await importOriginal<typeof import('@inertiajs/vue3')>()),
+    usePage: () => inertia.page,
+    router: { patch: inertia.patch },
+}));
+
+async function choose(label: string): Promise<void> {
+    const wrapper = mount(ThemeSwitcher, {
         global: {
             plugins: [vuetify],
         },
     });
-}
-
-async function choose(label: string): Promise<void> {
-    const wrapper = mountSwitcher();
 
     await wrapper
         .findAll('button')
@@ -26,9 +33,11 @@ describe('ThemeSwitcher', () => {
         vuetify.theme.change('system');
         window.localStorage.clear();
         delete document.documentElement.dataset.theme;
+        inertia.page.props.auth.user = null;
+        inertia.patch.mockClear();
     });
 
-    it('switches to the dark theme and remembers it', async () => {
+    it('switches to the dark theme and remembers it in the browser', async () => {
         await choose('Dark');
 
         expect(vuetify.theme.global.name.value).toBe('dark');
@@ -44,22 +53,40 @@ describe('ThemeSwitcher', () => {
         expect(window.localStorage.getItem(THEME_STORAGE_KEY)).toBeNull();
         expect(document.documentElement.dataset.theme).toBeUndefined();
     });
+
+    it('does not try to save the choice to an account when signed out', async () => {
+        await choose('Dark');
+
+        expect(inertia.patch).not.toHaveBeenCalled();
+    });
+
+    it("saves the choice to the signed-in user's account", async () => {
+        inertia.page.props.auth.user = { name: 'Ada' };
+
+        await choose('Light');
+
+        expect(inertia.patch).toHaveBeenCalledWith(
+            '/account/preferences',
+            { theme: 'light' },
+            expect.objectContaining({ preserveScroll: true }),
+        );
+    });
 });
 
-describe('readStoredTheme', () => {
+describe('readInitialTheme', () => {
     beforeEach(() => {
-        window.localStorage.clear();
+        delete document.documentElement.dataset.theme;
     });
 
-    it('reads a saved choice', () => {
-        window.localStorage.setItem(THEME_STORAGE_KEY, 'light');
+    it('starts with the theme set on the page before the app loads', () => {
+        document.documentElement.dataset.theme = 'light';
 
-        expect(readStoredTheme()).toBe('light');
+        expect(readInitialTheme()).toBe('light');
     });
 
-    it('falls back to the device setting for anything else', () => {
-        window.localStorage.setItem(THEME_STORAGE_KEY, 'purple');
+    it('follows the device for anything else', () => {
+        document.documentElement.dataset.theme = 'purple';
 
-        expect(readStoredTheme()).toBe('system');
+        expect(readInitialTheme()).toBe('system');
     });
 });

@@ -5,10 +5,15 @@ import { defineComponent, h } from 'vue';
 import { VApp } from 'vuetify/components';
 import Welcome from './Welcome.vue';
 
-vi.mock('@inertiajs/vue3', async (importOriginal) => ({
-    ...(await importOriginal<typeof import('@inertiajs/vue3')>()),
-    Head: defineComponent({ render: () => null }),
-}));
+vi.mock('@inertiajs/vue3', async (importOriginal) => {
+    // Imported here because the mock can load before this file's own imports.
+    const { defineComponent } = await import('vue');
+
+    return {
+        ...(await importOriginal<typeof import('@inertiajs/vue3')>()),
+        Head: defineComponent({ render: () => null }),
+    };
+});
 
 function mountWelcome() {
     const Wrapper = defineComponent({
@@ -27,10 +32,12 @@ describe('Welcome', () => {
         expect(mountWelcome().find('h1').text()).toBe('Memento');
     });
 
-    it('links into the app', () => {
-        const link = mountWelcome().find('a');
+    it('offers to create an account or sign in', () => {
+        const links = mountWelcome().findAll('a');
 
-        expect(link.text()).toBe('Take a look');
-        expect(link.attributes('href')).toBe('/today');
+        expect(links.map((link) => [link.text(), link.attributes('href')])).toEqual([
+            ['Create an account', '/register'],
+            ['Sign in', '/login'],
+        ]);
     });
 });

@@ -18,9 +18,24 @@ const { navigate } = useLinkNavigation();
             A tiny, private journal for the moments worth keeping.
         </p>
 
-        <!-- Goes straight in until sign-in arrives with accounts. -->
-        <v-btn color="primary" size="x-large" href="/today" @click="navigate($event, '/today')">
-            Take a look
-        </v-btn>
+        <div class="d-flex flex-wrap justify-center ga-3">
+            <v-btn
+                color="primary"
+                size="x-large"
+                href="/register"
+                @click="navigate($event, '/register')"
+            >
+                Create an account
+            </v-btn>
+            <v-btn
+                variant="tonal"
+                color="primary"
+                size="x-large"
+                href="/login"
+                @click="navigate($event, '/login')"
+            >
+                Sign in
+            </v-btn>
+        </div>
     </section>
 </template>
