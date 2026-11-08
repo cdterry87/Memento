@@ -17,7 +17,7 @@ class CurrentUserResource extends JsonResource
     /**
      * Transform the resource into an array.
      *
-     * @return array{name: string, email: string, emailVerified: bool, timezone: string, theme: string, showQuotes: bool}
+     * @return array{name: string, email: string, emailVerified: bool, timezone: string, theme: string, showQuotes: bool, reminderEmails: bool, reminderTime: string, onThisDayEmails: bool}
      */
     public function toArray(Request $request): array
     {
@@ -28,6 +28,9 @@ class CurrentUserResource extends JsonResource
             'timezone' => $this->timezone,
             'theme' => $this->theme->value,
             'showQuotes' => $this->show_quotes,
+            'reminderEmails' => $this->reminder_emails,
+            'reminderTime' => substr($this->reminder_time, 0, 5),
+            'onThisDayEmails' => $this->on_this_day_emails,
         ];
     }
 }

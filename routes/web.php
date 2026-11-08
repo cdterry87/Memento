@@ -7,11 +7,21 @@ use App\Http\Controllers\PhotoController;
 use App\Http\Controllers\RecapController;
 use App\Http\Controllers\TimelineController;
 use App\Http\Controllers\TodayController;
+use App\Http\Controllers\UnsubscribeController;
 use Illuminate\Support\Facades\Route;
 
 Route::inertia('/', 'Welcome', [
     'appName' => config('app.name'),
 ])->middleware('guest')->name('home');
+
+/*
+ * Signed links from emails. They work signed in or out, and the signature
+ * is the only proof needed, so an old email can always turn emails off.
+ */
+Route::middleware('signed')->group(function () {
+    Route::get('/unsubscribe/{user}/{type}', [UnsubscribeController::class, 'show'])->name('unsubscribe');
+    Route::post('/unsubscribe/{user}/{type}', [UnsubscribeController::class, 'store'])->name('unsubscribe.store');
+});
 
 Route::middleware(['auth', 'verified'])->group(function () {
     Route::get('/today', TodayController::class)->name('today');
