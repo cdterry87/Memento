@@ -11,6 +11,7 @@ use App\Http\Controllers\TimelineController;
 use App\Http\Controllers\TodayController;
 use App\Http\Controllers\UnsubscribeController;
 use Illuminate\Support\Facades\Route;
+use Inertia\Middleware\EncryptHistory;
 
 Route::inertia('/', 'Welcome', [
     'appName' => config('app.name'),
@@ -31,7 +32,11 @@ Route::middleware('signed')->group(function () {
     Route::post('/unsubscribe/{user}/{type}', [UnsubscribeController::class, 'store'])->name('unsubscribe.store');
 });
 
-Route::middleware(['auth', 'verified'])->group(function () {
+/*
+ * Every signed-in page. Inertia keeps each page's data in the browser's
+ * history, so it is encrypted there with a key that signing out discards.
+ */
+Route::middleware(['auth', 'verified', 'throttle:app', EncryptHistory::class])->group(function () {
     Route::get('/today', TodayController::class)->name('today');
 
     Route::get('/timeline', TimelineController::class)->name('timeline');

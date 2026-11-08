@@ -14,6 +14,8 @@
 html {
     background: #fbfaff;
     color-scheme: light;
+    /* Keeps a focused element clear of the fixed app bar and the check-in's sticky action bar. */
+    scroll-padding-block: 88px 96px;
 }
 
 html[data-theme='dark'] {
@@ -79,4 +81,39 @@ html[data-theme='dark'] {
     clip: rect(0 0 0 0);
     white-space: nowrap;
     border: 0;
+}
+
+/*
+ * Field labels. Vuetify dims them twice, with a translucent text colour and
+ * its medium-emphasis opacity, which leaves them at 3.8:1 on a filled field.
+ * This lifts them past the 4.5:1 that WCAG asks for. Disabled fields keep
+ * Vuetify's dimming, which signals that they can't be used.
+ */
+.v-field:not(.v-field--focused):not(.v-field--disabled) .v-field-label {
+    opacity: 0.8;
+}
+
+/* Hidden until focused, then the first thing a keyboard user can reach. */
+.skip-link {
+    position: fixed;
+    top: 12px;
+    left: 12px;
+    z-index: 3000;
+    padding: 10px 16px;
+    border-radius: 999px;
+    background: rgb(var(--v-theme-primary));
+    color: rgb(var(--v-theme-on-primary));
+    font-weight: 700;
+    text-decoration: none;
+    transform: translateY(-200%);
+}
+
+.skip-link:focus-visible {
+    transform: none;
+    outline: 3px solid rgb(var(--v-theme-on-background));
+    outline-offset: 2px;
+}
+
+#main-content:focus {
+    outline: none;
 }

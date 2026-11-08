@@ -51,6 +51,8 @@ function signOut(): void {
 
 <template>
     <v-app class="app-background">
+        <a href="#main-content" class="skip-link">Skip to content</a>
+
         <v-app-bar flat color="background" height="72">
             <div class="app-bar-content">
                 <Link href="/today" class="font-logo text-h5 text-primary text-decoration-none">
@@ -87,7 +89,7 @@ function signOut(): void {
                         </v-btn>
                     </template>
 
-                    <v-list nav min-width="200">
+                    <v-list nav min-width="200" role="menu" :aria-label="userName">
                         <v-list-item
                             :href="accountItem.href"
                             :prepend-icon="accountItem.icon"
@@ -95,6 +97,7 @@ function signOut(): void {
                             :active="isActive(accountItem.href)"
                             color="primary"
                             rounded="lg"
+                            role="menuitem"
                             :aria-current="isActive(accountItem.href) ? 'page' : undefined"
                             @click="navigate($event, accountItem.href)"
                         />
@@ -102,6 +105,7 @@ function signOut(): void {
                             :prepend-icon="mdiLogout"
                             title="Sign out"
                             rounded="lg"
+                            role="menuitem"
                             @click="signOut"
                         />
                     </v-list>
@@ -118,8 +122,8 @@ function signOut(): void {
                         />
                     </template>
 
-                    <v-list nav min-width="220">
-                        <v-list-subheader>{{ userName }}</v-list-subheader>
+                    <v-list nav min-width="220" role="menu" aria-label="Menu">
+                        <v-list-subheader role="presentation">{{ userName }}</v-list-subheader>
                         <v-list-item
                             v-for="item in allItems"
                             :key="item.href"
@@ -129,6 +133,7 @@ function signOut(): void {
                             :active="isActive(item.href)"
                             color="primary"
                             rounded="lg"
+                            role="menuitem"
                             :aria-current="isActive(item.href) ? 'page' : undefined"
                             @click="navigate($event, item.href)"
                         />
@@ -137,6 +142,7 @@ function signOut(): void {
                             :prepend-icon="mdiLogout"
                             title="Sign out"
                             rounded="lg"
+                            role="menuitem"
                             @click="signOut"
                         />
                     </v-list>
@@ -144,7 +150,7 @@ function signOut(): void {
             </div>
         </v-app-bar>
 
-        <v-main>
+        <v-main id="main-content" tabindex="-1">
             <div class="page-column pt-4">
                 <v-alert
                     v-if="page.props.auth.user?.isDemo"

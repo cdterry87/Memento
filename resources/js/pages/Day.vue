@@ -146,11 +146,15 @@ function deleteEntry(): void {
         <v-dialog
             :model-value="!!photoToDelete"
             max-width="420"
+            aria-labelledby="delete-photo-title"
+            aria-describedby="delete-photo-text"
             @update:model-value="photoToDelete = null"
         >
             <v-card>
-                <v-card-title class="text-h6 pt-5 px-6">Delete this photo?</v-card-title>
-                <v-card-text class="px-6"
+                <v-card-title id="delete-photo-title" class="text-h6 pt-5 px-6"
+                    >Delete this photo?</v-card-title
+                >
+                <v-card-text id="delete-photo-text" class="px-6"
                     >It will be removed for good. This can't be undone.</v-card-text
                 >
                 <v-card-actions class="px-6 pb-5">
@@ -168,10 +172,17 @@ function deleteEntry(): void {
             </v-card>
         </v-dialog>
 
-        <v-dialog v-model="confirmingDelete" max-width="420">
+        <v-dialog
+            v-model="confirmingDelete"
+            max-width="420"
+            aria-labelledby="delete-day-title"
+            aria-describedby="delete-day-text"
+        >
             <v-card>
-                <v-card-title class="text-h6 pt-5 px-6">Delete this day?</v-card-title>
-                <v-card-text class="px-6">
+                <v-card-title id="delete-day-title" class="text-h6 pt-5 px-6"
+                    >Delete this day?</v-card-title
+                >
+                <v-card-text id="delete-day-text" class="px-6">
                     Your check-in for {{ longDate }}, including its photos, will be removed for
                     good. This can't be undone.
                 </v-card-text>

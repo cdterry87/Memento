@@ -115,4 +115,23 @@ return [
         'name' => env('MAIL_FROM_NAME', env('APP_NAME', 'Laravel')),
     ],
 
+    /*
+    |--------------------------------------------------------------------------
+    | Markdown Mail Settings
+    |--------------------------------------------------------------------------
+    |
+    | Every email uses Memento's own theme and header, from the templates in
+    | resources/views/vendor/mail. Templates that aren't there fall back to
+    | Laravel's own.
+    |
+    */
+
+    'markdown' => [
+        'theme' => 'memento',
+
+        'paths' => [
+            resource_path('views/vendor/mail'),
+        ],
+    ],
+
 ];

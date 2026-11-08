@@ -140,3 +140,20 @@ describe('Account data', () => {
         expect(buttonNamed(wrapper, 'Delete my account')).toBeUndefined();
     });
 });
+
+describe('Account profile', () => {
+    it('asks for the current password only when the email address changes', async () => {
+        const wrapper = mountAccount();
+        // The profile form comes first; the password form has its own current password field.
+        const profile = () => wrapper.findAll('form')[0];
+        const email = profile().find('input[name="email"]');
+
+        expect(profile().find('input[name="current_password"]').exists()).toBe(false);
+
+        await email.setValue('Ada@Example.com');
+        expect(profile().find('input[name="current_password"]').exists()).toBe(false);
+
+        await email.setValue('new@example.com');
+        expect(profile().find('input[name="current_password"]').exists()).toBe(true);
+    });
+});

@@ -33,7 +33,7 @@ it('asks for the new address to be verified after an email change', function () 
     $user = User::factory()->create();
 
     $this->actingAs($user)
-        ->put(route('user-profile-information.update'), ['name' => $user->name, 'email' => 'new@example.com'])
+        ->put(route('user-profile-information.update'), ['name' => $user->name, 'email' => 'new@example.com', 'current_password' => 'password'])
         ->assertSessionHasNoErrors();
 
     expect($user->fresh()->email)->toBe('new@example.com')

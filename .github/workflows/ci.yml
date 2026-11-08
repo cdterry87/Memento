@@ -94,3 +94,74 @@ jobs:
 
             - name: Production build
               run: npm run build
+
+    browser:
+        name: Browser (${{ matrix.browser }})
+        runs-on: ubuntu-latest
+
+        strategy:
+            fail-fast: false
+            matrix:
+                browser: [chrome, safari]
+
+        services:
+            mysql:
+                image: mysql:8.4
+                env:
+                    MYSQL_DATABASE: testing
+                    MYSQL_USER: sail
+                    MYSQL_PASSWORD: password
+                    MYSQL_ROOT_PASSWORD: password
+                ports:
+                    - 3306:3306
+                options: >-
+                    --health-cmd="mysqladmin ping -ppassword"
+                    --health-interval=10s
+                    --health-timeout=5s
+                    --health-retries=5
+
+        env:
+            DB_HOST: 127.0.0.1
+            DB_PORT: 3306
+            DB_USERNAME: sail
+            DB_PASSWORD: password
+
+        steps:
+            - uses: actions/checkout@v7
+
+            - uses: shivammathur/setup-php@v2
+              with:
+                  php-version: '8.5'
+                  extensions: pdo_mysql, mbstring, exif, gd, zip, sockets
+                  coverage: none
+
+            - uses: actions/setup-node@v7
+              with:
+                  node-version: 24
+                  cache: npm
+
+            - name: Install dependencies
+              run: |
+                  composer install --no-interaction --no-progress --prefer-dist
+                  npm ci
+
+            - name: Install the browser
+              run: npx playwright install --with-deps ${{ matrix.browser == 'safari' && 'webkit' || 'chromium' }}
+
+            - name: Prepare environment
+              run: |
+                  cp .env.example .env
+                  php artisan key:generate
+
+            - name: Build assets
+              run: npm run build
+
+            - name: Browser tests (Pest)
+              run: php artisan test --testsuite=Browser --browser ${{ matrix.browser }}
+
+            - name: Keep failure screenshots
+              if: failure()
+              uses: actions/upload-artifact@v4
+              with:
+                  name: browser-screenshots-${{ matrix.browser }}
+                  path: tests/Browser/Screenshots
