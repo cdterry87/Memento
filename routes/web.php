@@ -15,6 +15,8 @@ Route::inertia('/', 'Welcome', [
     'appName' => config('app.name'),
 ])->middleware('guest')->name('home');
 
+Route::inertia('/privacy', 'Privacy')->name('privacy');
+
 Route::post('/demo', [DemoController::class, 'store'])
     ->middleware(['guest', 'throttle:guest-forms'])
     ->name('demo');

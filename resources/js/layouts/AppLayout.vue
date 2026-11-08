@@ -5,6 +5,7 @@
  * bar, with Account and Sign out in a menu under the user's name. On narrow
  * screens everything collapses into a single menu button.
  */
+import AppFooter from '@/components/AppFooter.vue';
 import { useLinkNavigation } from '@/composables/useLinkNavigation';
 import { Link, router, usePage } from '@inertiajs/vue3';
 import {
@@ -157,6 +158,7 @@ function signOut(): void {
                 </v-alert>
                 <slot />
             </div>
+            <AppFooter />
         </v-main>
     </v-app>
 </template>
