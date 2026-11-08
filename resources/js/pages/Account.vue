@@ -428,7 +428,6 @@ const reminderHours = Array.from({ length: 24 }, (_, hour) => ({
                                 label="Password"
                                 autocomplete="current-password"
                                 :error-messages="errors.password"
-                                autofocus
                             />
                         </v-card-text>
                         <v-card-actions class="px-6 pb-5">

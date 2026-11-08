@@ -47,6 +47,30 @@ afterEach(function () {
 
 dataset('themes', ['light', 'dark']);
 
+/**
+ * Waits for dialogs and menus to finish fading in. Checked halfway, their
+ * text is still part transparent and fails the contrast check, more often
+ * on a slower machine such as a CI runner.
+ *
+ * @template TPage of object
+ *
+ * @param  TPage  $page
+ * @return TPage
+ */
+function afterAnimations(object $page): object
+{
+    $page->script(<<<'JS'
+        async () => {
+            const ending = document.getAnimations()
+                .filter((animation) => animation.effect?.getComputedTiming().endTime !== Infinity);
+
+            await Promise.allSettled(ending.map((animation) => animation.finished));
+        }
+    JS);
+
+    return $page;
+}
+
 it('has no accessibility issues on guest pages', function (string $path, string $theme) {
     $page = $theme === 'dark' ? visit($path)->inDarkMode() : visit($path)->inLightMode();
 
@@ -105,23 +129,23 @@ it('has no accessibility issues through each check-in step', function () {
 it('has no accessibility issues in dialogs and menus', function () {
     $this->actingAs($this->user);
 
-    visit('/account')
+    $page = visit('/account')
         ->press('Delete my account')
-        ->assertSee('Delete your account?')
-        ->wait(1)
-        ->assertNoAccessibilityIssues(3);
+        ->assertSee('Delete your account?');
+    afterAnimations($page)->assertNoAccessibilityIssues(3);
 
-    visit('/days/2026-11-06')
+    $page = visit('/days/2026-11-06')
         ->click('Delete')
-        ->assertNoAccessibilityIssues(3);
+        ->assertSee('Delete this day?');
+    afterAnimations($page)->assertNoAccessibilityIssues(3);
 
     // An open menu sits in Vuetify's overlay container, outside the page
     // landmarks, which trips axe's "region" best practice. That isn't a WCAG
     // rule, so menus are held to serious and critical issues.
-    visit('/today')
+    $page = visit('/today')
         ->click('Ada Lovelace')
-        ->assertSee('Sign out')
-        ->assertNoAccessibilityIssues(1);
+        ->assertSee('Sign out');
+    afterAnimations($page)->assertNoAccessibilityIssues(1);
 });
 
 it('has no accessibility issues on a phone', function (string $path) {
