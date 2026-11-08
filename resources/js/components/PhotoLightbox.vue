@@ -78,7 +78,13 @@ watch(
 </script>
 
 <template>
-    <v-dialog v-model="open" fullscreen :scrim="false" transition="fade-transition">
+    <v-dialog
+        v-model="open"
+        fullscreen
+        :scrim="false"
+        transition="fade-transition"
+        :aria-label="`${label}, photos`"
+    >
         <v-theme-provider theme="dark" class="h-100">
             <div
                 class="lightbox"

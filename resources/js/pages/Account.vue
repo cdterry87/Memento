@@ -20,6 +20,17 @@ const statusMessages: Record<string, string> = {
     'export-requested': "We're making your export. We'll email you when it's ready.",
 };
 
+/** The email being typed, so a password is asked for only when it changes. */
+const emailInput = ref(user.value.email);
+const isChangingEmail = computed(
+    () => emailInput.value.trim().toLowerCase() !== user.value.email.toLowerCase(),
+);
+
+watch(
+    () => user.value.email,
+    (email) => (emailInput.value = email),
+);
+
 const snackbar = ref(false);
 const snackbarText = ref('');
 
@@ -142,6 +153,8 @@ const reminderHours = Array.from({ length: 24 }, (_, hour) => ({
                 method="put"
                 error-bag="updateProfileInformation"
                 :options="{ preserveScroll: true }"
+                :reset-on-error="['current_password']"
+                :reset-on-success="['current_password']"
             >
                 <v-text-field
                     :disabled="user.isDemo"
@@ -153,13 +166,25 @@ const reminderHours = Array.from({ length: 24 }, (_, hour) => ({
                 />
 
                 <v-text-field
+                    v-model="emailInput"
                     :disabled="user.isDemo"
                     name="email"
                     type="email"
                     label="Email"
                     autocomplete="email"
-                    :model-value="user.email"
                     :error-messages="errors.email"
+                />
+
+                <v-text-field
+                    v-if="isChangingEmail"
+                    name="current_password"
+                    type="password"
+                    label="Current password"
+                    autocomplete="current-password"
+                    hint="Needed to change your email address."
+                    persistent-hint
+                    class="mb-2"
+                    :error-messages="errors.current_password"
                 />
 
                 <p class="text-body-2 text-medium-emphasis mb-4">
@@ -375,7 +400,12 @@ const reminderHours = Array.from({ length: 24 }, (_, hour) => ({
                 Delete my account
             </v-btn>
 
-            <v-dialog v-model="deleteDialog" max-width="480">
+            <v-dialog
+                v-model="deleteDialog"
+                max-width="480"
+                aria-labelledby="delete-account-title"
+                aria-describedby="delete-account-text"
+            >
                 <v-card>
                     <Form
                         v-slot="{ errors, processing }"
@@ -384,9 +414,11 @@ const reminderHours = Array.from({ length: 24 }, (_, hour) => ({
                         error-bag="deleteAccount"
                         :reset-on-error="['password']"
                     >
-                        <v-card-title class="text-h6 pt-5 px-6">Delete your account?</v-card-title>
+                        <v-card-title id="delete-account-title" class="text-h6 pt-5 px-6"
+                            >Delete your account?</v-card-title
+                        >
                         <v-card-text class="px-6">
-                            <p class="mb-4">
+                            <p id="delete-account-text" class="mb-4">
                                 Your account, entries, and photos will be deleted for good. Enter
                                 your password to confirm.
                             </p>
@@ -396,7 +428,6 @@ const reminderHours = Array.from({ length: 24 }, (_, hour) => ({
                                 label="Password"
                                 autocomplete="current-password"
                                 :error-messages="errors.password"
-                                autofocus
                             />
                         </v-card-text>
                         <v-card-actions class="px-6 pb-5">

@@ -593,7 +593,10 @@ These respond directly to section 4.
 11. **Production:** HTTPS only, secure and HttpOnly cookies, HSTS, a Content Security Policy, and `noindex` for all app pages. The `SecurityHeaders` middleware sends these. The policy uses a per-request script nonce, allows Turnstile and the media host, and is on in production (`CSP_ENABLED` overrides it).
 12. **Backups** must include both the database and the R2 bucket. Losing either one loses people's memories.
 13. **Public registration protections:** email verification, rate limits on registration, and bounded storage per user (the daily limits in section 6.2 already cap this).
-14. **Demo restrictions** are enforced by a policy or middleware on the server, based on `is_demo`, as listed in section 6.9.
+14. **Demo restrictions** are enforced by a policy or middleware on the server, based on `is_demo`, as listed in section 6.9. The demo account can't sign in with its password, only through the Turnstile-protected demo button.
+15. **Account takeover protections:** changing the email address needs the current password; changing or resetting the password signs out every other session and "remember me" cookie (`AuthenticateSession`); "forgot password" gives the same reply for every address; and sign-in takes the same time whether or not an account exists.
+16. **Abuse limits:** sign-in is limited per address and per IP, signed-in requests share a ceiling of 300 a minute, and uploads are refused above 50 megapixels so decoding can't exhaust memory. In production, new passwords are checked against known breaches.
+17. **Browser history:** Inertia encrypts the page history of signed-in pages and clears it on sign-out and account deletion, so the back button can't show a journal on a shared device.
 
 Journal content relies on encryption at rest provided by the database host and R2. Application-level encryption is not planned.
 
@@ -659,7 +662,7 @@ resources/
 ### 8.7 Web only
 
 - This is an online-only web app. There is no service worker, offline mode, or push notifications.
-- The web manifest and icons carry over and are refreshed, so that adding it to a phone's home screen looks right.
+- The web manifest and icons carry over and are refreshed, so that adding it to a phone's home screen looks right. They live in `public/site.webmanifest`, `public/icons/`, `public/apple-touch-icon.png`, and `public/favicon.ico`.
 
 ### 8.8 Local development and deployment
 
@@ -683,7 +686,19 @@ resources/
 - The scheduler runs every minute (`schedule:run`) and a queue worker runs continuously (`queue:work`), for emails and exports.
 - Upload limits must agree across the web server, PHP (`upload_max_filesize`, `post_max_size`), and validation. Set them to 12 MB per request, since files upload individually.
 - `public/build` is gitignored, and no compiled assets are committed.
-- GitHub Actions runs Pint, Larastan, Pest with a MySQL service, ESLint, `vue-tsc`, Vitest, and a production build on every pull request. Dependabot stays on.
+- GitHub Actions runs Pint, Larastan, Pest with a MySQL service, ESLint, `vue-tsc`, Vitest, and a production build on every pull request, plus the browser tests in Chromium and WebKit. Dependabot opens weekly grouped updates for Composer, npm, and GitHub Actions (`.github/dependabot.yml`).
+- Browser tests use Pest's browser plugin with Playwright. Run them with `sail artisan test --testsuite=Browser`, adding `--browser safari` for WebKit. After a fresh `npm install`, run `sail npx playwright install chromium webkit`; the browsers are kept in `node_modules`. If a rebuilt Sail container is missing their system libraries, run `sail root-shell` then `npx playwright install-deps chromium webkit`.
+
+**Production security checklist**
+
+- `APP_ENV=production` and `APP_DEBUG=false`, so errors show no details. Leave `INERTIA_DEVTOOLS_ENABLED` unset.
+- `composer install --no-dev`, so development tools such as Boost are not installed.
+- `SESSION_SECURE_COOKIE=true` and `SESSION_ENCRYPT=true`.
+- Configure trusted proxies for the host's load balancer, so rate limits see each visitor's real IP and not the proxy's.
+- Real Turnstile keys. The test keys are refused in production.
+- A long random `DEMO_PASSWORD` if demo mode is on.
+- R2 credentials limited to the one bucket.
+- PHP `memory_limit` of at least 512 MB for photo processing.
 
 Environment settings specific to this app:
 
@@ -714,7 +729,7 @@ QUEUE_CONNECTION=database
 - **Email:** opt-in is respected, sends match the user's local time, no duplicates occur across daylight saving changes, unverified and demo users are skipped, unsubscribe works, and no journal content appears in an email.
 - **Demo mode:** registration routes are absent when it's on, each restricted action is refused for the demo user, and the reset leaves other users' data untouched and refuses to run when demo mode is off.
 - **Settings and export:** hiding quotes works, the theme preference persists, and an export contains all of a user's data and only that user's data.
-- **Browser:** the complete check-in with photo and voice in Chromium and WebKit, plus manual checks on a real iPhone and Android phone.
+- **Browser:** the complete check-in with photo and voice in Chromium and WebKit, plus manual checks on a real iPhone and Android phone. Every screen is also checked with axe in both themes and on a phone-sized screen (`tests/Browser`).
 
 ### Release acceptance criteria
 

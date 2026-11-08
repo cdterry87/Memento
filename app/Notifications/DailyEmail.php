@@ -47,7 +47,6 @@ abstract class DailyEmail extends Notification implements ShouldQueue
 
         return $this->message($notifiable)
             ->line("Don't want these emails? [Turn them off]({$unsubscribeUrl}).")
-            ->salutation('Memento')
             ->withSymfonyMessage(function (Email $message) use ($unsubscribeUrl) {
                 $message->getHeaders()
                     ->addTextHeader('List-Unsubscribe', "<{$unsubscribeUrl}>")

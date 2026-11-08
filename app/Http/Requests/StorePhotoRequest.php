@@ -5,7 +5,9 @@ namespace App\Http\Requests;
 use App\Support\DemoRestriction;
 use Illuminate\Contracts\Validation\ValidationRule;
 use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Http\UploadedFile;
 use Illuminate\Validation\Rules\File;
+use Illuminate\Validation\Validator;
 
 /**
  * One photo for the day in the URL. The type is checked from the file's
@@ -18,6 +20,14 @@ class StorePhotoRequest extends FormRequest
      * Largest accepted upload, in kilobytes.
      */
     public const MAX_KILOBYTES = 10 * 1024;
+
+    /**
+     * Largest accepted image, in pixels. Decoding needs about four bytes a
+     * pixel, so this keeps one upload to roughly 200 MB of memory. It allows
+     * 48-megapixel phone photos, and refuses small files that decode to
+     * enormous images.
+     */
+    public const MAX_PIXELS = 50_000_000;
 
     /**
      * Determine if the user is authorized to make this request.
@@ -49,6 +59,28 @@ class StorePhotoRequest extends FormRequest
                 // Guards against tiny files that decode to huge images.
                 'dimensions:max_width=12000,max_height=12000',
             ],
+        ];
+    }
+
+    /**
+     * @return array<int, callable(Validator): void>
+     */
+    public function after(): array
+    {
+        return [
+            function (Validator $validator): void {
+                $photo = $this->file('photo');
+
+                if ($validator->errors()->has('photo') || ! $photo instanceof UploadedFile) {
+                    return;
+                }
+
+                $size = @getimagesize($photo->getRealPath());
+
+                if ($size === false || $size[0] * $size[1] > self::MAX_PIXELS) {
+                    $validator->errors()->add('photo', 'That photo is too large to process.');
+                }
+            },
         ];
     }
 

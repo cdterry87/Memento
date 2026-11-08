@@ -27,3 +27,4 @@ Homestead.yaml
 Thumbs.db
 
 /tests/reports/coverage
+/tests/Browser/Screenshots

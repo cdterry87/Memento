@@ -37,8 +37,7 @@ class DataExportReady extends Notification
             ->line('The copy of your journal you asked for is ready to download.')
             ->action('Download your export', self::downloadUrl($this->export))
             ->line('The link works for '.DataExport::EXPIRES_AFTER_HOURS.' hours, and you need to be signed in to use it. After that the file is deleted, and you can make a new one from your Account page.')
-            ->line("If you didn't ask for this, you can ignore this email, but consider changing your password.")
-            ->salutation('Memento');
+            ->line("If you didn't ask for this, you can ignore this email, but consider changing your password.");
     }
 
     /**
