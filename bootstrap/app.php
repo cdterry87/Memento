@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Middleware\HandleInertiaRequests;
+use App\Http\Middleware\SecurityHeaders;
 use App\Http\Middleware\ThrottleGuestForms;
 use Illuminate\Foundation\Application;
 use Illuminate\Foundation\Configuration\Exceptions;
@@ -23,6 +24,7 @@ return Application::configure(basePath: dirname(__DIR__))
         $middleware->validateCsrfTokens(except: ['unsubscribe/*']);
 
         $middleware->web(append: [
+            SecurityHeaders::class,
             ThrottleGuestForms::class,
             HandleInertiaRequests::class,
         ]);

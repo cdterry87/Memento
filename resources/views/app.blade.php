@@ -13,7 +13,7 @@
 
         @guest
             {{-- Signed-out visitors keep their theme in the browser. Applying it here, before the first paint, avoids a flash of the device theme. Keep the key in step with useAppTheme.ts. --}}
-            <script>
+            <script @if (Vite::cspNonce()) nonce="{{ Vite::cspNonce() }}" @endif>
                 try {
                     const theme = localStorage.getItem('memento.theme');
 

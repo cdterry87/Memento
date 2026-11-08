@@ -323,8 +323,9 @@ Recap figures are computed on request, since one user's year is at most 366 rows
 - Edit name and email, and change password (the current password is required).
 - Time zone is detected from the browser at registration and editable in Account.
 - Account settings: appearance (system, light, dark), show quotes, and email preferences.
-- **Export data:** a queued job builds a ZIP of JSON and media files, then emails a signed link that expires after 24 hours. The ZIP is deleted after expiry.
-- **Delete account:** requires confirmation and password re-entry, and removes all database rows **and all media files**.
+- **Export data:** a queued job builds a ZIP of JSON and media files, then emails a signed link that expires after 24 hours. The link also needs the owner to be signed in. The Account page shows the export's progress and the download button. One export is kept per user, up to 5 can be requested a day, and the ZIP is deleted after expiry by an hourly `model:prune`.
+- **Delete account:** requires confirmation and password re-entry, and removes all database rows **and all media files**, including exports. Sessions on other devices end too.
+- **Console account creation:** `php artisan user:create` creates a verified account even when registration is off. It asks for each detail, or takes `--name`, `--email`, `--timezone`, and `--password` for scripted use. `--unverified` leaves the address to be confirmed.
 - Because the app is public, a short privacy page explains what is stored and how to export or delete it.
 - Nothing is seeded in production except lookup data and quotes, plus the demo user when demo mode is on.
 
@@ -352,7 +353,7 @@ Enabled with `DEMO_MODE=true`. It lets anyone try the app without creating an ac
 - Public registration is **hidden and disabled**. The Fortify feature is turned off, so the routes don't exist, rather than just removing the link.
 - The login page shows a "Try the demo" button that signs in as the demo user. No credentials are displayed.
 - A small banner tells demo users that changes reset nightly.
-- The owner's own account keeps working normally, and a nightly reset never touches it.
+- The owner's own account keeps working normally, and a nightly reset never touches it. With registration off, the owner creates it with `php artisan user:create`.
 
 **Demo account restrictions**
 
@@ -589,7 +590,7 @@ These respond directly to section 4.
 8. **Rate limiting** on login, password reset, and uploads.
 9. **Mass assignment:** explicit `$fillable`, excluding `user_id`.
 10. **State changes** use POST, PUT, PATCH, or DELETE only, with CSRF protection.
-11. **Production:** HTTPS only, secure and HttpOnly cookies, HSTS, a Content Security Policy, and `noindex` for all app pages.
+11. **Production:** HTTPS only, secure and HttpOnly cookies, HSTS, a Content Security Policy, and `noindex` for all app pages. The `SecurityHeaders` middleware sends these. The policy uses a per-request script nonce, allows Turnstile and the media host, and is on in production (`CSP_ENABLED` overrides it).
 12. **Backups** must include both the database and the R2 bucket. Losing either one loses people's memories.
 13. **Public registration protections:** email verification, rate limits on registration, and bounded storage per user (the daily limits in section 6.2 already cap this).
 14. **Demo restrictions** are enforced by a policy or middleware on the server, based on `is_demo`, as listed in section 6.9.
@@ -617,9 +618,9 @@ Web routes return Inertia pages. Memories are addressed by date, for example `/d
 | `GET /media/voice/{voiceNote}` | Authorize, then redirect to a signed URL |
 | `GET /recap`, `GET /recap/{year}` | Redirect to the latest year, or show a year |
 | `GET /account`, `PATCH /account/preferences` | Settings, including theme, quotes, and emails |
-| `POST /account/export` | Queue a data export |
-| `GET /account/export/{export}` | Download an export (signed, expires) |
-| `DELETE /account` | Delete account |
+| `POST /account/export` | Queue a data export (not for the demo user) |
+| `GET /account/export/{export}` | Download an export (signed, expires, owner only) |
+| `DELETE /account` | Delete account (password required, not for the demo user) |
 | `GET /unsubscribe/{user}/{type}` | One-click email unsubscribe (signed) |
 | `POST /demo` | Sign in as the demo user (only when demo mode is on) |
 | `GET /privacy` | Privacy page |
@@ -630,7 +631,7 @@ Web routes return Inertia pages. Memories are addressed by date, for example `/d
 ```
 app/
   Actions/           StoreMemory, DeleteMemory, StorePhoto, StoreVoiceNote, DeleteAccount
-  Console/Commands/  SendDailyEmails, ResetDemo
+  Console/Commands/  SendDailyEmails, ResetDemo, CreateUser
   Jobs/              BuildDataExport
   Notifications/     CheckInReminder, OnThisDayReminder, DataExportReady
   Http/Controllers/  TodayController, TimelineController, DayController,
@@ -678,7 +679,8 @@ resources/
 
 **General**
 
-- Required PHP extensions: `pdo_mysql`, `gd` or `imagick`, `exif`, `mbstring`.
+- Required PHP extensions: `pdo_mysql`, `gd` or `imagick`, `exif`, `mbstring`, `zip` (for data exports).
+- The scheduler runs every minute (`schedule:run`) and a queue worker runs continuously (`queue:work`), for emails and exports.
 - Upload limits must agree across the web server, PHP (`upload_max_filesize`, `post_max_size`), and validation. Set them to 12 MB per request, since files upload individually.
 - `public/build` is gitignored, and no compiled assets are committed.
 - GitHub Actions runs Pint, Larastan, Pest with a MySQL service, ESLint, `vue-tsc`, Vitest, and a production build on every pull request. Dependabot stays on.
@@ -687,6 +689,7 @@ Environment settings specific to this app:
 
 ```dotenv
 DEMO_MODE=false
+CSP_ENABLED=true
 FILESYSTEM_DISK=local
 MEDIA_DISK=media
 R2_ACCESS_KEY_ID=

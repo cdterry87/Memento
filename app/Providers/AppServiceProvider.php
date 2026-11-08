@@ -4,6 +4,7 @@ namespace App\Providers;
 
 use Carbon\CarbonImmutable;
 use Illuminate\Cache\RateLimiting\Limit;
+use Illuminate\Database\Eloquent\Model;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\RateLimiter;
 use Illuminate\Support\Facades\Route;
@@ -18,7 +19,11 @@ class AppServiceProvider extends ServiceProvider
     {
         $this->bindCalendarDates();
 
+        // Surfaces N+1 queries in development and tests. Production logs nothing extra.
+        Model::preventLazyLoading(! $this->app->isProduction());
+
         RateLimiter::for('uploads', fn (Request $request) => Limit::perMinute(30)->by($request->user()?->id ?: $request->ip()));
+        RateLimiter::for('exports', fn (Request $request) => Limit::perDay(5)->by($request->user()?->id ?: $request->ip()));
     }
 
     /**

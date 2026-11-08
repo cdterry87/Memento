@@ -40,4 +40,17 @@ return [
         'verify_url' => 'https://challenges.cloudflare.com/turnstile/v0/siteverify',
     ],
 
+    /*
+    |--------------------------------------------------------------------------
+    | Content Security Policy
+    |--------------------------------------------------------------------------
+    |
+    | Sent in production (spec section 8.4). It is off by default elsewhere,
+    | because the Vite dev server serves scripts from another origin. Set
+    | CSP_ENABLED=true to try it locally against a production build.
+    |
+    */
+
+    'content_security_policy' => (bool) env('CSP_ENABLED', env('APP_ENV') === 'production'),
+
 ];
