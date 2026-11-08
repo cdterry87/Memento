@@ -157,6 +157,9 @@ jobs:
               run: npm run build
 
             - name: Browser tests (Pest)
+              # A wide terminal, so failures show the whole test and dataset name.
+              env:
+                  COLUMNS: 200
               run: php artisan test --testsuite=Browser --browser ${{ matrix.browser }}
 
             - name: Keep failure screenshots
