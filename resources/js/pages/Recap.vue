@@ -117,7 +117,7 @@ const hasMonthlyTrend = computed(
 
         <EmptyState
             v-if="!recap.checkIns"
-            emoji="🌱"
+            emoji="📖"
             :title="`Your ${recap.year} story starts here`"
             text="Check in for a few days and your year will start to take shape."
         >

@@ -160,4 +160,8 @@ function signOut(): void {
     margin-inline: auto;
     padding-inline: 16px;
 }
+
+.font-logo {
+    font-size: 1.7rem;
+}
 </style>
