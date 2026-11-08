@@ -32,6 +32,21 @@ class UpdatePreferencesRequest extends FormRequest
             'theme' => ['sometimes', Rule::enum(Theme::class)],
             'timezone' => ['sometimes', 'string', 'timezone:all_with_bc'],
             'show_quotes' => ['sometimes', 'boolean'],
+            'reminder_emails' => ['sometimes', 'boolean'],
+            'on_this_day_emails' => ['sometimes', 'boolean'],
+            'reminder_time' => ['sometimes', 'string', 'regex:/^([01]\d|2[0-3]):00$/'],
+        ];
+    }
+
+    /**
+     * Get custom messages for validator errors.
+     *
+     * @return array<string, string>
+     */
+    public function messages(): array
+    {
+        return [
+            'reminder_time.regex' => 'Choose an hour for your reminder.',
         ];
     }
 }

@@ -71,6 +71,9 @@ it('shares only the fields the interface needs about the signed-in user', functi
                 'timezone' => 'Europe/London',
                 'theme' => 'system',
                 'showQuotes' => true,
+                'reminderEmails' => false,
+                'reminderTime' => '20:00',
+                'onThisDayEmails' => false,
             ])
         );
 });

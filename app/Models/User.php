@@ -38,6 +38,10 @@ class User extends Authenticatable implements MustVerifyEmail
      */
     protected $attributes = [
         'show_quotes' => true,
+        'reminder_emails' => false,
+        'reminder_time' => '20:00:00',
+        'on_this_day_emails' => false,
+        'is_demo' => false,
     ];
 
     /**

@@ -10,6 +10,10 @@ export interface CurrentUser {
     timezone: string;
     theme: ThemePreference;
     showQuotes: boolean;
+    reminderEmails: boolean;
+    /** "20:00", the local hour of the daily reminder. */
+    reminderTime: string;
+    onThisDayEmails: boolean;
 }
 
 /** A pickable option in the check-in, shaped by MoodResource and ReasonResource. */

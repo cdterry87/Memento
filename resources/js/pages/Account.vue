@@ -30,19 +30,21 @@ watch(
     { immediate: true },
 );
 
-function saveShowQuotes(showQuotes: boolean | null): void {
-    router.patch(
-        '/account/preferences',
-        { show_quotes: !!showQuotes },
-        {
-            preserveScroll: true,
-            onSuccess: () => {
-                snackbarText.value = showQuotes
-                    ? 'Quotes are back on Today.'
-                    : 'Quotes are hidden.';
-                snackbar.value = true;
-            },
+/** Saves one or more preferences, then confirms with a short message. */
+function savePreferences(preferences: Record<string, string | boolean>, message: string): void {
+    router.patch('/account/preferences', preferences, {
+        preserveScroll: true,
+        onSuccess: () => {
+            snackbarText.value = message;
+            snackbar.value = true;
         },
+    });
+}
+
+function saveShowQuotes(showQuotes: boolean | null): void {
+    savePreferences(
+        { show_quotes: !!showQuotes },
+        showQuotes ? 'Quotes are back on Today.' : 'Quotes are hidden.',
     );
 }
 
@@ -51,18 +53,35 @@ function saveTimezone(timezone: string | null): void {
         return;
     }
 
-    router.patch(
-        '/account/preferences',
-        { timezone },
-        {
-            preserveScroll: true,
-            onSuccess: () => {
-                snackbarText.value = 'Your time zone is saved.';
-                snackbar.value = true;
-            },
-        },
+    savePreferences({ timezone }, 'Your time zone is saved.');
+}
+
+function saveReminderEmails(on: boolean | null): void {
+    savePreferences({ reminder_emails: !!on }, on ? 'Reminders are on.' : 'Reminders are off.');
+}
+
+function saveReminderTime(time: string | null): void {
+    if (!time || time === user.value.reminderTime) {
+        return;
+    }
+
+    savePreferences({ reminder_time: time }, 'Your reminder time is saved.');
+}
+
+function saveOnThisDayEmails(on: boolean | null): void {
+    savePreferences(
+        { on_this_day_emails: !!on },
+        on ? 'On this day emails are on.' : 'On this day emails are off.',
     );
 }
+
+/** Every whole hour, labelled the way the browser shows times, such as "8 PM". */
+const reminderHours = Array.from({ length: 24 }, (_, hour) => ({
+    value: `${String(hour).padStart(2, '0')}:00`,
+    title: new Intl.DateTimeFormat(undefined, { hour: 'numeric', timeZone: 'UTC' }).format(
+        new Date(Date.UTC(2000, 0, 1, hour)),
+    ),
+}));
 </script>
 
 <template>
@@ -185,6 +204,55 @@ function saveTimezone(timezone: string | null): void {
                 auto-select-first
                 @update:model-value="saveTimezone"
             />
+        </v-card>
+
+        <v-card class="pa-6">
+            <h2 class="text-subtitle-1 font-weight-bold mb-1">Emails</h2>
+            <p class="text-body-2 text-medium-emphasis mb-2">
+                Both are off unless you turn them on. Emails never include your entries, only a link
+                back here.
+            </p>
+
+            <v-alert v-if="!user.emailVerified" type="info" variant="tonal" class="my-4">
+                Confirm your email address to get emails.
+            </v-alert>
+
+            <v-switch
+                label="Daily check-in reminder"
+                color="primary"
+                inset
+                hide-details
+                :disabled="!user.emailVerified"
+                :model-value="user.reminderEmails"
+                @update:model-value="saveReminderEmails"
+            />
+            <p class="text-body-2 text-medium-emphasis mb-4">
+                Only on days you haven't checked in yet.
+            </p>
+
+            <v-select
+                v-if="user.reminderEmails"
+                label="Reminder time"
+                :items="reminderHours"
+                :model-value="user.reminderTime"
+                :error-messages="page.props.errors.reminder_time"
+                :disabled="!user.emailVerified"
+                class="mb-2"
+                @update:model-value="saveReminderTime"
+            />
+
+            <v-switch
+                label="On this day"
+                color="primary"
+                inset
+                hide-details
+                :disabled="!user.emailVerified"
+                :model-value="user.onThisDayEmails"
+                @update:model-value="saveOnThisDayEmails"
+            />
+            <p class="text-body-2 text-medium-emphasis">
+                A note at 8 AM when you have memories from this date in earlier years.
+            </p>
         </v-card>
 
         <v-snackbar v-model="snackbar" :timeout="3000">{{ snackbarText }}</v-snackbar>

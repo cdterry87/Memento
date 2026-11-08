@@ -16,6 +16,12 @@ return Application::configure(basePath: dirname(__DIR__))
     ->withMiddleware(function (Middleware $middleware): void {
         $middleware->redirectUsersTo('/today');
 
+        /*
+         * Mail apps post one-click unsubscribes with no session. The signed
+         * URL is what protects the route.
+         */
+        $middleware->validateCsrfTokens(except: ['unsubscribe/*']);
+
         $middleware->web(append: [
             ThrottleGuestForms::class,
             HandleInertiaRequests::class,
