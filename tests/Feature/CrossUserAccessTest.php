@@ -1,5 +1,6 @@
 <?php
 
+use App\Models\DataExport;
 use App\Models\Memory;
 use App\Models\MemoryPhoto;
 use App\Models\User;
@@ -32,6 +33,9 @@ beforeEach(function () {
     $this->ownersPhoto = MemoryPhoto::factory()->for($this->ownersMemory)->create();
     Storage::disk('media')->put($this->ownersPhoto->path, 'photo');
     Storage::disk('media')->put($this->ownersPhoto->thumbnail_path, 'thumbnail');
+
+    $this->ownersExport = DataExport::factory()->for($this->owner)->ready()->create();
+    Storage::disk('media')->put($this->ownersExport->path, 'export');
 });
 
 afterEach(function () {
@@ -59,6 +63,7 @@ function urlFor(RoutingRoute $route): string
         '{photo}' => test()->ownersPhoto->ulid,
         '{variant}' => 'thumb',
         '{year}' => '2026',
+        '{export}' => test()->ownersExport->ulid,
     ];
 
     $unknown = array_diff($route->parameterNames(), array_map(fn ($key) => trim($key, '{}'), array_keys($values)));
@@ -115,8 +120,10 @@ it("never changes the owner's entry from anyone else's request", function () {
     expect($memory->body)->toBe($this->secret)
         ->and($memory->mood_id)->toBe($this->ownersMemory->mood_id)
         ->and($memory->reasons)->toHaveCount(0)
-        ->and($memory->photos)->toHaveCount(1);
-    Storage::disk('media')->assertExists([$this->ownersPhoto->path, $this->ownersPhoto->thumbnail_path]);
+        ->and($memory->photos)->toHaveCount(1)
+        ->and($this->ownersExport->fresh())->not->toBeNull()
+        ->and($this->owner->fresh())->not->toBeNull();
+    Storage::disk('media')->assertExists([$this->ownersPhoto->path, $this->ownersPhoto->thumbnail_path, $this->ownersExport->path]);
 });
 
 it("gives a stranger their own blank day at the owner's date", function () {

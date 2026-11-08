@@ -1,10 +1,13 @@
 <script setup lang="ts">
 import ThemeSwitcher from '@/components/ThemeSwitcher.vue';
-import { Form, Head, router, usePage } from '@inertiajs/vue3';
+import type { DataExportStatus } from '@/types';
+import { mdiDownload } from '@mdi/js';
+import { Form, Head, router, usePage, usePoll } from '@inertiajs/vue3';
 import { computed, ref, watch } from 'vue';
 
-defineProps<{
+const props = defineProps<{
     timezones: string[];
+    dataExport: DataExportStatus | null;
 }>();
 
 const page = usePage();
@@ -14,6 +17,7 @@ const statusMessages: Record<string, string> = {
     'profile-information-updated': 'Your profile is saved.',
     'password-updated': 'Your password is changed.',
     'verification-link-sent': 'A verification link is on its way.',
+    'export-requested': "We're making your export. We'll email you when it's ready.",
 };
 
 const snackbar = ref(false);
@@ -75,6 +79,39 @@ function saveOnThisDayEmails(on: boolean | null): void {
     );
 }
 
+const exporting = ref(false);
+
+function requestExport(): void {
+    router.post(
+        '/account/export',
+        {},
+        {
+            preserveScroll: true,
+            onStart: () => (exporting.value = true),
+            onFinish: () => (exporting.value = false),
+        },
+    );
+}
+
+/** Checks on an export in progress, so the download appears without a refresh. */
+const exportPoll = usePoll(5000, { only: ['dataExport'] }, { autoStart: false });
+
+watch(
+    () => props.dataExport?.status,
+    (status) => (status === 'pending' ? exportPoll.start() : exportPoll.stop()),
+    { immediate: true },
+);
+
+const exportExpiresAt = computed(() =>
+    props.dataExport?.expiresAt
+        ? new Intl.DateTimeFormat(undefined, { dateStyle: 'medium', timeStyle: 'short' }).format(
+              new Date(props.dataExport.expiresAt),
+          )
+        : null,
+);
+
+const deleteDialog = ref(false);
+
 /** Every whole hour, labelled the way the browser shows times, such as "8 PM". */
 const reminderHours = Array.from({ length: 24 }, (_, hour) => ({
     value: `${String(hour).padStart(2, '0')}:00`,
@@ -92,7 +129,8 @@ const reminderHours = Array.from({ length: 24 }, (_, hour) => ({
 
         <v-alert v-if="user.isDemo" type="info" variant="tonal">
             This is the shared demo account, so its name, email, password, time zone, and emails
-            can't be changed. Appearance and quotes are yours to try.
+            can't be changed, and it can't be exported or deleted. Appearance and quotes are yours
+            to try.
         </v-alert>
 
         <v-card class="pa-6">
@@ -268,6 +306,109 @@ const reminderHours = Array.from({ length: 24 }, (_, hour) => ({
             <p class="text-body-2 text-medium-emphasis">
                 A note at 8 AM when you have memories from this date in earlier years.
             </p>
+        </v-card>
+
+        <v-card v-if="!user.isDemo" class="pa-6">
+            <h2 class="text-subtitle-1 font-weight-bold mb-1">Your data</h2>
+            <p class="text-body-2 text-medium-emphasis mb-4">
+                Download a copy of everything you've kept: your entries as a JSON file, and your
+                photos at full size, in one ZIP. We'll email you a link when it's ready. It works
+                for 24 hours.
+            </p>
+
+            <v-alert
+                v-if="dataExport?.status === 'pending'"
+                type="info"
+                variant="tonal"
+                class="mb-4"
+                role="status"
+            >
+                Your export is being made. This page updates when it's ready, and we'll email you
+                too.
+            </v-alert>
+
+            <v-alert
+                v-else-if="dataExport?.status === 'failed'"
+                type="warning"
+                variant="tonal"
+                class="mb-4"
+            >
+                Your last export couldn't be made. Please try again.
+            </v-alert>
+
+            <div v-else-if="dataExport?.status === 'ready'" class="mb-4">
+                <v-btn
+                    color="primary"
+                    :prepend-icon="mdiDownload"
+                    :href="dataExport.downloadUrl ?? undefined"
+                    download
+                >
+                    Download your export
+                </v-btn>
+                <p class="text-body-2 text-medium-emphasis mt-2">
+                    The link works until {{ exportExpiresAt }}.
+                </p>
+            </div>
+
+            <v-btn
+                :color="dataExport?.status === 'ready' ? undefined : 'primary'"
+                :variant="dataExport?.status === 'ready' ? 'tonal' : 'flat'"
+                :loading="exporting"
+                :disabled="dataExport?.status === 'pending'"
+                @click="requestExport"
+            >
+                {{ dataExport?.status === 'ready' ? 'Make a new export' : 'Export my data' }}
+            </v-btn>
+            <p v-if="page.props.errors.export" class="text-body-2 text-error mt-2" role="alert">
+                {{ page.props.errors.export }}
+            </p>
+
+            <v-divider class="my-6" />
+
+            <h3 class="text-subtitle-1 font-weight-bold mb-1">Delete account</h3>
+            <p class="text-body-2 text-medium-emphasis mb-4">
+                Deletes your account and every entry and photo in it, straight away. This can't be
+                undone, so you may want to export your data first.
+            </p>
+
+            <v-btn color="error" variant="tonal" @click="deleteDialog = true">
+                Delete my account
+            </v-btn>
+
+            <v-dialog v-model="deleteDialog" max-width="480">
+                <v-card>
+                    <Form
+                        v-slot="{ errors, processing }"
+                        action="/account"
+                        method="delete"
+                        error-bag="deleteAccount"
+                        :reset-on-error="['password']"
+                    >
+                        <v-card-title class="text-h6 pt-5 px-6">Delete your account?</v-card-title>
+                        <v-card-text class="px-6">
+                            <p class="mb-4">
+                                Your account, entries, and photos will be deleted for good. Enter
+                                your password to confirm.
+                            </p>
+                            <v-text-field
+                                name="password"
+                                type="password"
+                                label="Password"
+                                autocomplete="current-password"
+                                :error-messages="errors.password"
+                                autofocus
+                            />
+                        </v-card-text>
+                        <v-card-actions class="px-6 pb-5">
+                            <v-spacer />
+                            <v-btn variant="text" @click="deleteDialog = false">Cancel</v-btn>
+                            <v-btn type="submit" color="error" variant="flat" :loading="processing">
+                                Delete my account
+                            </v-btn>
+                        </v-card-actions>
+                    </Form>
+                </v-card>
+            </v-dialog>
         </v-card>
 
         <v-snackbar v-model="snackbar" :timeout="3000">{{ snackbarText }}</v-snackbar>

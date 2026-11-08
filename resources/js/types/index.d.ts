@@ -87,6 +87,15 @@ export interface Recap {
     goodMemories: Memory[];
 }
 
+/** Where the latest data export stands, from AccountController. */
+export interface DataExportStatus {
+    status: 'pending' | 'ready' | 'failed';
+    /** When the download link stops working, for a ready export. */
+    expiresAt: string | null;
+    /** A signed link to the ZIP, for a ready export. */
+    downloadUrl: string | null;
+}
+
 declare module '@inertiajs/core' {
     export interface InertiaConfig {
         sharedPageProps: {

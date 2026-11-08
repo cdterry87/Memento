@@ -79,6 +79,14 @@ class User extends Authenticatable implements MustVerifyEmail
     }
 
     /**
+     * @return HasMany<DataExport, $this>
+     */
+    public function dataExports(): HasMany
+    {
+        return $this->hasMany(DataExport::class);
+    }
+
+    /**
      * Today's date on the user's own calendar, which decides what "today"
      * means for check-ins and which dates are in the future.
      */

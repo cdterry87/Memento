@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\AccountController;
+use App\Http\Controllers\DataExportController;
 use App\Http\Controllers\DayController;
 use App\Http\Controllers\DemoController;
 use App\Http\Controllers\MediaController;
@@ -55,4 +56,12 @@ Route::middleware(['auth', 'verified'])->group(function () {
 
     Route::get('/account', [AccountController::class, 'show'])->name('account');
     Route::patch('/account/preferences', [AccountController::class, 'updatePreferences'])->name('account.preferences');
+    Route::delete('/account', [AccountController::class, 'destroy'])->name('account.destroy');
+
+    Route::post('/account/export', [DataExportController::class, 'store'])
+        ->middleware('throttle:exports')
+        ->name('account.export');
+    Route::get('/account/export/{export}', [DataExportController::class, 'show'])
+        ->middleware('signed')
+        ->name('account.export.download');
 });

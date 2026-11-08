@@ -51,8 +51,9 @@ import { Head, Link } from '@inertiajs/vue3';
                     analytics, advertising, or marketing emails.
                 </p>
                 <p>
-                    Reminder and "on this day" emails are off unless you turn them on. They never
-                    include your entries, moods, or photos, only a link back to the app.
+                    Reminder and "on this day" emails are off unless you turn them on. Like every
+                    email Memento sends, they never include your entries, moods, or photos, only a
+                    link back to the app.
                 </p>
             </section>
 
@@ -70,8 +71,9 @@ import { Head, Link } from '@inertiajs/vue3';
                     </li>
                     <li><strong>Cloudflare R2</strong> stores your photos privately.</li>
                     <li>
-                        <strong>An email delivery service</strong> sends the emails you ask for, and
-                        receives your email address to do so.
+                        <strong>An email delivery service</strong> sends account emails, such as
+                        address confirmations, password resets, and export links, and the emails you
+                        turn on. It receives your email address to do so.
                     </li>
                     <li>
                         <strong>The hosting provider</strong> stores the application and its
@@ -100,10 +102,15 @@ import { Head, Link } from '@inertiajs/vue3';
                 </p>
                 <p>
                     Your information is kept until you delete it. Deleting an entry removes it and
-                    its photos. You will be able to download a copy of everything, or delete your
-                    account and all of its entries and photos, from your Account page. The shared
-                    demo account is reset every night.
+                    its photos.
                 </p>
+                <p>
+                    From your Account page you can download a copy of everything, as a ZIP of your
+                    entries and photos. It is emailed to you as a link that works for 24 hours,
+                    after which the file is deleted. You can also delete your account there, which
+                    removes it and all of its entries and photos straight away.
+                </p>
+                <p>The shared demo account is reset every night.</p>
             </section>
 
             <section>

@@ -14,6 +14,16 @@ const page = usePage();
     <Head title="Welcome" />
 
     <section class="text-center">
+        <v-alert
+            v-if="page.props.status === 'account-deleted'"
+            type="success"
+            variant="tonal"
+            class="text-start mb-8"
+            role="status"
+        >
+            Your account, entries, and photos have been deleted.
+        </v-alert>
+
         <h1 class="font-logo text-h2 text-primary mb-3">{{ appName }}</h1>
         <p class="text-h6 font-weight-regular text-medium-emphasis mb-8">
             A tiny, private journal for the moments worth keeping.
