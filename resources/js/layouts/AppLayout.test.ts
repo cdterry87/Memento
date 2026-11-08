@@ -28,8 +28,8 @@ vi.mock('@inertiajs/vue3', async (importOriginal) => {
     };
 });
 
-function mountLayout(url: string) {
-    inertia.page = reactive({ url, props: { auth: { user: { name: 'Ada' } } } });
+function mountLayout(url: string, user: { name: string; isDemo?: boolean } = { name: 'Ada' }) {
+    inertia.page = reactive({ url, props: { auth: { user } } });
 
     return mount(AppLayout, {
         attachTo: document.body,
@@ -69,6 +69,17 @@ describe('AppLayout', () => {
     afterEach(() => {
         wrapper?.unmount();
         wrapper = undefined;
+    });
+
+    it('tells demo users that what they write is shared and resets', () => {
+        wrapper = mountLayout('/today', { name: 'Demo User', isDemo: true });
+
+        expect(wrapper.find('main').text()).toContain("You're using the demo.");
+
+        wrapper.unmount();
+        wrapper = mountLayout('/today');
+
+        expect(wrapper.find('main').text()).not.toContain("You're using the demo.");
     });
 
     it('renders the page inside the layout', () => {

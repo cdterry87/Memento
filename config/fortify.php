@@ -159,8 +159,11 @@ return [
     |
     */
 
+    /*
+     * Registration is turned off in demo mode, so its routes don't exist.
+     */
     'features' => [
-        Features::registration(),
+        ...(env('DEMO_MODE', false) ? [] : [Features::registration()]),
         Features::resetPasswords(),
         Features::emailVerification(),
         Features::updateProfileInformation(),

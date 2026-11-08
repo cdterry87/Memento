@@ -1,6 +1,15 @@
 <script setup lang="ts">
 import AuthCard from '@/components/AuthCard.vue';
+import TurnstileWidget from '@/components/TurnstileWidget.vue';
 import { Form, Head, Link } from '@inertiajs/vue3';
+import { ref } from 'vue';
+
+defineProps<{
+    turnstileSiteKey: string | null;
+}>();
+
+const turnstileToken = ref('');
+const turnstile = ref<InstanceType<typeof TurnstileWidget> | null>(null);
 
 /** Sent with the form so reminders and "today" match the user's own clock. */
 const timezone = Intl.DateTimeFormat().resolvedOptions().timeZone;
@@ -15,8 +24,10 @@ const timezone = Intl.DateTimeFormat().resolvedOptions().timeZone;
             action="/register"
             method="post"
             :reset-on-error="['password', 'password_confirmation']"
+            @finish="turnstile?.reset()"
         >
             <input type="hidden" name="timezone" :value="timezone" />
+            <input type="hidden" name="turnstile" :value="turnstileToken" />
 
             <v-text-field
                 name="name"
@@ -52,6 +63,17 @@ const timezone = Intl.DateTimeFormat().resolvedOptions().timeZone;
                 autocomplete="new-password"
                 required
             />
+
+            <TurnstileWidget
+                ref="turnstile"
+                v-model="turnstileToken"
+                :site-key="turnstileSiteKey"
+                action="register"
+                class="mb-2"
+            />
+            <p v-if="errors.turnstile" class="text-body-2 text-error mb-2" role="alert">
+                {{ errors.turnstile }}
+            </p>
 
             <v-btn
                 type="submit"

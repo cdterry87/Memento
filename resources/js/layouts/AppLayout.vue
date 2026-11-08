@@ -5,6 +5,7 @@
  * bar, with Account and Sign out in a menu under the user's name. On narrow
  * screens everything collapses into a single menu button.
  */
+import AppFooter from '@/components/AppFooter.vue';
 import { useLinkNavigation } from '@/composables/useLinkNavigation';
 import { Link, router, usePage } from '@inertiajs/vue3';
 import {
@@ -145,8 +146,19 @@ function signOut(): void {
 
         <v-main>
             <div class="page-column pt-4">
+                <v-alert
+                    v-if="page.props.auth.user?.isDemo"
+                    type="info"
+                    variant="tonal"
+                    density="compact"
+                    class="mb-4"
+                >
+                    You're using the demo. Other visitors can see what you write, and everything
+                    resets every night.
+                </v-alert>
                 <slot />
             </div>
+            <AppFooter />
         </v-main>
     </v-app>
 </template>
@@ -162,6 +174,6 @@ function signOut(): void {
 }
 
 .font-logo {
-    font-size: 1.7rem;
+    font-size: 2rem;
 }
 </style>

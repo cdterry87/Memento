@@ -74,6 +74,7 @@ it('shares only the fields the interface needs about the signed-in user', functi
                 'reminderEmails' => false,
                 'reminderTime' => '20:00',
                 'onThisDayEmails' => false,
+                'isDemo' => false,
             ])
         );
 });

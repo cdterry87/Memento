@@ -37,9 +37,12 @@ class FortifyServiceProvider extends ServiceProvider
     {
         Fortify::loginView(fn (Request $request) => Inertia::render('auth/Login', [
             'canResetPassword' => true,
+            'turnstileSiteKey' => config('memento.turnstile.site_key'),
         ]));
 
-        Fortify::registerView(fn () => Inertia::render('auth/Register'));
+        Fortify::registerView(fn () => Inertia::render('auth/Register', [
+            'turnstileSiteKey' => config('memento.turnstile.site_key'),
+        ]));
 
         Fortify::requestPasswordResetLinkView(fn () => Inertia::render('auth/ForgotPassword'));
 

@@ -8,7 +8,7 @@ const appName = import.meta.env.VITE_APP_NAME || 'Memento';
 
 /** Pages shown to signed-out visitors. Every other page uses the app layout. */
 const isGuestPage = (name: string): boolean =>
-    name === 'Welcome' || name === 'Unsubscribe' || name.startsWith('auth/');
+    ['Welcome', 'Unsubscribe', 'Privacy'].includes(name) || name.startsWith('auth/');
 
 createInertiaApp({
     pages: './pages',

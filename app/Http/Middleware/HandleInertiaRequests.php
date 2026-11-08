@@ -44,6 +44,7 @@ class HandleInertiaRequests extends Middleware
                 'user' => $user ? (new CurrentUserResource($user))->resolve($request) : null,
             ],
             'status' => fn () => $request->session()->get('status'),
+            'demoMode' => (bool) config('memento.demo_mode'),
         ];
     }
 }

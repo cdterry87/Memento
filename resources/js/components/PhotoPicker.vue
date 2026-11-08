@@ -9,6 +9,7 @@ import {
     photoProblem,
 } from '@/composables/usePhotoUploads';
 import type { Photo } from '@/types';
+import { usePage } from '@inertiajs/vue3';
 import { mdiClose, mdiImagePlusOutline } from '@mdi/js';
 import { computed, onBeforeUnmount, ref, useId, watch } from 'vue';
 
@@ -22,6 +23,10 @@ const props = withDefaults(
 );
 
 const files = defineModel<File[]>({ required: true });
+
+/** The shared demo account can't upload, so visitors can't add files to storage. */
+const page = usePage();
+const isDemo = computed(() => !!page?.props?.auth?.user?.isDemo);
 
 const inputId = useId();
 const input = ref<HTMLInputElement | null>(null);
@@ -134,16 +139,18 @@ function removeFile(file: File): void {
             <v-btn
                 variant="tonal"
                 :prepend-icon="mdiImagePlusOutline"
-                :disabled="remaining === 0"
+                :disabled="isDemo || remaining === 0"
                 @click="choose"
             >
                 Add photo
             </v-btn>
             <span class="text-body-2 text-medium-emphasis">
                 {{
-                    remaining === 0
-                        ? 'That’s the most for one day.'
-                        : `Up to ${MAX_PHOTOS_PER_DAY} photos a day.`
+                    isDemo
+                        ? 'Adding photos is turned off in the demo.'
+                        : remaining === 0
+                          ? 'That’s the most for one day.'
+                          : `Up to ${MAX_PHOTOS_PER_DAY} photos a day.`
                 }}
             </span>
         </div>
