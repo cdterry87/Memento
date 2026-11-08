@@ -34,7 +34,7 @@ const entries = computed(() =>
 
         <EmptyState
             v-if="!entries.length"
-            emoji="📖"
+            emoji="⏳"
             title="Nothing here yet"
             text="Each day you check in will appear here, newest first."
         >

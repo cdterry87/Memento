@@ -4,6 +4,7 @@ use App\Http\Controllers\AccountController;
 use App\Http\Controllers\DayController;
 use App\Http\Controllers\MediaController;
 use App\Http\Controllers\PhotoController;
+use App\Http\Controllers\RecapController;
 use App\Http\Controllers\TimelineController;
 use App\Http\Controllers\TodayController;
 use Illuminate\Support\Facades\Route;
@@ -32,11 +33,8 @@ Route::middleware(['auth', 'verified'])->group(function () {
         ->whereIn('variant', ['full', 'thumb'])
         ->name('media.photos');
 
-    /*
-     * Placeholder screens. A later milestone replaces them with a controller.
-     */
-    Route::inertia('/recap', 'Recap')->name('recap');
-    Route::inertia('/recap/{year}', 'Recap')->whereNumber('year')->name('recap.show');
+    Route::get('/recap', [RecapController::class, 'index'])->name('recap');
+    Route::get('/recap/{year}', [RecapController::class, 'show'])->whereNumber('year')->name('recap.show');
 
     Route::get('/account', [AccountController::class, 'show'])->name('account');
     Route::patch('/account/preferences', [AccountController::class, 'updatePreferences'])->name('account.preferences');

@@ -47,7 +47,7 @@ watch(pickedMood, (mood) => {
 
     <section class="d-flex flex-column ga-6">
         <header>
-            <h1 class="text-h4">{{ greeting }}, {{ firstName }}</h1>
+            <h1 class="text-h4">{{ greeting }}, {{ firstName }}!</h1>
             <p class="text-body-1 text-medium-emphasis">{{ formatLongDate(today) }}</p>
         </header>
 
