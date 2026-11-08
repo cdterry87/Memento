@@ -34,6 +34,13 @@ export function dayOfMonth(date: string): number {
     return Number(date.slice(8, 10));
 }
 
+/** "November", or "Nov" when short, for a month number from 1 to 12. */
+export function monthName(month: number, { short = false } = {}): string {
+    return formatCalendarDate(`2000-${String(month).padStart(2, '0')}-01`, {
+        month: short ? 'short' : 'long',
+    });
+}
+
 /** "2026-11", for grouping dates by month. */
 export function monthKey(date: string): string {
     return date.slice(0, 7);

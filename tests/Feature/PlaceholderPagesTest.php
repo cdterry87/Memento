@@ -6,7 +6,6 @@ use Inertia\Testing\AssertableInertia as Assert;
 dataset('app screens', [
     'today' => ['today', 'Today'],
     'timeline' => ['timeline', 'Timeline'],
-    'recap' => ['recap', 'Recap'],
     'account' => ['account', 'Account'],
 ]);
 

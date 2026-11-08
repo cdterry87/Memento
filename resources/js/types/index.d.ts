@@ -49,6 +49,39 @@ export interface Quote {
     author: string;
 }
 
+/** A month's average mood score, or null for a month with no entries. */
+export interface MonthAverage {
+    month: number;
+    average: number | null;
+    count: number;
+}
+
+/** One day in the year-in-pixels grid. */
+export interface MoodPixel {
+    date: string;
+    score: number;
+    emoji: string;
+    label: string;
+}
+
+/** A year's recap, shaped by RecapBuilder. */
+export interface Recap {
+    year: number;
+    isYearToDate: boolean;
+    daysInPeriod: number;
+    checkIns: number;
+    longestStreak: number;
+    photos: number;
+    averageScore: number | null;
+    pixels: MoodPixel[];
+    months: MonthAverage[];
+    moodMix: (Mood & { count: number; share: number })[];
+    topReasons: (Reason & { count: number })[];
+    lifted: (Reason & { average: number })[];
+    bestMonth: MonthAverage | null;
+    goodMemories: Memory[];
+}
+
 declare module '@inertiajs/core' {
     export interface InertiaConfig {
         sharedPageProps: {

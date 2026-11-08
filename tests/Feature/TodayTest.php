@@ -252,9 +252,4 @@ describe('recap promotion', function () {
             ->get(route('today'))
             ->assertInertia(fn (Assert $page) => $page->where('recapYear', null));
     });
-
-    it('opens the recap for a year', function () {
-        $this->actingAs($this->user)->get('/recap/2026')->assertOk();
-        $this->actingAs($this->user)->get('/recap/latest')->assertNotFound();
-    });
 });
