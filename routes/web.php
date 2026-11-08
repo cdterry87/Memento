@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\AccountController;
 use App\Http\Controllers\DayController;
+use App\Http\Controllers\DemoController;
 use App\Http\Controllers\MediaController;
 use App\Http\Controllers\PhotoController;
 use App\Http\Controllers\RecapController;
@@ -13,6 +14,10 @@ use Illuminate\Support\Facades\Route;
 Route::inertia('/', 'Welcome', [
     'appName' => config('app.name'),
 ])->middleware('guest')->name('home');
+
+Route::post('/demo', [DemoController::class, 'store'])
+    ->middleware(['guest', 'throttle:guest-forms'])
+    ->name('demo');
 
 /*
  * Signed links from emails. They work signed in or out, and the signature

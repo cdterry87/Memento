@@ -72,7 +72,7 @@ const entries = computed(() =>
     </section>
 </template>
 
-<style scoped>
+<style>
 .timeline {
     display: flex;
     flex-direction: column;

@@ -3,6 +3,7 @@
 namespace App\Actions\Fortify;
 
 use App\Models\User;
+use App\Rules\Turnstile;
 use DateTimeZone;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Validator;
@@ -33,6 +34,9 @@ class CreateNewUser implements CreatesNewUsers
                 Rule::unique(User::class),
             ],
             'password' => $this->passwordRules(),
+            'turnstile' => ['required', new Turnstile(request()->ip())],
+        ], [
+            'turnstile.required' => 'Please complete the security check and try again.',
         ])->validate();
 
         return User::create([

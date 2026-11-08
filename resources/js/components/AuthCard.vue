@@ -37,4 +37,8 @@ defineProps<{
     margin-inline: auto;
     padding-block: 32px;
 }
+
+.font-logo {
+    font-size: 2rem;
+}
 </style>

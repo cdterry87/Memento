@@ -14,6 +14,7 @@ export interface CurrentUser {
     /** "20:00", the local hour of the daily reminder. */
     reminderTime: string;
     onThisDayEmails: boolean;
+    isDemo: boolean;
 }
 
 /** A pickable option in the check-in, shaped by MoodResource and ReasonResource. */
@@ -91,6 +92,7 @@ declare module '@inertiajs/core' {
         sharedPageProps: {
             auth: { user: CurrentUser | null };
             status: string | null;
+            demoMode: boolean;
         };
     }
 }

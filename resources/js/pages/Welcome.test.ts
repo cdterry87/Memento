@@ -5,6 +5,8 @@ import { defineComponent, h } from 'vue';
 import { VApp } from 'vuetify/components';
 import Welcome from './Welcome.vue';
 
+const inertia = vi.hoisted(() => ({ demoMode: false }));
+
 vi.mock('@inertiajs/vue3', async (importOriginal) => {
     // Imported here because the mock can load before this file's own imports.
     const { defineComponent } = await import('vue');
@@ -12,10 +14,13 @@ vi.mock('@inertiajs/vue3', async (importOriginal) => {
     return {
         ...(await importOriginal<typeof import('@inertiajs/vue3')>()),
         Head: defineComponent({ render: () => null }),
+        usePage: () => ({ props: { demoMode: inertia.demoMode } }),
     };
 });
 
-function mountWelcome() {
+function mountWelcome(demoMode = false) {
+    inertia.demoMode = demoMode;
+
     const Wrapper = defineComponent({
         render: () => h(VApp, () => h(Welcome, { appName: 'Memento' })),
     });
@@ -37,6 +42,15 @@ describe('Welcome', () => {
 
         expect(links.map((link) => [link.text(), link.attributes('href')])).toEqual([
             ['Create an account', '/register'],
+            ['Sign in', '/login'],
+        ]);
+    });
+
+    it('offers the demo instead of registration in demo mode', () => {
+        const links = mountWelcome(true).findAll('a');
+
+        expect(links.map((link) => [link.text(), link.attributes('href')])).toEqual([
+            ['Try the demo', '/login'],
             ['Sign in', '/login'],
         ]);
     });

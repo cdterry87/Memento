@@ -145,6 +145,16 @@ function signOut(): void {
 
         <v-main>
             <div class="page-column pt-4">
+                <v-alert
+                    v-if="page.props.auth.user?.isDemo"
+                    type="info"
+                    variant="tonal"
+                    density="compact"
+                    class="mb-4"
+                >
+                    You're using the demo. Other visitors can see what you write, and everything
+                    resets every night.
+                </v-alert>
                 <slot />
             </div>
         </v-main>
@@ -162,6 +172,6 @@ function signOut(): void {
 }
 
 .font-logo {
-    font-size: 1.7rem;
+    font-size: 2rem;
 }
 </style>

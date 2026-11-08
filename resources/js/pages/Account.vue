@@ -90,6 +90,11 @@ const reminderHours = Array.from({ length: 24 }, (_, hour) => ({
     <section class="d-flex flex-column ga-6">
         <h1 class="text-h4">Account</h1>
 
+        <v-alert v-if="user.isDemo" type="info" variant="tonal">
+            This is the shared demo account, so its name, email, password, time zone, and emails
+            can't be changed. Appearance and quotes are yours to try.
+        </v-alert>
+
         <v-card class="pa-6">
             <h2 class="text-subtitle-1 font-weight-bold mb-4">Profile</h2>
 
@@ -101,6 +106,7 @@ const reminderHours = Array.from({ length: 24 }, (_, hour) => ({
                 :options="{ preserveScroll: true }"
             >
                 <v-text-field
+                    :disabled="user.isDemo"
                     name="name"
                     label="Name"
                     autocomplete="name"
@@ -109,6 +115,7 @@ const reminderHours = Array.from({ length: 24 }, (_, hour) => ({
                 />
 
                 <v-text-field
+                    :disabled="user.isDemo"
                     name="email"
                     type="email"
                     label="Email"
@@ -122,7 +129,9 @@ const reminderHours = Array.from({ length: 24 }, (_, hour) => ({
                     carry on.
                 </p>
 
-                <v-btn type="submit" color="primary" :loading="processing">Save profile</v-btn>
+                <v-btn type="submit" color="primary" :loading="processing" :disabled="user.isDemo"
+                    >Save profile</v-btn
+                >
             </Form>
         </v-card>
 
@@ -139,6 +148,7 @@ const reminderHours = Array.from({ length: 24 }, (_, hour) => ({
                 :reset-on-error="['current_password', 'password', 'password_confirmation']"
             >
                 <v-text-field
+                    :disabled="user.isDemo"
                     name="current_password"
                     type="password"
                     label="Current password"
@@ -147,6 +157,7 @@ const reminderHours = Array.from({ length: 24 }, (_, hour) => ({
                 />
 
                 <v-text-field
+                    :disabled="user.isDemo"
                     name="password"
                     type="password"
                     label="New password"
@@ -155,13 +166,16 @@ const reminderHours = Array.from({ length: 24 }, (_, hour) => ({
                 />
 
                 <v-text-field
+                    :disabled="user.isDemo"
                     name="password_confirmation"
                     type="password"
                     label="Confirm new password"
                     autocomplete="new-password"
                 />
 
-                <v-btn type="submit" color="primary" :loading="processing">Change password</v-btn>
+                <v-btn type="submit" color="primary" :loading="processing" :disabled="user.isDemo"
+                    >Change password</v-btn
+                >
             </Form>
         </v-card>
 
@@ -202,6 +216,7 @@ const reminderHours = Array.from({ length: 24 }, (_, hour) => ({
                 :model-value="user.timezone"
                 :error-messages="page.props.errors.timezone"
                 auto-select-first
+                :disabled="user.isDemo"
                 @update:model-value="saveTimezone"
             />
         </v-card>
@@ -222,7 +237,7 @@ const reminderHours = Array.from({ length: 24 }, (_, hour) => ({
                 color="primary"
                 inset
                 hide-details
-                :disabled="!user.emailVerified"
+                :disabled="!user.emailVerified || user.isDemo"
                 :model-value="user.reminderEmails"
                 @update:model-value="saveReminderEmails"
             />
@@ -236,7 +251,7 @@ const reminderHours = Array.from({ length: 24 }, (_, hour) => ({
                 :items="reminderHours"
                 :model-value="user.reminderTime"
                 :error-messages="page.props.errors.reminder_time"
-                :disabled="!user.emailVerified"
+                :disabled="!user.emailVerified || user.isDemo"
                 class="mb-2"
                 @update:model-value="saveReminderTime"
             />
@@ -246,7 +261,7 @@ const reminderHours = Array.from({ length: 24 }, (_, hour) => ({
                 color="primary"
                 inset
                 hide-details
-                :disabled="!user.emailVerified"
+                :disabled="!user.emailVerified || user.isDemo"
                 :model-value="user.onThisDayEmails"
                 @update:model-value="saveOnThisDayEmails"
             />

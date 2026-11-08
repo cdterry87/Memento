@@ -1,12 +1,13 @@
 <script setup lang="ts">
 import { useLinkNavigation } from '@/composables/useLinkNavigation';
-import { Head } from '@inertiajs/vue3';
+import { Head, usePage } from '@inertiajs/vue3';
 
 defineProps<{
     appName: string;
 }>();
 
 const { navigate } = useLinkNavigation();
+const page = usePage();
 </script>
 
 <template>
@@ -20,6 +21,16 @@ const { navigate } = useLinkNavigation();
 
         <div class="d-flex flex-wrap justify-center ga-3">
             <v-btn
+                v-if="page.props.demoMode"
+                color="primary"
+                size="x-large"
+                href="/login"
+                @click="navigate($event, '/login')"
+            >
+                Try the demo
+            </v-btn>
+            <v-btn
+                v-else
                 color="primary"
                 size="x-large"
                 href="/register"
@@ -39,3 +50,9 @@ const { navigate } = useLinkNavigation();
         </div>
     </section>
 </template>
+
+<style scoped>
+.font-logo {
+    font-size: 4rem;
+}
+</style>

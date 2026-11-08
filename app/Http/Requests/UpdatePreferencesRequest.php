@@ -3,6 +3,7 @@
 namespace App\Http\Requests;
 
 use App\Enums\Theme;
+use App\Support\DemoRestriction;
 use Illuminate\Contracts\Validation\ValidationRule;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Validation\Rule;
@@ -36,6 +37,21 @@ class UpdatePreferencesRequest extends FormRequest
             'on_this_day_emails' => ['sometimes', 'boolean'],
             'reminder_time' => ['sometimes', 'string', 'regex:/^([01]\d|2[0-3]):00$/'],
         ];
+    }
+
+    /**
+     * Everyone shares the demo account, so it can't turn on emails or move
+     * its time zone, which would change "today" for every visitor.
+     */
+    protected function prepareForValidation(): void
+    {
+        if ($this->boolean('reminder_emails') || $this->boolean('on_this_day_emails')) {
+            DemoRestriction::refuse($this->user(), 'emails', "The demo account can't get emails.");
+        }
+
+        if ($this->has('timezone')) {
+            DemoRestriction::refuse($this->user(), 'timezone', "The demo account's time zone can't be changed.");
+        }
     }
 
     /**

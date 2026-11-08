@@ -3,6 +3,7 @@
 namespace App\Actions\Fortify;
 
 use App\Models\User;
+use App\Support\DemoRestriction;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Validation\Rule;
 use Illuminate\Validation\ValidationException;
@@ -19,6 +20,8 @@ class UpdateUserProfileInformation implements UpdatesUserProfileInformation
      */
     public function update(User $user, array $input): void
     {
+        DemoRestriction::refuse($user, 'name', "The demo account's name and email can't be changed.", 'updateProfileInformation');
+
         Validator::make($input, [
             'name' => ['required', 'string', 'max:255'],
 

@@ -40,6 +40,7 @@ function mountAccount(user: Partial<CurrentUser> = {}) {
         reminderEmails: false,
         reminderTime: '20:00',
         onThisDayEmails: false,
+        isDemo: false,
         ...user,
     };
     inertia.patch.mockClear();
